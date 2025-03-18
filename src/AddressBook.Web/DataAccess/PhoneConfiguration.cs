@@ -1,0 +1,26 @@
+﻿using AddressBook.Web.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace AddressBook.Web.DataAccess;
+
+public class PhoneConfiguration : IEntityTypeConfiguration<Phone>
+{
+  public void Configure(EntityTypeBuilder<Phone> builder)
+  {
+    builder.HasKey(e => e.Id);
+    builder.Property(e => e.PhoneNumber)
+      .HasMaxLength(15)
+      .IsRequired();
+    builder.Property(e => e.Comment)
+      .HasMaxLength(100)
+      .IsRequired(false);
+    builder.HasOne(e => e.Contact)
+      .WithMany(e => e.Phones)
+      .HasForeignKey(e => e.ContactId);
+    builder.HasOne(e => e.PhoneOperator)
+      .WithMany()
+      .HasForeignKey(e => e.PhoneOperatorId);
+
+  }
+}
