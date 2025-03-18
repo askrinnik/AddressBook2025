@@ -11,9 +11,9 @@ namespace AddressBook.Web.DataAccess
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      base.OnModelCreating(modelBuilder);
-
-      modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+      modelBuilder.ApplyConfiguration(new PhoneOperatorConfiguration());
+      modelBuilder.ApplyConfiguration(new ContactConfiguration());
+      modelBuilder.ApplyConfiguration(new PhoneConfiguration());
     }
   }
 }

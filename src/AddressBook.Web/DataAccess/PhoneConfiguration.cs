@@ -10,17 +10,16 @@ public class PhoneConfiguration : IEntityTypeConfiguration<Phone>
   {
     builder.HasKey(e => e.Id);
     builder.Property(e => e.PhoneNumber)
-      .HasMaxLength(15)
-      .IsRequired();
+        .HasMaxLength(15)
+        .IsRequired();
     builder.Property(e => e.Comment)
-      .HasMaxLength(100)
-      .IsRequired(false);
+        .HasMaxLength(100)
+        .IsRequired(false);
     builder.HasOne(e => e.Contact)
-      .WithMany(e => e.Phones)
-      .HasForeignKey(e => e.ContactId);
+        .WithMany(e => e.Phones)
+        .HasForeignKey(e => e.ContactId);
     builder.HasOne(e => e.PhoneOperator)
-      .WithMany()
-      .HasForeignKey(e => e.PhoneOperatorId);
-
+        .WithMany(e => e.Phones)
+        .HasForeignKey(e => e.PhoneOperatorId);
   }
 }
