@@ -6,7 +6,7 @@ using MediatR;
 
 namespace AddressBook.Web.Application;
 
-public class GetFilteredContactsQueryHandler(
+internal class GetFilteredContactsQueryHandler(
   IRetrieveMany<GetFilteredContactsQuery, Contact> contactsRetriever
     ) : IRequestHandler<GetFilteredContactsQuery, GetFilteredContactsResponse>
 {
