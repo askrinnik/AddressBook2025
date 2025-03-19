@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AddressBook.Web.DataAccess;
 
+/// <summary>
+/// Extension methods for configuring DataAccess layer
+/// </summary>
 public static class StartupExtensions
 {
   /// <summary>

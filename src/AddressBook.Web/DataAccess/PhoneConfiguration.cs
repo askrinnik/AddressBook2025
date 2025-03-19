@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AddressBook.Web.DataAccess;
 
-public class PhoneConfiguration : IEntityTypeConfiguration<Phone>
+internal class PhoneConfiguration : IEntityTypeConfiguration<Phone>
 {
   public void Configure(EntityTypeBuilder<Phone> builder)
   {
