@@ -1,24 +1,22 @@
 using AddressBook.Web;
-using Scalar.AspNetCore;
+using AddressBook.Web.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
-builder.ConfigureDatabase();
+builder.Services.AddMediatR(cfg => 
+  cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.ConfigureDataAccess();
 
 var app = builder.Build();
 
 app.ExecuteDatabaseMigration();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-app.MapScalarApiReference(o => o.OpenApiRoutePattern = "/swagger/{documentName}/swagger.json");
-
+app.ConfigureOpenApi();
 //app.UseHttpsRedirection();
 //app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
