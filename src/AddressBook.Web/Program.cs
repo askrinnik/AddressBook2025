@@ -1,26 +1,16 @@
+using AddressBook.Web;
 using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
-using AddressBook.Web.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
-// Configure Entity Framework Core with SQL Server
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.ConfigureDatabase();
 
 var app = builder.Build();
 
-// Ensure database is created and migrations are applied
-using (var scope = app.Services.CreateScope())
-{
-  var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-  dbContext.Database.Migrate();
-}
+app.ExecuteDatabaseMigration();
 
 app.UseSwagger();
 app.UseSwaggerUI();
