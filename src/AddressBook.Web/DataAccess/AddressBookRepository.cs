@@ -12,7 +12,7 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
   {
     IQueryable<Contact> query = dbContext.Contacts;
     if (!string.IsNullOrWhiteSpace(key.SearchText))
-      query = query.Where(c => c.FirstName.Contains(key.SearchText));
+      query = query.Where(c => c.FirstName.Contains(key.SearchText) || c.LastName.Contains(key.SearchText));
     return await query.ToArrayAsync();
   }
 }
