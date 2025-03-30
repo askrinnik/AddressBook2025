@@ -16,6 +16,7 @@ builder.Services.AddMediatR(cfg =>
   cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.ConfigureDataAccess();
+builder.ConfigureBlazor();
 
 var app = builder.Build();
 
@@ -24,5 +25,6 @@ app.ConfigureOpenApi();
 //app.UseHttpsRedirection();
 //app.UseAuthorization();
 app.MapControllers();
+app.ConfigureBlazor();
 
 app.Run();

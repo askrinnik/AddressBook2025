@@ -1,4 +1,6 @@
-﻿using Scalar.AspNetCore;
+﻿using AddressBook.Web.Components;
+using Microsoft.AspNetCore.Components;
+using Scalar.AspNetCore;
 
 namespace AddressBook.Web;
 
@@ -7,6 +9,28 @@ namespace AddressBook.Web;
 /// </summary>
 public static class StartupExtensions
 {
+  /// <summary>
+  /// Configure Blazor dependencies
+  /// </summary>
+  public static WebApplicationBuilder ConfigureBlazor(this WebApplicationBuilder builder)
+  {
+    //builder.Services.AddCors(options => options.AddPolicy("AllowBlazor",
+    //  policy => policy.WithOrigins("https://localhost:7166")
+    //    .AllowAnyMethod()
+    //    .AllowAnyHeader()));
+
+    builder.Services.AddRazorComponents()
+      .AddInteractiveWebAssemblyComponents();
+
+    builder.Services.AddScoped(sp =>
+    {
+      var navigationManager = sp.GetRequiredService<NavigationManager>();
+      return new HttpClient { BaseAddress = new Uri(navigationManager.BaseUri) }; // for server rendering
+    });
+
+    return builder;
+  }
+
   /// <summary>
   /// Configure OpenApi specification and UI
   /// </summary>
@@ -20,4 +44,29 @@ public static class StartupExtensions
 
     return app;
   }
+
+  /// <summary>
+  /// Configure Blazor middleware
+  /// </summary>
+  public static WebApplication ConfigureBlazor(this WebApplication app)
+  {
+    //app.UseCors("AllowBlazor");
+    if (app.Environment.IsDevelopment())
+    {
+      app.UseWebAssemblyDebugging();
+    }
+    else
+    {
+      app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    }
+    app.UseAntiforgery();
+
+    app.MapStaticAssets();
+    app.MapRazorComponents<App>()
+      .AddInteractiveWebAssemblyRenderMode()
+      .AddAdditionalAssemblies(typeof(AddressBook.Web.Client._Imports).Assembly);
+
+    return app;
+  }
+
 }
