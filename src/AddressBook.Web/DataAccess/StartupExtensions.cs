@@ -1,6 +1,7 @@
 ﻿using AddressBook.Contracts;
 using AddressBook.Web.Domain;
 using AddressBook.Web.Interfaces;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace AddressBook.Web.DataAccess;

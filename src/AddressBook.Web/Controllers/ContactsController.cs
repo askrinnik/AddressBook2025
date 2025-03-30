@@ -9,7 +9,7 @@ namespace AddressBook.Web.Controllers;
 /// Controller for contacts
 /// </summary>
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ContactsController(
   ISender sender) : ControllerBase
 {
