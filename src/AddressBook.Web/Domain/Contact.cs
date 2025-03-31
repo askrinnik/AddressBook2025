@@ -33,5 +33,5 @@ public class Contact
   /// <summary>
   /// A collection of phones
   /// </summary>
-  public IReadOnlyCollection<Phone> Phones { get; set; } = [];
+  public List<Phone> Phones { get; set; } = [];
 }

@@ -20,6 +20,27 @@ public class ContactsController(
   /// <param name="token"><see cref="CancellationToken"/></param>
   /// <returns>a collection of contacts</returns>
   [HttpGet]
-  public async Task<GetFilteredContactsResponse> GetContactById([FromQuery] string? search, CancellationToken token) => 
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  public async Task<GetFilteredContactsResponse> Get([FromQuery] string? search, CancellationToken token) =>
     await sender.Send(new GetFilteredContactsQuery(search), token);
+
+  /// <summary>
+  /// Get contact by ID
+  /// </summary>
+  /// <param name="id">Contact ID</param>
+  /// <param name="token"><see cref="CancellationToken"/></param>
+  /// <returns>Contact model</returns>
+  [HttpGet("{id:int}")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  public async Task<ActionResult<ContactModel>> GetById([FromRoute] int id, CancellationToken token)
+  {
+    var contactModel = await sender.Send(new GetContactByIdQuery(id), token);
+    if (contactModel == null)
+      return NotFound();
+
+    return Ok(contactModel);
+  }
 }

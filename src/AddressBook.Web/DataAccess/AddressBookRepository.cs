@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace AddressBook.Web.DataAccess;
 
 internal class AddressBookRepository(ApplicationDbContext dbContext) :
-  IRetrieveMany<GetFilteredContactsQuery, Contact>
+  IRetrieveMany<GetFilteredContactsQuery, Contact>,
+  IRetrieve<int, Contact>
 {
   public async Task<IReadOnlyCollection<Contact>> RetrieveManyAsync(GetFilteredContactsQuery key)
   {
@@ -15,4 +16,10 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
       query = query.Where(c => c.FirstName.Contains(key.SearchText) || c.LastName.Contains(key.SearchText));
     return await query.AsNoTracking().ToArrayAsync();
   }
+
+  public async Task<Contact?> TryRetrieveAsync(int key) =>
+    await dbContext.Contacts
+      .Include(c => c.Phones)
+      .AsNoTracking()
+      .FirstOrDefaultAsync(c => c.Id == key);
 }
