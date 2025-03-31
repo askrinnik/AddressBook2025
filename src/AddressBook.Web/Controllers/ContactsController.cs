@@ -43,4 +43,19 @@ public class ContactsController(
 
     return Ok(contactModel);
   }
+
+  /// <summary>
+  /// Create a new contact
+  /// </summary>
+  /// <param name="request">Contact info</param>
+  /// <param name="token"><see cref="CancellationToken"/></param>
+  /// <returns></returns>
+  [HttpPost]
+  [ProducesResponseType(StatusCodes.Status201Created)] 
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  public async Task<ActionResult> CreateContact([FromBody] CreateContactCommand request, CancellationToken token)
+  {
+    var response = await sender.Send(request, token);
+    return CreatedAtAction(nameof(GetById), new { id = response.Id }, null);
+  }
 }

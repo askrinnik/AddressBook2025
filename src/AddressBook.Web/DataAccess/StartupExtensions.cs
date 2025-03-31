@@ -1,7 +1,6 @@
 ﻿using AddressBook.Contracts;
 using AddressBook.Web.Domain;
 using AddressBook.Web.Interfaces;
-using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace AddressBook.Web.DataAccess;
@@ -18,6 +17,7 @@ public static class StartupExtensions
   {
     builder.Services.AddScoped<IRetrieveMany<GetFilteredContactsQuery, Contact>, AddressBookRepository>();
     builder.Services.AddScoped<IRetrieve<int, Contact>, AddressBookRepository>();
+    builder.Services.AddScoped<ICreate<Contact>, AddressBookRepository>();
 
     ConfigureDbContext(builder);
 
