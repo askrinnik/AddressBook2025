@@ -21,7 +21,6 @@ public class ContactsController(
   /// <returns>a collection of contacts</returns>
   [HttpGet]
   [ProducesResponseType(StatusCodes.Status200OK)]
-  [ProducesResponseType(StatusCodes.Status404NotFound)]
   public async Task<GetFilteredContactsResponse> Get([FromQuery] string? search, CancellationToken token) =>
     await sender.Send(new GetFilteredContactsQuery(search), token);
 
