@@ -8,12 +8,12 @@ public class Contact
   /// <summary>
   /// Contact identifier
   /// </summary>
-  public int Id { get; set; }
+  public ContactId Id { get; set; } = ContactId.New();
 
   /// <summary>
   /// Owner identifier
   /// </summary>
-  public int OwnerId { get; set; } = 1;
+  public OwnerId OwnerId { get; set; } = OwnerId.Default();
 
   /// <summary>
   /// First name

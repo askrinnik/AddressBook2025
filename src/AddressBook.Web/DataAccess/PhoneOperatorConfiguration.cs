@@ -9,6 +9,12 @@ internal class PhoneOperatorConfiguration : IEntityTypeConfiguration<PhoneOperat
   public void Configure(EntityTypeBuilder<PhoneOperator> builder)
   {
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.Id)
+      .UseIdentityColumn()
+      .HasConversion(
+        operatorId => operatorId.Value,
+        value => new(value));
+
     builder.Property(e => e.Name)
       .HasMaxLength(30)
       .IsRequired();

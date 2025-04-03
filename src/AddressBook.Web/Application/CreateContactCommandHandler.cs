@@ -16,9 +16,9 @@ internal class CreateContactCommandHandler(
       FirstName = request.FirstName,
       LastName = request.LastName,
       Birthday = request.Birthday,
-      OwnerId = 1
+      OwnerId = OwnerId.Default()
     };
     var createdContact = await create.CreateAsync(contact);
-    return new(createdContact.Id);
+    return new(createdContact.Id.Value);
   }
 }

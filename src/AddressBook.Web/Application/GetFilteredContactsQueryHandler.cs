@@ -13,7 +13,7 @@ internal class GetFilteredContactsQueryHandler(
   public async Task<GetFilteredContactsResponse> Handle(GetFilteredContactsQuery request, CancellationToken cancellationToken)
   {
     var contacts = await contactsRetriever.RetrieveManyAsync(request);
-    var contactModels = contacts.Select(c => new ContactModel(c.Id, c.FirstName, c.LastName, c.Birthday)).ToArray();
+    var contactModels = contacts.Select(c => new ContactModel(c.Id.Value, c.FirstName, c.LastName, c.Birthday)).ToArray();
     return new(contactModels.Length, contactModels);
   }
 }

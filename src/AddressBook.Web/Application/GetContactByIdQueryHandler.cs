@@ -14,6 +14,6 @@ internal class GetContactByIdQueryHandler(
     var contact = await retrieve.TryRetrieveAsync(request.Id);
     return contact == null
       ? null
-      : new ContactModel(contact.Id, contact.FirstName, contact.LastName, contact.Birthday);
+      : new ContactModel(contact.Id.Value, contact.FirstName, contact.LastName, contact.Birthday);
   }
 }

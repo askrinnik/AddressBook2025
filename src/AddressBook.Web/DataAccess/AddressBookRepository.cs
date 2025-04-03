@@ -22,7 +22,7 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
     await dbContext.Contacts
       .Include(c => c.Phones)
       .AsNoTracking()
-      .FirstOrDefaultAsync(c => c.Id == key);
+      .FirstOrDefaultAsync(c => c.Id.Value == key);
 
   public async Task<Contact> CreateAsync(Contact item)
   {

@@ -8,7 +8,7 @@ public class PhoneOperator
   /// <summary>
   /// Phone operator identifier
   /// </summary>
-  public int Id { get; set; }
+  public PhoneOperatorId Id { get; set; } = PhoneOperatorId.New();
 
   /// <summary>
   /// Phone operator name

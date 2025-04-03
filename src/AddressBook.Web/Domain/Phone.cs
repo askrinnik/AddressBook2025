@@ -8,12 +8,12 @@ public class Phone
   /// <summary>
   /// Phone identifier
   /// </summary>
-  public int Id { get; set; }
+  public PhoneId Id { get; set; } = PhoneId.New();
 
   /// <summary>
   /// Contact identifier
   /// </summary>
-  public int ContactId { get; set; }
+  public ContactId ContactId { get; set; } = ContactId.New();
 
   /// <summary>
   /// Contact entity
@@ -23,7 +23,7 @@ public class Phone
   /// <summary>
   /// Phone operator identifier
   /// </summary>
-  public int PhoneOperatorId { get; set; }
+  public PhoneOperatorId PhoneOperatorId { get; set; } = PhoneOperatorId.New();
 
   /// <summary>
   /// Phone number
