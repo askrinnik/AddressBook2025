@@ -4,14 +4,8 @@ namespace AddressBook.Web.Domain;
 /// Owner identifier
 /// </summary>
 /// <param name="Value"></param>
-public record OwnerId(int Value)
+public sealed record OwnerId(int Value)
 {
-  /// <summary>
-  /// New Owner identifier
-  /// </summary>
-  /// <returns></returns>
-  public static OwnerId New() => new(0);
-
   /// <summary>
   /// Default Owner identifier
   /// </summary>

@@ -4,11 +4,4 @@ namespace AddressBook.Web.Domain;
 /// Phone identifier
 /// </summary>
 /// <param name="Value"></param>
-public record PhoneId(int Value)
-{
-  /// <summary>
-  /// New Phone identifier
-  /// </summary>
-  /// <returns></returns>
-  public static PhoneId New() => new(0);
-}
+public sealed record PhoneId(int Value);

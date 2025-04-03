@@ -3,13 +3,8 @@ namespace AddressBook.Web.Domain;
 /// <summary>
 /// Phone entity
 /// </summary>
-public class Phone
+public sealed class Phone : Entity<PhoneId>
 {
-  /// <summary>
-  /// Phone identifier
-  /// </summary>
-  public PhoneId Id { get; set; } = PhoneId.New();
-
   /// <summary>
   /// Contact identifier
   /// </summary>

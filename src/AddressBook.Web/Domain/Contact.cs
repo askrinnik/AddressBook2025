@@ -3,13 +3,8 @@ namespace AddressBook.Web.Domain;
 /// <summary>
 /// Contact entity
 /// </summary>
-public class Contact
+public sealed class Contact : Entity<ContactId>
 {
-  /// <summary>
-  /// Contact identifier
-  /// </summary>
-  public ContactId Id { get; set; } = ContactId.New();
-
   /// <summary>
   /// Owner identifier
   /// </summary>

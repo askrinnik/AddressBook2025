@@ -3,13 +3,8 @@
 /// <summary>
 /// Phone operator entity
 /// </summary>
-public class PhoneOperator
+public sealed class PhoneOperator : Entity<PhoneOperatorId>
 {
-  /// <summary>
-  /// Phone operator identifier
-  /// </summary>
-  public PhoneOperatorId Id { get; set; } = PhoneOperatorId.New();
-
   /// <summary>
   /// Phone operator name
   /// </summary>
