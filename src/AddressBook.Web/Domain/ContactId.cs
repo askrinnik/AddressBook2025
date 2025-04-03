@@ -4,7 +4,7 @@ namespace AddressBook.Web.Domain;
 /// Contact identifier
 /// </summary>
 /// <param name="Value"></param>
-public record ContactId(int Value)
+public sealed record ContactId(int Value)
 {
   /// <summary>
   /// New contact identifier

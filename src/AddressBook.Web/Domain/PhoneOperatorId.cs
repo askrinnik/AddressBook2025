@@ -4,7 +4,7 @@ namespace AddressBook.Web.Domain;
 /// Phone Operator identifier
 /// </summary>
 /// <param name="Value"></param>
-public record PhoneOperatorId(int Value)
+public sealed record PhoneOperatorId(int Value)
 {
   /// <summary>
   /// New Phone Operator identifier
