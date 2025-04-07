@@ -1,7 +1,8 @@
 ﻿using AddressBook.Contracts.Models;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components;
 
-namespace AddressBook.Web.Client.Pages;
+namespace AddressBook.Web.Pages;
 
 public partial class Contacts
 {
@@ -9,6 +10,9 @@ public partial class Contacts
   private string _searchTerm = string.Empty;
   private ContactModel[]? _contacts;
   private bool _isLoading;
+
+  [Inject]
+  public HttpClient HttpClient { get; set; } = null!;
 
   private async Task LoadContacts()
   {
@@ -18,11 +22,11 @@ public partial class Contacts
       _status = "Loading...";
       _isLoading = true;
 
-      var requestUri = "/api/contacts";
+      var requestUri = "contacts";
       if (!string.IsNullOrWhiteSpace(_searchTerm))
         requestUri += $"?search={_searchTerm}";
 
-      var response = await Http.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri);
+      var response = await HttpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri);
       _contacts = response?.Rows.ToArray();
     }
     catch (Exception ex)
@@ -35,10 +39,7 @@ public partial class Contacts
     }
   }
 
-  private async Task SearchContacts()
-  {
-    await LoadContacts();
-  }
+  private async Task SearchContacts() => await LoadContacts();
 
   private async Task ClearSearch()
   {

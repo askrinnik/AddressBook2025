@@ -1,4 +1,3 @@
-using AddressBook.Web;
 using System.Reflection;
 using AddressBook.Api;
 using AddressBook.Api.DataAccess;
@@ -17,7 +16,7 @@ builder.Services.AddMediatR(cfg =>
   cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.ConfigureDataAccess();
-builder.ConfigureBlazor();
+builder.ConfigureClientAccess();
 
 var app = builder.Build();
 
@@ -26,6 +25,6 @@ app.ConfigureOpenApi();
 //app.UseHttpsRedirection();
 //app.UseAuthorization();
 app.MapControllers();
-app.ConfigureBlazor();
+app.ConfigureClientAccess();
 
 app.Run();
