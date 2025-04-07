@@ -1,5 +1,4 @@
 ﻿using AddressBook.Contracts.Models;
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace AddressBook.Web.Pages;
@@ -12,7 +11,7 @@ public partial class Contacts
   private bool _isLoading;
 
   [Inject]
-  public HttpClient HttpClient { get; set; } = null!;
+  public IAddressBookApiService AddressBookApiService { get; set; } = null!;
 
   private async Task LoadContacts()
   {
@@ -22,11 +21,7 @@ public partial class Contacts
       _status = "Loading...";
       _isLoading = true;
 
-      var requestUri = "contacts";
-      if (!string.IsNullOrWhiteSpace(_searchTerm))
-        requestUri += $"?search={_searchTerm}";
-
-      var response = await HttpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri);
+      var response = await AddressBookApiService.GetFilteredContactsAsync(_searchTerm);
       _contacts = response?.Rows.ToArray();
     }
     catch (Exception ex)
