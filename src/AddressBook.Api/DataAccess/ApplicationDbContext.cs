@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using AddressBook.Api.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace AddressBook.Api.DataAccess;
 
@@ -33,5 +35,28 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
       new Phone { Id = new(3), ContactId = new(2), PhoneOperatorId = new(1), PhoneNumber = "1112223333", Comment = "Jane's Phone 1" },
       new Phone { Id = new(4), ContactId = new(2), PhoneOperatorId = new(2), PhoneNumber = "4445556666", Comment = "Jane's Phone 2" }
     );
+
+    modelBuilder
+      .DefineWrapper(() => ((OwnerId?)null).Unwrap())
+      .DefineWrapper(() => ((ContactId?)null).Unwrap())
+      .DefineWrapper(() => ((PhoneOperatorId?)null).Unwrap())
+      .DefineWrapper(() => ((PhoneId?)null).Unwrap());
   }
+}
+
+internal static class ValueObjectExtensions
+{
+  public static ModelBuilder DefineWrapper(this ModelBuilder modelBuilder, Expression<Func<int>> expression)
+  {
+    modelBuilder
+      .HasDbFunction(expression)
+      .HasTranslation(args => new SqlFunctionExpression("", args, false, [false], typeof(int), null))
+      .HasParameter("id")
+      .HasStoreType("int");
+    return modelBuilder;
+  }
+  public static int Unwrap(this OwnerId? id) => throw new NotImplementedException();
+  public static int Unwrap(this ContactId? id) => throw new NotImplementedException();
+  public static int Unwrap(this PhoneId? id) => throw new NotImplementedException();
+  public static int Unwrap(this PhoneOperatorId? id) => throw new NotImplementedException();
 }
