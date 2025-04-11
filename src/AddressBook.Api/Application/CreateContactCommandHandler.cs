@@ -2,19 +2,24 @@
 using AddressBook.Api.Interfaces;
 using AddressBook.Contracts;
 using AddressBook.Contracts.Models;
+using FluentValidation;
 using MediatR;
 
 namespace AddressBook.Api.Application;
 
 internal class CreateContactCommandHandler(
-  ICreate<Contact> create) : IRequestHandler<CreateContactCommand, CreateContactCommandResponse>
+  ICreate<Contact> create,
+  IValidator<CreateContactCommand> validator
+  ) : IRequestHandler<CreateContactCommand, CreateContactCommandResponse>
 {
   public async Task<CreateContactCommandResponse> Handle(CreateContactCommand request, CancellationToken cancellationToken)
   {
-    var contact = new Contact()
+    await validator.ValidateAndThrowAsync(request, cancellationToken);
+
+    var contact = new Contact
     {
-      FirstName = request.FirstName,
-      LastName = request.LastName,
+      FirstName = request.FirstName.Trim(),
+      LastName = request.LastName.Trim(),
       Birthday = request.Birthday,
       OwnerId = OwnerId.Default()
     };
