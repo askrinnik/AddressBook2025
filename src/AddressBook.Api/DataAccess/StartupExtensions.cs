@@ -16,8 +16,10 @@ public static class StartupExtensions
   public static WebApplicationBuilder ConfigureDataAccess(this WebApplicationBuilder builder)
   {
     builder.Services.AddScoped<IRetrieveMany<GetFilteredContactsQuery, Contact>, AddressBookRepository>();
-    builder.Services.AddScoped<IRetrieve<int, Contact>, AddressBookRepository>();
+    builder.Services.AddScoped<IRetrieve<ContactId, Contact>, AddressBookRepository>();
     builder.Services.AddScoped<ICreate<Contact>, AddressBookRepository>();
+    builder.Services.AddScoped<IDelete<ContactId>, AddressBookRepository>();
+    builder.Services.AddScoped<IExist<ContactId>, AddressBookRepository>();
 
     ConfigureDbContext(builder);
 

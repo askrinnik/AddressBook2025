@@ -45,7 +45,6 @@ internal class GlobalExceptionHandler(
 
   private static void SetInternalServerErrorDetails(ProblemDetails problemDetails, Exception exception)
   {
-    problemDetails.Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1";
     problemDetails.Title = exception.GetType().Name;
     problemDetails.Status = StatusCodes.Status500InternalServerError;
     problemDetails.Detail = exception.Message;
@@ -53,7 +52,6 @@ internal class GlobalExceptionHandler(
 
   private static void SetValidationErrors(ProblemDetails problemDetails, ValidationException validationException)
   {
-    problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
     problemDetails.Title = "Validation Error";
     problemDetails.Status = StatusCodes.Status400BadRequest;
     problemDetails.Detail = "One or more validation errors occurred";

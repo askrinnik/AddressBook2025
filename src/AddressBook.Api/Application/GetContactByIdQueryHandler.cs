@@ -7,11 +7,11 @@ using MediatR;
 namespace AddressBook.Api.Application;
 
 internal class GetContactByIdQueryHandler(
-  IRetrieve<int, Contact> retrieve) : IRequestHandler<GetContactByIdQuery, ContactModel?>
+  IRetrieve<ContactId, Contact> retrieve) : IRequestHandler<GetContactByIdQuery, ContactModel?>
 {
   public async Task<ContactModel?> Handle(GetContactByIdQuery request, CancellationToken cancellationToken)
   {
-    var contact = await retrieve.TryRetrieveAsync(request.Id);
+    var contact = await retrieve.TryRetrieveAsync(new(request.Id));
     return contact == null
       ? null
       : new ContactModel(contact.Id.Value, contact.FirstName, contact.LastName, contact.Birthday);

@@ -2,13 +2,16 @@
 using AddressBook.Api.Interfaces;
 using AddressBook.Contracts;
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable EntityFramework.UnsupportedServerSideFunctionCall
 
 namespace AddressBook.Api.DataAccess;
 
 internal class AddressBookRepository(ApplicationDbContext dbContext) :
   IRetrieveMany<GetFilteredContactsQuery, Contact>,
-  IRetrieve<int, Contact>,
-  ICreate<Contact>
+  IRetrieve<ContactId, Contact>,
+  ICreate<Contact>,
+  IDelete<ContactId>,
+  IExist<ContactId>
 {
   public async Task<IReadOnlyCollection<Contact>> RetrieveManyAsync(GetFilteredContactsQuery key)
   {
@@ -18,11 +21,11 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
     return await query.AsNoTracking().ToArrayAsync();
   }
 
-  public async Task<Contact?> TryRetrieveAsync(int key) =>
+  public async Task<Contact?> TryRetrieveAsync(ContactId key) =>
     await dbContext.Contacts
       .Include(c => c.Phones)
       .AsNoTracking()
-      .FirstOrDefaultAsync(c => c.Id.Unwrap() == key);
+      .FirstOrDefaultAsync(c => c.Id.Unwrap() == key.Value);
 
   public async Task<Contact> CreateAsync(Contact item)
   {
@@ -30,4 +33,10 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
     await dbContext.SaveChangesAsync();
     return item;
   }
+
+  public async Task<int> DeleteAsync(ContactId key) => 
+      await dbContext.Contacts.Where(c => c.Id.Unwrap() == key.Value).ExecuteDeleteAsync();
+
+  public async Task<bool> ExistAsync(ContactId key) => 
+      await dbContext.Contacts.AnyAsync(c => c.Id.Unwrap() == key.Value);
 }
