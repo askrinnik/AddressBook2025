@@ -15,4 +15,11 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
     var response = await httpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri);
     return response;
   }
+
+  public async Task DeleteContact(int id)
+    {
+        var response = await httpClient.DeleteAsync($"contacts/{id}");
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"Error deleting contact: {response.ReasonPhrase}");
+    }
 }
