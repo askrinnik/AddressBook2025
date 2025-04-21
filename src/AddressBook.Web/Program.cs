@@ -1,4 +1,5 @@
 using AddressBook.Web;
+using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -11,6 +12,8 @@ builder.Services.AddScoped(_ =>
   {
     BaseAddress = new(builder.Configuration["API_Prefix"] ?? "http://localhost:5000/api/")
   });
+
 builder.Services.AddScoped<IAddressBookApiService, AddressBookApiService>();
+builder.Services.AddMatBlazor();
 
 await builder.Build().RunAsync();
