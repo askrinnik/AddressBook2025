@@ -17,7 +17,8 @@ public static class StartupExtensions
         //.WithOrigins("https://localhost:7166")
         .AllowAnyOrigin()
         .AllowAnyMethod()
-        .AllowAnyHeader()));
+        .AllowAnyHeader()
+        .WithExposedHeaders("*")));
 
     return builder;
   }

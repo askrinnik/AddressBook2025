@@ -1,0 +1,48 @@
+@using Microsoft.Extensions.Logging
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using AddressBook.Web.ErrorHandling
+@inject ILogger<Error> Logger
+
+<CascadingValue Value=this>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger m-0">
+            <h4 class="alert-heading">Woops!</h4>
+            <pre class="error-container">@ErrorMessage</pre>
+        </div>
+    }
+    @ChildContent
+</CascadingValue>
+
+@code {
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        WriteIndented = true,
+    };
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = null!;
+
+    public string ErrorMessage { get; set; } = String.Empty;
+
+    public void ProcessProblem(ClientProblemDetails? problem)
+    {
+        ErrorMessage = JsonSerializer.Serialize(problem?.Extensions, JsonOptions);
+        StateHasChanged();
+    }
+
+    public void ProcessError(string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+        StateHasChanged();
+    }
+
+    public void Clear()
+    {
+        ErrorMessage = String.Empty;
+        StateHasChanged();
+    }
+}
