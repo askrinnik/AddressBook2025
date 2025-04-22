@@ -6,7 +6,7 @@
 
 <MatDialog @bind-IsOpen="@_dialogIsOpen">
     <MatDialogTitle>Confirm Delete</MatDialogTitle>
-    <MatDialogContent>Are you sure you want to delete ALL contacts?</MatDialogContent>
+    <MatDialogContent>Are you sure you want to delete this contact?</MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="ConfirmDeleteAction" Color="MatButtonColor.Primary">Yes</MatButton>
         <MatButton OnClick="CancelDeleteAction" Color="MatButtonColor.Secondary">No</MatButton>
@@ -14,9 +14,11 @@
 </MatDialog>
 
 <div>
-   <input id="searchInput" @bind="_searchTerm" placeholder="Search contacts..." aria-label="Search contacts" />
-   <button @onclick="SearchContacts" disabled="@_isLoading">Search</button>
-   <button @onclick="ClearSearch" disabled="@_isLoading">Clear</button>
+    <input id="searchInput" @bind="_searchTerm" placeholder="Search contacts..." aria-label="Search contacts" />
+    <button @onclick="SearchContacts" disabled="@_isLoading">Search</button>
+    <button @onclick="ClearSearch" disabled="@_isLoading">Clear</button>
+    <p/>
+    <button @onclick="ShowCreateContactForm">Create Contact</button>
 </div>
 
 @if (_contacts == null)

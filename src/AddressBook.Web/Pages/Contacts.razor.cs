@@ -1,4 +1,5 @@
 ﻿using AddressBook.Contracts.Models;
+using AddressBook.Web.Layout;
 using Microsoft.AspNetCore.Components;
 
 namespace AddressBook.Web.Pages;
@@ -15,6 +16,12 @@ public partial class Contacts
     [Inject]
     public IAddressBookApiService AddressBookApiService { get; set; } = null!;
 
+    [Inject]
+    public NavigationManager Navigation { get; set; } = null!;
+
+    [CascadingParameter]
+    public Error Error { get; set; } = null!;
+
     private async Task LoadContacts()
     {
         try
@@ -28,7 +35,7 @@ public partial class Contacts
         }
         catch (Exception ex)
         {
-            _status = $"Error: {ex.Message}";
+            Error.ProcessError(ex.Message);
         }
         finally
         {
@@ -74,8 +81,8 @@ public partial class Contacts
         _dialogIsOpen = false;
     }
 
-    private void CancelDeleteAction()
-    {
-        _dialogIsOpen = false;
-    }
+    private void CancelDeleteAction() => _dialogIsOpen = false;
+
+    private void ShowCreateContactForm() => 
+        Navigation.NavigateTo("/create-contact");
 }

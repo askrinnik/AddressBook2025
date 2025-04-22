@@ -1,0 +1,92 @@
+﻿@page "/create-contact"
+@using AddressBook.Web.ErrorHandling
+@using AddressBook.Web.Models
+@inject NavigationManager Navigation
+@inject IAddressBookApiService AddressBookApiService
+
+<h3>Create Contact</h3>
+
+<EditForm EditContext="_editContext" OnValidSubmit="HandleCreateContact">
+    <DataAnnotationsValidator />
+    <ValidationSummary  />
+
+    <div>
+        <label>First Name:</label>
+        <InputText @bind-Value="_model.FirstName" />
+        <ValidationMessage For="@(() => _model.FirstName)" />
+    </div>
+    <p/>
+    <div>
+        <label>Last Name:</label>
+        <InputText @bind-Value="_model.LastName" />
+        <ValidationMessage For="@(() => _model.LastName)" />
+    </div>
+    <p/>
+    <div>
+        <label>Birthday:</label>
+        <MatDatePicker @bind-Value="@_model.Birthday"></MatDatePicker>
+        <MatButton OnClick="@(_ => _model.Birthday = null)">Empty</MatButton>
+    </div>
+    <p />
+    <div>
+        <MatButton type="submit" Color="MatButtonColor.Primary">Create</MatButton>
+        <MatButton @onclick="Cancel" Color="MatButtonColor.Secondary">Cancel</MatButton>
+    </div>
+</EditForm>
+
+@code {
+
+    [CascadingParameter] public Error Error { get; set; } = null!;
+
+    private readonly CreateContactModel _model = new();
+    private EditContext _editContext = null!;
+    private ValidationMessageStore _messageStore = null!;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new(_model);
+        _messageStore = new(_editContext);
+    }
+
+    private async Task HandleCreateContact()
+    {
+        try
+        {
+            await AddressBookApiService.CreateContact(_model);
+            Navigation.NavigateTo("/contacts");
+        }
+        catch (ProblemDetailsException ex)
+        {
+            AddCustomError(ex.ProblemDetails);
+        }
+        catch (Exception ex)
+        {
+            AddGeneralError(ex.Message);
+        }
+    }
+
+    private void AddGeneralError(string message)
+    {
+        _messageStore.Clear();
+        _messageStore.Add(_editContext.Field(""), message);
+        _editContext.NotifyValidationStateChanged();
+    }
+
+    private void AddCustomError(ClientProblemDetails? problem)
+    {
+        var errors = problem?.GetErrors();
+        if (errors == null)
+            return;
+
+        _messageStore.Clear();
+        foreach (var error in errors)
+            _messageStore.Add(_editContext.Field(error.Key), error.Value);
+
+        _editContext.NotifyValidationStateChanged();
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/contacts");
+    }
+}
