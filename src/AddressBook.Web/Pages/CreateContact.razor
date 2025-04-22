@@ -4,34 +4,33 @@
 @inject NavigationManager Navigation
 @inject IAddressBookApiService AddressBookApiService
 
-<h3>Create Contact</h3>
-
 <EditForm EditContext="_editContext" OnSubmit="HandleCreateContact">
-    <DataAnnotationsValidator/>
-    <ValidationSummary Model="_model"/>
+    <MatCard class="demo-mat-card">
+        <MatCardContent>
+            <MatHeadline5>Create Contact</MatHeadline5>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                <DataAnnotationsValidator/>
+                <ValidationSummary Model="_model"/>
 
-    <div>
-        <label>First Name:</label>
-        <InputText @bind-Value="_model.FirstName" />
-        <ValidationMessage For="@(() => _model.FirstName)" />
-    </div>
-    <p/>
-    <div>
-        <label>Last Name:</label>
-        <InputText @bind-Value="_model.LastName" />
-        <ValidationMessage For="@(() => _model.LastName)" />
-    </div>
-    <p/>
-    <div>
-        <label>Birthday:</label>
-        <MatDatePicker @bind-Value="@_model.Birthday"></MatDatePicker>
-        <MatButton OnClick="@(_ => _model.Birthday = null)">Empty</MatButton>
-    </div>
-    <p />
-    <div>
-        <MatButton type="submit" Color="MatButtonColor.Primary">Create</MatButton>
-        <MatButton @onclick="Cancel" Color="MatButtonColor.Secondary">Cancel</MatButton>
-    </div>
+                <div>
+                    <MatTextField Label="First Name" @bind-Value="_model.FirstName"/>
+                    <ValidationMessage For="@(() => _model.FirstName)"/>
+                </div>
+                <div>
+                    <MatTextField Label="Last Name" @bind-Value="_model.LastName"/>
+                    <ValidationMessage For="@(() => _model.LastName)"/>
+                </div>
+                <div>
+                    <MatDatePicker Label="Birthday" @bind-Value="@_model.Birthday"></MatDatePicker>
+                    <MatButton OnClick="@(_ => _model.Birthday = null)">Empty</MatButton>
+                </div>
+            </MatBody2>
+        </MatCardContent>
+        <MatCardActions>
+            <MatButton type="submit">Create</MatButton>
+            <MatButton @onclick="Cancel">Cancel</MatButton>
+        </MatCardActions>
+    </MatCard>
 </EditForm>
 
 @code {
