@@ -6,9 +6,9 @@
 
 <h3>Create Contact</h3>
 
-<EditForm EditContext="_editContext" OnValidSubmit="HandleCreateContact">
-    <DataAnnotationsValidator />
-    <ValidationSummary  />
+<EditForm EditContext="_editContext" OnSubmit="HandleCreateContact">
+    <DataAnnotationsValidator/>
+    <ValidationSummary Model="_model"/>
 
     <div>
         <label>First Name:</label>
@@ -36,8 +36,6 @@
 
 @code {
 
-    [CascadingParameter] public Error Error { get; set; } = null!;
-
     private readonly CreateContactModel _model = new();
     private EditContext _editContext = null!;
     private ValidationMessageStore _messageStore = null!;
@@ -50,6 +48,9 @@
 
     private async Task HandleCreateContact()
     {
+        _messageStore.Clear();
+        if (!_editContext.Validate())
+            return;
         try
         {
             await AddressBookApiService.CreateContact(_model);
@@ -67,7 +68,7 @@
 
     private void AddGeneralError(string message)
     {
-        _messageStore.Clear();
+
         _messageStore.Add(_editContext.Field(""), message);
         _editContext.NotifyValidationStateChanged();
     }
@@ -78,7 +79,7 @@
         if (errors == null)
             return;
 
-        _messageStore.Clear();
+
         foreach (var error in errors)
             _messageStore.Add(_editContext.Field(error.Key), error.Value);
 
