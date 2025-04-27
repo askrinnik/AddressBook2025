@@ -23,6 +23,7 @@
                 <div>
                     <MatDatePicker Label="Birthday" @bind-Value="@_model.Birthday"></MatDatePicker>
                     <MatButton @onclick="EmptyBirthdayValue">Empty</MatButton>
+                    <ValidationMessage For="@(() => _model.Birthday)" />
                 </div>
             </MatBody2>
         </MatCardContent>
