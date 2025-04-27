@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <MatDatePicker Label="Birthday" @bind-Value="@_model.Birthday"></MatDatePicker>
-                    <MatButton OnClick="@(_ => _model.Birthday = null)">Empty</MatButton>
+                    <MatButton @onclick="EmptyBirthdayValue">Empty</MatButton>
                 </div>
             </MatBody2>
         </MatCardContent>
@@ -38,6 +38,7 @@
     private readonly CreateContactModel _model = new();
     private EditContext _editContext = null!;
     private ValidationMessageStore _messageStore = null!;
+    private bool _isEmptyButtonPressed;
 
     protected override void OnInitialized()
     {
@@ -47,6 +48,14 @@
 
     private async Task HandleCreateContact()
     {
+        // strange thing. When the Empty button is pressed, it is interpreted as Submit action.
+        // I couldn't find root cause of the issue, so I added a workaround.:(
+        if (_isEmptyButtonPressed)
+        {
+            _isEmptyButtonPressed = false;
+            return;
+        }
+
         _messageStore.Clear();
         if (!_editContext.Validate())
             return;
@@ -89,5 +98,11 @@
     private void Cancel()
     {
         Navigation.NavigateTo("/contacts");
+    }
+
+    private void EmptyBirthdayValue()
+    {
+        _isEmptyButtonPressed = true;
+        _model.Birthday = null;
     }
 }
