@@ -1,87 +1,69 @@
 ﻿using AddressBook.Contracts.Models;
 using AddressBook.Web.Layout;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace AddressBook.Web.Pages;
 
 public partial class Contacts
 {
-    private string _status = "Press Search button";
-    private string _searchTerm = string.Empty;
-    private ContactModel[]? _contacts;
-    private bool _isLoading;
-    private int _contactIdToDelete;
-    private bool _dialogIsOpen;
+    private string _searchString = String.Empty;
+    private string _errorText = String.Empty;
+    private MudMessageBox _confirmDeleteMessageBox = null!;
+    private MudTable<ContactModel> _contactTable = null!;
 
     [Inject]
-    public IAddressBookApiService AddressBookApiService { get; set; } = null!;
+    private IAddressBookApiService AddressBookApiService { get; set; } = null!;
 
     [Inject]
-    public NavigationManager Navigation { get; set; } = null!;
+    private NavigationManager Navigation { get; set; } = null!;
+    
+    private string ErrorVisibility => string.IsNullOrWhiteSpace(_errorText) ? "invisible" : "";
 
     [CascadingParameter]
     public Error Error { get; set; } = null!;
 
-    private async Task LoadContacts()
+    private async Task<TableData<ContactModel>> ServerReload(TableState state, CancellationToken token)
     {
         try
         {
-            _contacts = null;
-            _status = "Loading...";
-            _isLoading = true;
+            var response = await AddressBookApiService.GetFilteredContactsAsync(_searchString, token);
+            IEnumerable<ContactModel> data = response!.Rows;
+            data = state.SortLabel switch
+            {
+                "fn_field" => data.OrderByDirection(state.SortDirection, o => o.FirstName),
+                "ln_field" => data.OrderByDirection(state.SortDirection, o => o.LastName),
+                "bd_field" => data.OrderByDirection(state.SortDirection, o => o.Birthday),
+                _ => data
+            };
 
-            var response = await AddressBookApiService.GetFilteredContactsAsync(_searchTerm);
-            _contacts = response?.Rows.ToArray();
+            var totalItems = response.TotalRows;
+            var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+            _errorText = "";
+            return new() { TotalItems = totalItems, Items = pagedData };
         }
         catch (Exception ex)
         {
             Error.ProcessError(ex.Message);
-        }
-        finally
-        {
-            _isLoading = false;
+            _errorText = ex.Message;
+            return new() { TotalItems = 0, Items = [] };
         }
     }
 
-    private async Task SearchContacts() => await LoadContacts();
-
-    private async Task ClearSearch()
+    private void OnSearch(string text)
     {
-        _searchTerm = string.Empty;
-        await LoadContacts();
+        _searchString = text;
+        _contactTable.ReloadServerData();
     }
 
-    private async Task DeleteContact(int contactId)
+    private async Task DeleteContactAsync(int contactId)
     {
-        try
-        {
-            _isLoading = true;
-            await AddressBookApiService.DeleteContact(contactId);
-            await LoadContacts();
-        }
-        catch (Exception ex)
-        {
-            _status = $"Error: {ex.Message}";
-        }
-        finally
-        {
-            _isLoading = false;
-        }
+        var result = await _confirmDeleteMessageBox.ShowAsync();
+        if (! (result ?? false))
+            return;
+        await AddressBookApiService.DeleteContact(contactId);
+        await _contactTable.ReloadServerData();
     }
-
-    private void ShowConfirmationDialog(int contactId)
-    {
-        _contactIdToDelete = contactId;
-        _dialogIsOpen = true;
-    }
-
-    private async Task ConfirmDeleteAction()
-    {
-        await DeleteContact(_contactIdToDelete);
-        _dialogIsOpen = false;
-    }
-
-    private void CancelDeleteAction() => _dialogIsOpen = false;
 
     private void ShowCreateContactForm() => 
         Navigation.NavigateTo("/create-contact");

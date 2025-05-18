@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "API+Web",
+    "Projects": [
+      {
+        "Path": "AddressBook.Api\\AddressBook.Api.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "AddressBook.Web\\AddressBook.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

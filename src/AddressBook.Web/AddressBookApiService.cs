@@ -8,13 +8,13 @@ namespace AddressBook.Web;
 public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiService
 {
 
-    public async Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm)
+    public async Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken cancellationToken)
     {
         var requestUri = "contacts";
         if (!string.IsNullOrWhiteSpace(searchTerm))
             requestUri += $"?search={searchTerm}";
 
-        var response = await httpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri);
+        var response = await httpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri, cancellationToken);
         return response;
     }
 

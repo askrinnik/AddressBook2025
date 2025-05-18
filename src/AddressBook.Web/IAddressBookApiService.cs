@@ -5,7 +5,7 @@ namespace AddressBook.Web;
 
 public interface IAddressBookApiService
 {
-  Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm);
+  Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken cancellationToken);
   Task DeleteContact(int id);
   Task<int> CreateContact(CreateContactModel model);
 }
