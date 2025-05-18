@@ -23,7 +23,7 @@ public sealed class Contact : Entity<ContactId>
   /// <summary>
   /// Birthday
   /// </summary>
-  public DateTime? Birthday { get; set; }
+  public DateOnly? Birthday { get; set; }
 
   /// <summary>
   /// A collection of phones

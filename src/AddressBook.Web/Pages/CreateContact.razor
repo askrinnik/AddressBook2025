@@ -65,7 +65,7 @@
             return;
         try
         {
-            _model.Birthday = _model.Birthday?.ToLocalTime();
+            _model.Birthday = _model.Birthday;
             await AddressBookApiService.CreateContact(_model);
             Navigation.NavigateTo("/contacts");
         }

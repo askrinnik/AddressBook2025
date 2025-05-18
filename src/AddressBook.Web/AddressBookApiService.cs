@@ -27,7 +27,7 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
 
     public async Task<int> CreateContact(CreateContactModel model)
     {
-        var command = new CreateContactCommand()
+        var command = new CreateContactCommand
         {
             FirstName = model.FirstName,
             LastName = model.LastName,

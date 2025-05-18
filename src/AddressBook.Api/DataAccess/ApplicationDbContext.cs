@@ -25,8 +25,8 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     );
 
     modelBuilder.Entity<Contact>().HasData(
-      new Contact { Id = new(1), OwnerId = OwnerId.Default(), FirstName = "John", LastName = "Doe", Birthday = new DateTime(1990, 1, 1) },
-      new Contact { Id = new(2), OwnerId = OwnerId.Default(), FirstName = "Jane", LastName = "Smith", Birthday = new DateTime(1992, 2, 2) }
+      new Contact { Id = new(1), OwnerId = OwnerId.Default(), FirstName = "John", LastName = "Doe", Birthday = new DateOnly(1990, 1, 1) },
+      new Contact { Id = new(2), OwnerId = OwnerId.Default(), FirstName = "Jane", LastName = "Smith", Birthday = new DateOnly(1992, 2, 2) }
     );
 
     modelBuilder.Entity<Phone>().HasData(

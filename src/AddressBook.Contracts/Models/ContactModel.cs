@@ -11,4 +11,4 @@ public record ContactModel(
   int Id,
   string FirstName,
   string LastName,
-  DateTime? Birthday);
+  DateOnly? Birthday);
