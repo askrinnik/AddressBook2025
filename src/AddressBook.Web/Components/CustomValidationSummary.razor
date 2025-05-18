@@ -1,0 +1,53 @@
+﻿@implements IDisposable
+
+@if (EditContext != null)
+{
+    <ul class="validation-errors">
+        @foreach (var message in ValidationMessages)
+        {
+            <li class="validation-message">@message</li>
+        }
+    </ul>
+}
+
+@code {
+    [CascadingParameter] private EditContext? EditContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if(EditContext != null)
+            EditContext.OnValidationStateChanged += ValidationStateChangedHandler;
+    }
+
+    public void Dispose()
+    {
+        if (EditContext != null)
+            EditContext.OnValidationStateChanged -= ValidationStateChangedHandler;
+    }
+
+    private IEnumerable<string> ValidationMessages
+    {
+        get
+        {
+            if(EditContext == null)
+                return [];
+
+            var allMessages = EditContext.GetValidationMessages().ToArray();
+            if (allMessages.Length == 0)
+                return [];
+
+            var propertiesInfo = EditContext.Model.GetType().GetProperties();
+            var propMessages = propertiesInfo.SelectMany(prop =>
+                EditContext.GetValidationMessages(new FieldIdentifier(EditContext.Model, prop.Name))
+            ).ToArray();
+            allMessages = allMessages.Where(m => !propMessages.Contains(m)).ToArray();
+
+            return allMessages;
+        }
+    }
+
+    private void ValidationStateChangedHandler(object? target, ValidationStateChangedEventArgs args)
+    {
+        StateHasChanged();
+    }
+}

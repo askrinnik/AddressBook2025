@@ -1,6 +1,7 @@
 ﻿@page "/create-contact"
 @using AddressBook.Web.ErrorHandling
 @using AddressBook.Web.Models
+@using AddressBook.Web.Components
 @inject NavigationManager Navigation
 @inject IAddressBookApiService AddressBookApiService
 
@@ -11,6 +12,7 @@
             <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
                 <DataAnnotationsValidator/>
                 <ValidationSummary Model="_model"/>
+                <CustomValidationSummary/>
 
                 <div>
                     <MatTextField Label="First Name" @bind-Value="_model.FirstName"/>
@@ -38,7 +40,7 @@
 
     private readonly CreateContactModel _model = new();
     private EditContext _editContext = null!;
-    private ValidationMessageStore _messageStore = null!;
+    private ValidationMessageStore? _messageStore;
     private bool _isEmptyButtonPressed;
 
     protected override void OnInitialized()
@@ -57,7 +59,8 @@
             return;
         }
 
-        _messageStore.Clear();
+        _messageStore?.Clear();
+        _editContext.NotifyValidationStateChanged();
         if (!_editContext.Validate())
             return;
         try
@@ -79,7 +82,7 @@
     private void AddGeneralError(string message)
     {
 
-        _messageStore.Add(_editContext.Field(""), message);
+        _messageStore?.Add(_editContext.Field(""), message);
         _editContext.NotifyValidationStateChanged();
     }
 
@@ -91,7 +94,7 @@
 
 
         foreach (var error in errors)
-            _messageStore.Add(_editContext.Field(error.Key), error.Value);
+            _messageStore?.Add(_editContext.Field(error.Key), error.Value);
 
         _editContext.NotifyValidationStateChanged();
     }
