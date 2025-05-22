@@ -7,6 +7,10 @@
       "type": "mssql.azure",
       "connectionId": "ConnectionStrings:DatabaseConnection",
       "dynamicId": null
+    },
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/AddressBookApi/apis/AddressBookApi",
+      "type": "apis.azure"
     }
   }
 }

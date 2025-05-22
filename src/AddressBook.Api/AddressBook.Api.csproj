@@ -25,4 +25,8 @@
     <ProjectReference Include="..\AddressBook.Contracts\AddressBook.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>
