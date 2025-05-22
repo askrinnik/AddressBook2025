@@ -22,5 +22,5 @@ public class CreateContactModel
     /// <summary>
     /// Birthday
     /// </summary>
-    public DateOnly? Birthday { get; set; }
+    public DateTime? Birthday { get; set; }
 }

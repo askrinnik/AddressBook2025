@@ -1,39 +1,27 @@
 ﻿@page "/create-contact"
 @using AddressBook.Web.ErrorHandling
 @using AddressBook.Web.Models
-@using AddressBook.Web.Components
 @inject NavigationManager Navigation
 @inject IAddressBookApiService AddressBookApiService
 
 <EditForm EditContext="_editContext" OnSubmit="HandleCreateContact">
-    <MatCard class="demo-mat-card">
-        <MatCardContent>
-            <MatHeadline5>Create Contact</MatHeadline5>
-            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
-                <DataAnnotationsValidator/>
-                <ValidationSummary Model="_model"/>
-                <CustomValidationSummary/>
-
-                <div>
-                    <MatTextField Label="First Name" @bind-Value="_model.FirstName"/>
-                    <ValidationMessage For="@(() => _model.FirstName)"/>
-                </div>
-                <div>
-                    <MatTextField Label="Last Name" @bind-Value="_model.LastName"/>
-                    <ValidationMessage For="@(() => _model.LastName)"/>
-                </div>
-                <div>
-                    <MatDatePicker Label="Birthday" @bind-Value="@_model.Birthday"></MatDatePicker>
-                    <MatButton @onclick="EmptyBirthdayValue">Empty</MatButton>
-                    <ValidationMessage For="@(() => _model.Birthday)" />
-                </div>
-            </MatBody2>
-        </MatCardContent>
-        <MatCardActions>
-            <MatButton type="submit">Create</MatButton>
-            <MatButton @onclick="Cancel">Cancel</MatButton>
-        </MatCardActions>
-    </MatCard>
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First name" @bind-Value="_model.FirstName" For="@(() => _model.FirstName)" />
+                    <MudTextField Label="Last Name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" />
+                    <MudDatePicker Label="Birthday" @bind-Date="_model.Birthday" For="@(() => _model.Birthday)" />
+                    <ValidationSummary Model="_model" class="mt-4"/>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" disabled="@_isLoading">Create</MudButton>
+                    <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="Cancel" Class=" ms-2">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
 </EditForm>
 
 @code {
@@ -41,7 +29,7 @@
     private readonly CreateContactModel _model = new();
     private EditContext _editContext = null!;
     private ValidationMessageStore? _messageStore;
-    private bool _isEmptyButtonPressed;
+    private bool _isLoading;
 
     protected override void OnInitialized()
     {
@@ -51,21 +39,15 @@
 
     private async Task HandleCreateContact()
     {
-        // strange thing. When the Empty button is pressed, it is interpreted as Submit action.
-        // I couldn't find root cause of the issue, so I added a workaround.:(
-        if (_isEmptyButtonPressed)
-        {
-            _isEmptyButtonPressed = false;
-            return;
-        }
-
         _messageStore?.Clear();
         _editContext.NotifyValidationStateChanged();
         if (!_editContext.Validate())
             return;
+
+        StateHasChanged();
         try
         {
-            _model.Birthday = _model.Birthday;
+            _isLoading = true;
             await AddressBookApiService.CreateContact(_model);
             Navigation.NavigateTo("/contacts");
         }
@@ -77,11 +59,14 @@
         {
             AddGeneralError(ex.Message);
         }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private void AddGeneralError(string message)
     {
-
         _messageStore?.Add(_editContext.Field(""), message);
         _editContext.NotifyValidationStateChanged();
     }
@@ -102,11 +87,5 @@
     private void Cancel()
     {
         Navigation.NavigateTo("/contacts");
-    }
-
-    private void EmptyBirthdayValue()
-    {
-        _isEmptyButtonPressed = true;
-        _model.Birthday = null;
     }
 }

@@ -14,17 +14,16 @@
 
 <MudGrid>
     <MudItem xs="3">
-        <MudButton Variant="Variant.Outlined" OnClick="ShowCreateContactForm" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Create Contact</MudButton>
+        <MudText Typo="Typo.h6">Contacts</MudText>
     </MudItem>
     <MudItem xs="9" />
 
     <MudItem xs="12">
         <MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="_contactTable">
             <ToolBarContent>
-                <MudText Typo="Typo.h6">Contacts</MudText>
+                <MudButton Variant="Variant.Outlined" OnClick="ShowCreateContactForm" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Create Contact</MudButton>
                 <MudSpacer />
-                <MudTextField
-                    T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                     AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"
                     Clearable="true"></MudTextField>
             </ToolBarContent>

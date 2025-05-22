@@ -31,7 +31,7 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
         {
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Birthday = model.Birthday
+            Birthday = model.Birthday.HasValue ? DateOnly.FromDateTime(model.Birthday.Value) : null
         };
         var response = await httpClient.PostAsJsonAsync("contacts", command);
 
