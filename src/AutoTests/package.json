@@ -1,0 +1,27 @@
+{
+  "name": "intro-to-api-testing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prettier:format": "prettier --write \"tests/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "prettier:check": "prettier --check \"tests/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "lint": "eslint tests",
+    "test": "npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.7.5",
+    "eslint": "^9.12.0",
+    "globals": "^15.11.0",
+    "http-status-codes": "^2.3.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1"
+  }
+}
