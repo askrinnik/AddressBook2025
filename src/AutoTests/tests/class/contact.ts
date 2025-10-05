@@ -5,7 +5,7 @@ export class Contact {
   birthday?: string;
 
   constructor(firstName: string, lastName: string, birthday?: string) {
-    this.id = Math.floor(Math.random() * 1000) + 1;
+    this.id = 0;
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthday = birthday;
