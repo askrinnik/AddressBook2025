@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { describe } from 'node:test';
 import { Contact } from './class/contact';
 
 const apiUrl =
   'https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/Contacts';
 
-describe('GET /api/Contacts', () => {
+test.describe('GET /api/Contacts', () => {
   test('get all contacts', async ({ request }) => {
     const response = await request.get(`${apiUrl}`);
     console.log(await response.json());
@@ -25,7 +24,7 @@ describe('GET /api/Contacts', () => {
   });
 });
 
-describe('GET /api/Contacts/{id}', () => {
+test.describe('GET /api/Contacts/{id}', () => {
   test('get contact by id', async ({ request }) => {
     const contactId = 1;
     const response = await request.get(`${apiUrl}/${contactId}`);
@@ -42,7 +41,7 @@ describe('GET /api/Contacts/{id}', () => {
   });
 });
 
-describe('POST /api/Contacts', () => {
+test.describe('POST /api/Contacts', () => {
   test('create contact with birthday', async ({ request }) => {
     const contact = Contact.createCorrectContactWithBirthday();
     const response = await request.post(`${apiUrl}`, {
@@ -68,7 +67,7 @@ describe('POST /api/Contacts', () => {
   });
 });
 
-describe('DELETE /api/Contacts/{id}', () => {
+test.describe('DELETE /api/Contacts/{id}', () => {
   //test('delete contact by id', async ({ request }) => {
   //const contactId = 60;
   //const response = await request.delete(`${apiUrl}/${contactId}`);
