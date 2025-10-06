@@ -13,5 +13,9 @@ internal sealed class CreateContactCommandValidator : AbstractValidator<CreateCo
     RuleFor(x => x.LastName)
       .NotEmpty()
       .MaximumLength(30);
+    RuleFor(x => x.Birthday)
+      .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
+      .When(x => x.Birthday.HasValue)
+      .WithMessage("Birthday cannot be in the future");
   }
 }
