@@ -29,9 +29,11 @@ test.describe('GET /api/Contacts/{id}', () => {
     const contactId = 1;
     const response = await request.get(`${apiUrl}/${contactId}`);
     const data = await response.json();
-    console.log(data);
     expect.soft(response.status()).toBe(200);
     expect.soft(data.id).toBe(contactId);
+    expect.soft(data.firstName).toBe('John');
+    expect.soft(data.lastName).toBe('Doe');
+    expect.soft(data.birthday).toBe('1990-01-01');
   });
 
   test('get contact by non-existed id', async ({ request }) => {
@@ -42,20 +44,58 @@ test.describe('GET /api/Contacts/{id}', () => {
 });
 
 test.describe('POST /api/Contacts', () => {
-  test('create contact with birthday', async ({ request }) => {
-    const contact = Contact.createCorrectContactWithBirthday();
-    const response = await request.post(`${apiUrl}`, {
-      data: contact,
+  test('create, verify, and delete contact with birthday data', async ({ request }) => {
+    const expectedContact = Contact.createCorrectContactWithBirthday();
+    const createResponse = await request.post(`${apiUrl}`, {
+      data: expectedContact,
     });
-    expect(response.status()).toBe(201);
+    expect.soft(createResponse.status()).toBe(201);
+
+    const locationHeader = createResponse.headers()['location'];
+    const match = locationHeader?.match(/\/Contacts\/(\d+)$/);
+    expect.soft(match?.[1]).toBeDefined();
+
+    const contactId = Number(match?.[1]);
+    const getResponse = await request.get(`${apiUrl}/${contactId}`);
+    expect.soft(getResponse.ok()).toBeTruthy();
+
+    const actualContact = await getResponse.json();
+    expect.soft(actualContact.firstName).toBe(expectedContact.firstName);
+    expect.soft(actualContact.lastName).toBe(expectedContact.lastName);
+    expect.soft(actualContact.birthday).toBe(expectedContact.birthday);
+
+    const deleteResponse = await request.delete(`${apiUrl}/${contactId}`);
+    expect.soft(deleteResponse.ok()).toBeTruthy();
+
+    const finalGetResponse = await request.get(`${apiUrl}/${contactId}`);
+    expect.soft(finalGetResponse.status()).toBe(404);
   });
 
-  test('create contact without birthday', async ({ request }) => {
-    const contact = Contact.createCorrectContactWithoutBirthday();
-    const response = await request.post(`${apiUrl}`, {
-      data: contact,
+  test('create, verify, and delete contact without birthday data', async ({ request }) => {
+    const expectedContact = Contact.createCorrectContactWithoutBirthday();
+    const createResponse = await request.post(`${apiUrl}`, {
+      data: expectedContact,
     });
-    expect(response.status()).toBe(201);
+    expect.soft(createResponse.status()).toBe(201);
+
+    const locationHeader = createResponse.headers()['location'];
+    const match = locationHeader?.match(/\/Contacts\/(\d+)$/);
+    expect.soft(match?.[1]).toBeDefined();
+
+    const contactId = Number(match?.[1]);
+    const getResponse = await request.get(`${apiUrl}/${contactId}`);
+    expect.soft(getResponse.ok()).toBeTruthy();
+
+    const actualContact = await getResponse.json();
+    expect.soft(actualContact.firstName).toBe(expectedContact.firstName);
+    expect.soft(actualContact.lastName).toBe(expectedContact.lastName);
+    expect.soft(actualContact.birthday).toBeNull();
+
+    const deleteResponse = await request.delete(`${apiUrl}/${contactId}`);
+    expect.soft(deleteResponse.ok()).toBeTruthy();
+
+    const finalGetResponse = await request.get(`${apiUrl}/${contactId}`);
+    expect.soft(finalGetResponse.status()).toBe(404);
   });
 
   test('create incorrect contact', async ({ request }) => {
