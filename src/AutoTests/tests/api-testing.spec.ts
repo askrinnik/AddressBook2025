@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { Contact } from './class/contact';
+import { Contact } from './dtos/contact';
 
 const apiUrl =
   'https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/Contacts';
