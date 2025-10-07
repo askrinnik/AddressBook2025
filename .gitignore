@@ -33,3 +33,6 @@ packages/
 
 # Machine-specific settings
 appsettings.Development.json
+
+src/AddressBook.Api/Properties/PublishProfiles/addressbook-api.pubxml.user
+
