@@ -1,8 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, APIResponse } from '@playwright/test';
 import { Contact } from './dtos/contact';
 
 const apiUrl =
   'https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/Contacts';
+
+function extractContactId(response: APIResponse): number {
+  const locationHeader = response.headers()['location'];
+  if (!locationHeader) throw new Error('Missing Location header');
+  const match = locationHeader.match(/\/Contacts\/(\d+)$/);
+  if (!match?.[1]) throw new Error(`Cannot parse contact id from Location: ${locationHeader}`);
+  return Number(match[1]);
+}
 
 test.describe('GET /api/Contacts', () => {
   test('get all contacts', async ({ request }) => {
@@ -51,11 +59,8 @@ test.describe('POST /api/Contacts', () => {
     });
     expect.soft(createResponse.status()).toBe(201);
 
-    const locationHeader = createResponse.headers()['location'];
-    const match = locationHeader?.match(/\/Contacts\/(\d+)$/);
-    expect.soft(match?.[1]).toBeDefined();
-
-    const contactId = Number(match?.[1]);
+    const contactId = extractContactId(createResponse);
+    expect.soft(contactId).toBeDefined();
     const getResponse = await request.get(`${apiUrl}/${contactId}`);
     expect.soft(getResponse.ok()).toBeTruthy();
 
@@ -78,11 +83,8 @@ test.describe('POST /api/Contacts', () => {
     });
     expect.soft(createResponse.status()).toBe(201);
 
-    const locationHeader = createResponse.headers()['location'];
-    const match = locationHeader?.match(/\/Contacts\/(\d+)$/);
-    expect.soft(match?.[1]).toBeDefined();
-
-    const contactId = Number(match?.[1]);
+    const contactId = extractContactId(createResponse);
+    expect.soft(contactId).toBeDefined();
     const getResponse = await request.get(`${apiUrl}/${contactId}`);
     expect.soft(getResponse.ok()).toBeTruthy();
 
