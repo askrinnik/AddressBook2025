@@ -30,7 +30,9 @@ builder.ConfigureClientAccess();
 
 var app = builder.Build();
 
-app.ExecuteDatabaseMigration();
+if (!IsSwaggerGeneration())
+    app.ExecuteDatabaseMigration();
+
 app.ConfigureOpenApi();
 //app.UseHttpsRedirection();
 //app.UseAuthorization();
@@ -41,3 +43,14 @@ app.ConfigureClientAccess();
 app.UseExceptionHandler(_ => { });
 
 app.Run();
+
+// It verifies that the app is run in the context of Swagger generation for Azure API Management
+// That was invoked because a publishing file contains <UpdateApiOnPublish>true</UpdateApiOnPublish>
+bool IsSwaggerGeneration()
+{
+    // The "dotnet swagger tofile" command always passes arguments like:
+    //   swagger tofile --output v1
+    // so we can check the process name or arguments
+    return args.Contains("swagger", StringComparer.OrdinalIgnoreCase) ||
+           AppDomain.CurrentDomain.FriendlyName.Contains("swagger", StringComparison.OrdinalIgnoreCase);
+}
