@@ -20,4 +20,7 @@ export class Contact {
   static createIncorrectContact(): Contact {
     return new Contact('1234567890123456789012345678901', '1234567890123456789012345678901');
   }
+  static createContactWithFutureDate(): Contact {
+    return new Contact('Petr', 'Petrov', '2100-11-11');
+  }
 }
