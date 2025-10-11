@@ -1,5 +1,7 @@
 import { test, expect, APIResponse } from '@playwright/test';
 import { Contact } from './dtos/contact';
+import { ProblemDetails } from './dtos/ProblemDetails';
+import { GetContactsResponse } from './dtos/GetContactsResponse';
 
 const apiUrl =
   'https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/Contacts';
@@ -16,7 +18,7 @@ test.describe('GET /api/Contacts', () => {
   test('get all contacts', async ({ request }) => {
     const getResponse = await request.get(`${apiUrl}`);
     expect.soft(getResponse.status()).toBe(200);
-    const contactsBody = await getResponse.json();
+    const contactsBody = (await getResponse.json()) as GetContactsResponse;
     const contactsArray = contactsBody.rows;
     expect.soft(contactsArray.length).toBeGreaterThan(0);
     const expectedCount = contactsBody.totalRows;
@@ -49,9 +51,9 @@ test.describe('GET /api/Contacts', () => {
     // --- СПИСОК ОЖИДАЕМЫХ ПРАВИЛЬНЫХ КОНТАКТОВ ---
     // Создаем массив объектов с ПРАВИЛЬНЫМИ данными, которые должны вернуться
     const EXPECTED_CORRECT_CONTACTS = [
-      { firstName: 'Alex', lastName: 'Skr', birthday: '1972-07-14' },
-      { firstName: 'Vera', lastName: 'Skrynnik', birthday: '1998-12-11' },
-      { firstName: 'Skrynnik', lastName: 'Vera', birthday: null },
+      new Contact('Alex', 'Skr', '1972-07-14' ),
+      new Contact( 'Vera', 'Skrynnik', '1998-12-11' ),
+      new Contact( 'Skrynnik', 'Vera' ),
     ];
 
     // Проверка 1: Количество совпадает
@@ -68,14 +70,6 @@ test.describe('GET /api/Contacts', () => {
 
       // 1. Проверяем, что контакт вообще должен был вернуться
       expect.soft(expectedMatch).toBeDefined();
-
-      // 2. Если контакт найден, проверяем, что все его поля совпадают с ожидаемыми
-      if (expectedMatch) {
-        // Проверяем все поля на ИДЕАЛЬНОЕ совпадение
-        expect.soft(actualContact.firstName).toBe(expectedMatch.firstName);
-        expect.soft(actualContact.lastName).toBe(expectedMatch.lastName);
-        expect.soft(actualContact.birthday).toBe(expectedMatch.birthday);
-      }
     }
   });
 });
@@ -84,12 +78,16 @@ test.describe('GET /api/Contacts/{id}', () => {
   test('get contact by id', async ({ request }) => {
     const contactId = 1;
     const response = await request.get(`${apiUrl}/${contactId}`);
-    const data = await response.json();
+
     expect.soft(response.status()).toBe(200);
-    expect.soft(data.id).toBe(contactId);
-    expect.soft(data.firstName).toBe('John');
-    expect.soft(data.lastName).toBe('Doe');
-    expect.soft(data.birthday).toBe('1990-01-01');
+
+    const json = (await response.json());
+    const contact = json as Contact;
+
+    expect.soft(contact.id).toBe(contactId);
+    expect.soft(contact.firstName).toBe('John');
+    expect.soft(contact.lastName).toBe('Doe');
+    expect.soft(contact.birthday).toBe('1990-01-01');
   });
 
   test('get contact by non-existed id', async ({ request }) => {
@@ -162,6 +160,11 @@ test.describe('POST /api/Contacts', () => {
       data: contact,
     });
     expect(response.status()).toBe(400);
+    const problemDetails = ProblemDetails.fromJSON(await response.json());
+    expect(problemDetails.hasErrors()).toBeTruthy();
+    const errors = problemDetails.messagesFor('Birthday');
+    expect(errors.length).toBe(1);
+    expect(errors[0]).toBe('Birthday cannot be in the future');
   });
 });
 
