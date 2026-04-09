@@ -1,6 +1,7 @@
 ﻿using AddressBook.Api.Domain;
 using AddressBook.Api.Interfaces;
 using AddressBook.Contracts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace AddressBook.Api.DataAccess;
@@ -43,13 +44,29 @@ public static class StartupExtensions
   /// </summary>
   private static void ConfigureDbContext(WebApplicationBuilder builder)
   {
+
+
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var connectionBuilder = new SqlConnectionStringBuilder(connectionString);
+
     var server = builder.Configuration["Database:Server"];
+    if (!string.IsNullOrEmpty(server))
+      connectionBuilder.DataSource = server;
+
     var user = builder.Configuration["Database:User"];
     var password = builder.Configuration["Database:Password"];
+    if (!string.IsNullOrEmpty(user) || !string.IsNullOrEmpty(password))
+    {
+      connectionBuilder.IntegratedSecurity = false;
+      if (!string.IsNullOrEmpty(user))
+        connectionBuilder.UserID = user;
+      if (!string.IsNullOrEmpty(password))
+        connectionBuilder.Password = password;
+    }
 
-    var connectionString =
-      $"Server={server};Database=AddressBook;User={user};Password={password};TrustServerCertificate=True;MultipleActiveResultSets=true;Max Pool Size=2500";
+    connectionString = connectionBuilder.ToString();
+
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-      options.UseSqlServer(connectionString));
+        options.UseSqlServer(connectionString));
   }
 }

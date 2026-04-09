@@ -32,7 +32,7 @@ packages/
 /.idea/
 
 # Machine-specific settings
-appsettings.Development.json
+appsettings.*.json
 
 src/AddressBook.Api/Properties/PublishProfiles/addressbook-api.pubxml.user
 src/AddressBook.Web/Properties/PublishProfiles/addressbook-web.pubxml.user
