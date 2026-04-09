@@ -1,0 +1,12 @@
+## Built by hand, because I hate myself
+
+[*.cs]
+
+# indention
+indent_size = 2
+indent_style = space
+tab_width = 2
+
+# newlines
+end_of_line = crlf
+insert_final_newline = false
