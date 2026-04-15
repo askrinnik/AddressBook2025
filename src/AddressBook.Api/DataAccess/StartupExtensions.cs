@@ -30,13 +30,11 @@ public static class StartupExtensions
   /// <summary>
   /// Ensure database is created and migrations are applied
   /// </summary>
-  public static WebApplication ExecuteDatabaseMigration(this WebApplication app)
+  public static void ExecuteDatabaseMigration(this WebApplication app)
   {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
-
-    return app;
   }
 
   /// <summary>
@@ -44,8 +42,6 @@ public static class StartupExtensions
   /// </summary>
   private static void ConfigureDbContext(WebApplicationBuilder builder)
   {
-
-
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     var connectionBuilder = new SqlConnectionStringBuilder(connectionString);
 
