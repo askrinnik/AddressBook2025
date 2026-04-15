@@ -83,14 +83,15 @@ public static class StartupExtensions
       }
     }
 
+    // It should be added to disable the DeveloperExceptionPageMiddleware and allow to use my GlobalExceptionHandler
+    // Must be placed first in the pipeline to catch exceptions from all subsequent middleware
+    app.UseExceptionHandler(_ => { });
+
     app.ConfigureOpenApi();
     //app.UseHttpsRedirection();
     //app.UseAuthorization();
     app.MapControllers();
     app.ConfigureClientAccess();
-
-    // It should be added to disable the DeveloperExceptionPageMiddleware and allow to use my GlobalExceptionHandler
-    app.UseExceptionHandler(_ => { });
   }
 
   /// <summary>
