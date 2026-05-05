@@ -1,0 +1,112 @@
+@page "/edit-contact/{Id:int}"
+@using AddressBook.Web.ErrorHandling
+@using AddressBook.Web.Models
+@inject NavigationManager Navigation
+@inject IAddressBookApiService AddressBookApiService
+
+<PageTitle>Edit Contact</PageTitle>
+
+@if (_notFound)
+{
+    <MudAlert Severity="Severity.Warning">Contact not found.</MudAlert>
+    <MudButton Variant="Variant.Outlined" OnClick="Cancel" Class="mt-4">Back to Contacts</MudButton>
+}
+else if (_model != null)
+{
+    <EditForm EditContext="_editContext" OnSubmit="HandleUpdateContact">
+        <DataAnnotationsValidator/>
+        <MudGrid>
+            <MudItem xs="12" sm="7">
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="First name" @bind-Value="_model.FirstName" For="@(() => _model.FirstName)" />
+                        <MudTextField Label="Last Name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" />
+                        <MudDatePicker Label="Birthday" @bind-Date="_model.Birthday" For="@(() => _model.Birthday)" />
+                        <ValidationSummary Model="_model" class="mt-4"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" disabled="@_isLoading">Save</MudButton>
+                        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="Cancel" Class="ms-2">Cancel</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private CreateContactModel? _model;
+    private EditContext _editContext = null!;
+    private ValidationMessageStore? _messageStore;
+    private bool _isLoading;
+    private bool _notFound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var contact = await AddressBookApiService.GetContactByIdAsync(Id, CancellationToken.None);
+        if (contact == null)
+        {
+            _notFound = true;
+            return;
+        }
+
+        _model = new CreateContactModel
+        {
+            FirstName = contact.FirstName,
+            LastName = contact.LastName,
+            Birthday = contact.Birthday.HasValue ? contact.Birthday.Value.ToDateTime(TimeOnly.MinValue) : null
+        };
+        _editContext = new(_model);
+        _messageStore = new(_editContext);
+    }
+
+    private async Task HandleUpdateContact()
+    {
+        _messageStore?.Clear();
+        _editContext.NotifyValidationStateChanged();
+        if (!_editContext.Validate())
+            return;
+
+        try
+        {
+            _isLoading = true;
+            await AddressBookApiService.UpdateContact(Id, _model!, CancellationToken.None);
+            Navigation.NavigateTo("/contacts");
+        }
+        catch (ProblemDetailsException ex)
+        {
+            AddCustomError(ex.ProblemDetails);
+        }
+        catch (Exception ex)
+        {
+            AddGeneralError(ex.Message);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void AddGeneralError(string message)
+    {
+        _messageStore?.Add(_editContext.Field(""), message);
+        _editContext.NotifyValidationStateChanged();
+    }
+
+    private void AddCustomError(ClientProblemDetails? problem)
+    {
+        var errors = problem?.GetErrors();
+        if (errors == null)
+            return;
+
+        foreach (var error in errors)
+            _messageStore?.Add(_editContext.Field(error.Key), error.Value);
+
+        _editContext.NotifyValidationStateChanged();
+    }
+
+    private void Cancel() => Navigation.NavigateTo("/contacts");
+}

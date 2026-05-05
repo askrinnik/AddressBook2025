@@ -3,7 +3,7 @@
 > **Repo:** [askrinnik/AddressBook2025](https://github.com/askrinnik/AddressBook2025)  
 > **Head commit:** `b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73`  
 > **Report date:** 2026-05-05  
-> **Last updated:** 2026-05-05 — added `PUT /api/contacts/{id}` Update Contact endpoint
+> **Last updated:** 2026-05-05 — added `PUT /api/contacts/{id}` Update Contact endpoint; added Edit Contact UI (`/edit-contact/{id}` page, Edit button on contacts list)
 
 ---
 
@@ -33,7 +33,7 @@ graph TB
 
     subgraph "src/AddressBook.Web"
         direction TB
-        Pages["Pages\n(Contacts.razor, CreateContact.razor)"]
+        Pages["Pages\n(Contacts.razor, CreateContact.razor,\nEditContact.razor)"]
         ApiSvc["AddressBookApiService\n(IAddressBookApiService)"]
         ErrHandling["ProblemDetailsHandler\n(DelegatingHandler)"]
         MudBlazor["MudBlazor 9.3.0\nMaterial UI Components"]
@@ -388,7 +388,16 @@ The API base URL is configurable via `API_Prefix` in `appsettings.json` (default
 
 #### 3b. API Service
 
-`AddressBookApiService` wraps all HTTP calls:[^17]
+`AddressBookApiService` wraps all HTTP calls and implements `IAddressBookApiService`:[^17]
+
+```csharp
+// IAddressBookApiService — service contract
+Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken ct);
+Task DeleteContact(int id);
+Task<int> CreateContact(CreateContactModel model);
+Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken ct);   // GET contacts/{id}, 404 → null
+Task UpdateContact(int id, CreateContactModel model, CancellationToken ct); // PUT contacts/{id}
+```
 
 ```csharp
 public async Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken ct)
@@ -411,6 +420,22 @@ public async Task<int> CreateContact(CreateContactModel model)
     }
     return 0;
 }
+
+public async Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken ct)
+{
+    var response = await httpClient.GetAsync($"contacts/{id}", ct);
+    if (response.StatusCode == HttpStatusCode.NotFound) return null;
+    response.EnsureSuccessStatusCode();
+    return await response.Content.ReadFromJsonAsync<ContactModel>(ct);
+}
+
+public async Task UpdateContact(int id, CreateContactModel model, CancellationToken ct)
+{
+    var command = new UpdateContactCommand { FirstName = model.FirstName, LastName = model.LastName,
+        Birthday = model.Birthday.HasValue ? DateOnly.FromDateTime(model.Birthday.Value) : null };
+    var response = await httpClient.PutAsJsonAsync($"contacts/{id}", command, ct);
+    response.EnsureSuccessStatusCode();
+}
 ```
 
 #### 3c. Error Handling Pipeline
@@ -430,13 +455,14 @@ public class ProblemDetailsHandler : DelegatingHandler
 }
 ```
 
-The `CreateContact` page catches `ProblemDetailsException` and maps server-side field errors back to individual form fields via `ValidationMessageStore`.[^19]
+The `CreateContact` and `EditContact` pages catch `ProblemDetailsException` and map server-side field errors back to individual form fields via `ValidationMessageStore`.[^19]
 
 #### 3d. Pages
 
-**`/contacts` (`Contacts.razor`)** — MudBlazor server-reloading table with search, sort, delete:[^20]
+**`/contacts` (`Contacts.razor`)** — MudBlazor server-reloading table with search, sort, edit, delete:[^20]
 - Search box triggers `_contactTable.ReloadServerData()` on change
 - Sort is performed client-side on the page's data (not server-side pagination)
+- **Edit** button (blue, pencil icon) per row → navigates to `/edit-contact/{id}`
 - Delete shows a `MudMessageBox` confirmation dialog before calling the API
 - Error state shown via cascading `Error` component
 
@@ -444,6 +470,13 @@ The `CreateContact` page catches `ProblemDetailsException` and maps server-side 
 - `MudDatePicker` for optional birthday
 - Submits via `HandleCreateContact()` → navigates to `/contacts` on success
 - Maps `ProblemDetailsException` field errors to form validation state
+
+**`/edit-contact/{Id:int}` (`EditContact.razor`)** — Edit form for an existing contact:
+- Loads existing contact via `GetContactByIdAsync(Id)` on `OnInitializedAsync`; shows "Contact not found" alert on 404
+- Pre-fills the same MudCard form (MudTextField×2 + MudDatePicker)
+- Submits via `HandleUpdateContact()` → calls `PUT /api/contacts/{id}` → navigates to `/contacts` on success
+- Maps `ProblemDetailsException` field errors to form validation state (same as Create)
+- **Save** / **Cancel** (→ `/contacts`) buttons
 
 **`/` (`Home.razor`)** — Static welcome page[^22]
 
@@ -571,7 +604,7 @@ sequenceDiagram
     participant DB as SQL Server (Azure)
 
     Browser->>BlazorWASM: User action (search / create / update / delete)
-    BlazorWASM->>ApiSvc: GetFilteredContactsAsync / CreateContact / UpdateContact / DeleteContact
+    BlazorWASM->>ApiSvc: GetFilteredContactsAsync / GetContactByIdAsync / CreateContact / UpdateContact / DeleteContact
     ApiSvc->>PDHandler: HTTP Request
     PDHandler->>API: Forward Request
     API->>MediatR: sender.Send(query/command)
