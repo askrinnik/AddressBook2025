@@ -32,22 +32,36 @@ internal class GlobalExceptionHandler(
       });
   }
 
-  private  void SetGenericDetails(ProblemDetails problemDetails, HttpContext httpContext, Exception exception)
+  private void SetGenericDetails(ProblemDetails problemDetails, HttpContext httpContext, Exception exception)
   {
     problemDetails.Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}";
 
-    if (exception.StackTrace is not null && hostEnvironment.IsDevelopment()) 
-      problemDetails.Extensions["StackTrace"] = exception.StackTrace;
+    if (hostEnvironment.IsDevelopment())
+    {
+      if (exception.StackTrace is not null)
+        problemDetails.Extensions["StackTrace"] = exception.StackTrace;
 
-    foreach (DictionaryEntry entry in exception.Data)
-      problemDetails.Extensions[entry.Key.ToString()!] = entry.Value;
+      // Propagate exception.Data only in development — could contain DB details or other internals
+      foreach (DictionaryEntry entry in exception.Data)
+        problemDetails.Extensions[entry.Key.ToString()!] = entry.Value;
+    }
   }
 
-  private static void SetInternalServerErrorDetails(ProblemDetails problemDetails, Exception exception)
+  private void SetInternalServerErrorDetails(ProblemDetails problemDetails, Exception exception)
   {
-    problemDetails.Title = exception.GetType().Name;
     problemDetails.Status = StatusCodes.Status500InternalServerError;
-    problemDetails.Detail = exception.Message;
+
+    if (hostEnvironment.IsDevelopment())
+    {
+      // Full details only in development to avoid leaking internals (DB names, stack info, etc.)
+      problemDetails.Title = exception.GetType().Name;
+      problemDetails.Detail = exception.Message;
+    }
+    else
+    {
+      problemDetails.Title = "Internal Server Error";
+      problemDetails.Detail = "An unexpected error occurred.";
+    }
   }
 
   private static void SetValidationErrors(ProblemDetails problemDetails, ValidationException validationException)

@@ -38,4 +38,6 @@ src/AddressBook.Api/Properties/PublishProfiles/addressbook-api.pubxml.user
 src/AddressBook.Web/Properties/PublishProfiles/addressbook-web.pubxml.user
 src/AddressBook.Web/AddressBook.Web.csproj.user
 
-
+# Local environment variable files — never commit these (may contain Azure IDs, tokens, etc.)
+src/.env
+*.env

@@ -83,27 +83,56 @@ public static class StartupExtensions
       }
     }
 
+    // Exception handler must be first so it wraps all downstream middleware
+    app.UseExceptionHandler(_ => { });
+
+    // Warn if CORS is open in non-development environments
+    if (!app.Environment.IsDevelopment())
+    {
+      var allowedOrigins = app.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
+      if (allowedOrigins.Length == 0)
+        logger.LogWarning(
+          "SECURITY: AllowedOrigins is not configured — all CORS origins are permitted. " +
+          "Set AllowedOrigins in production configuration (e.g., Azure App Service app settings: AllowedOrigins__0=https://your-app.azurestaticapps.net).");
+    }
+
     app.ConfigureOpenApi();
-    //app.UseHttpsRedirection();
-    //app.UseAuthorization();
-    app.MapControllers();
+
+    // CORS must be before controllers so it handles preflight requests
     app.ConfigureClientAccess();
 
-    // It should be added to disable the DeveloperExceptionPageMiddleware and allow to use my GlobalExceptionHandler
-    app.UseExceptionHandler(_ => { });
+    // HTTPS is terminated at the Azure App Service load balancer; enable if running without a reverse proxy.
+    //app.UseHttpsRedirection();
+
+    // Uncomment when authentication is added:
+    //app.UseAuthentication();
+    //app.UseAuthorization();
+
+    app.MapControllers();
   }
 
   /// <summary>
-  /// Configure Blazor dependencies
+  /// Configure CORS for the Blazor WebAssembly client.
+  /// In production, set AllowedOrigins in configuration (e.g., Azure App Service application settings:
+  ///   AllowedOrigins__0 = https://your-app.azurestaticapps.net)
+  /// If AllowedOrigins is empty/missing, all origins are allowed (suitable for local development).
   /// </summary>
   private static void ConfigureClientAccess(this WebApplicationBuilder builder)
   {
-    builder.Services.AddCors(options => options.AddPolicy(BlazorCorsPolicy, policy => policy
-        //.WithOrigins("https://localhost:7166")
-        .AllowAnyOrigin()
+    var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? [];
+
+    builder.Services.AddCors(options => options.AddPolicy(BlazorCorsPolicy, policy =>
+    {
+      if (allowedOrigins.Length > 0)
+        policy.WithOrigins(allowedOrigins);
+      else
+        policy.AllowAnyOrigin(); // dev fallback — restrict via AllowedOrigins in production
+
+      policy
         .AllowAnyMethod()
         .AllowAnyHeader()
-        .WithExposedHeaders("*")));
+        .WithExposedHeaders("Location"); // only Location is needed (for 201 Created responses)
+    }));
   }
 
   /// <summary>
