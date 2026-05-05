@@ -2,7 +2,8 @@
 
 > **Repo:** [askrinnik/AddressBook2025](https://github.com/askrinnik/AddressBook2025)  
 > **Head commit:** `b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73`  
-> **Report date:** 2026-05-05
+> **Report date:** 2026-05-05  
+> **Last updated:** 2026-05-05 — added `PUT /api/contacts/{id}` Update Contact endpoint
 
 ---
 
@@ -42,14 +43,14 @@ graph TB
         direction TB
         Controller["ContactsController\n/api/contacts"]
         Handlers["CQRS Handlers\n(MediatR)"]
-        Validator["CreateContactCommandValidator\n(FluentValidation)"]
+        Validator["CreateContactCommandValidator\nUpdateContactCommandValidator\n(FluentValidation)"]
         Repository["AddressBookRepository\n(EF Core)"]
         DbCtx["ApplicationDbContext\n(EF Core + SQL Server)"]
         GlobalEx["GlobalExceptionHandler\n(RFC 7807 ProblemDetails)"]
     end
 
     subgraph "src/AddressBook.Contracts"
-        Commands["Commands\n(CreateContactCommand)"]
+        Commands["Commands\n(CreateContactCommand,\nUpdateContactCommand)"]
         Queries["Queries\n(GetFilteredContacts,\nGetById, DeleteById)"]
         Models["Models\n(ContactModel, Responses)"]
     end
@@ -115,6 +116,7 @@ The contracts project is a thin shared library referenced by both the API and th
 | File | Type | Description |
 |---|---|---|
 | `CreateContactCommand.cs` | `class` | Mutable command with `FirstName`, `LastName`, `DateOnly? Birthday` |
+| `UpdateContactCommand.cs` | `class` | Mutable command with `Id`, `FirstName`, `LastName`, `DateOnly? Birthday` — for PUT endpoint |
 | `DeleteContactByIdQuery.cs` | `record` | `DeleteContactByIdQuery(int Id)` |
 | `GetContactByIdQuery.cs` | `record` | `GetContactByIdQuery(int Id)` |
 | `GetFilteredContactsQuery.cs` | `record` | `GetFilteredContactsQuery(string? SearchText)` |
@@ -122,6 +124,7 @@ The contracts project is a thin shared library referenced by both the API and th
 | `Models/CreateContactCommandResponse.cs` | `record` | `CreateContactCommandResponse(int Id)` |
 | `Models/DeleteContactByIdResponse.cs` | `record` | `DeleteContactByIdResponse(bool Success)` |
 | `Models/GetFilteredContactsResponse.cs` | `record` | `GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<ContactModel> Rows)` |
+| `Models/UpdateContactCommandResponse.cs` | `record` | `UpdateContactCommandResponse(bool Found)` — signals 404 if contact not found |
 
 **Complete Contract Definitions:**[^2]
 
@@ -179,6 +182,7 @@ public interface IDelete<in T>                           { Task<int>  DeleteAsyn
 public interface IExist<in T>                            { Task<bool> ExistAsync(T key); }
 public interface IRetrieve<in TKey, TOut>                { Task<TOut?> TryRetrieveAsync(TKey key); }
 public interface IRetrieveMany<in TKey, TOut>            { Task<IReadOnlyCollection<TOut>> RetrieveManyAsync(TKey key); }
+public interface IUpdate<in TKey, in T>                  { Task<bool> UpdateAsync(TKey key, T item); }  // returns true if found
 ```
 
 #### 2c. Controller
@@ -214,6 +218,14 @@ public class ContactsController(ISender sender) : ControllerBase
         var response = await sender.Send(new DeleteContactByIdQuery(id), token);
         return !response.Success ? NotFound() : NoContent();
     }
+
+    [HttpPut("{id:int}")]  // PUT /api/contacts/{id} → 204 / 404 / 400
+    public async Task<ActionResult> UpdateContact([FromRoute] int id, [FromBody] UpdateContactCommand request, CancellationToken token)
+    {
+        request.Id = id;
+        var response = await sender.Send(request, token);
+        return response.Found ? NoContent() : NotFound();
+    }
 }
 ```
 
@@ -224,6 +236,7 @@ public class ContactsController(ISender sender) : ControllerBase
 | GET | `/api/contacts?search=text` | 200 `GetFilteredContactsResponse` | — |
 | GET | `/api/contacts/{id}` | 200 `ContactModel` | 404 |
 | POST | `/api/contacts` | 201 + `Location` header | 400 (validation) |
+| PUT | `/api/contacts/{id}` | 204 No Content | 404, 400 (validation) |
 | DELETE | `/api/contacts/{id}` | 204 No Content | 404 |
 
 #### 2d. CQRS Application Handlers
@@ -248,11 +261,28 @@ internal class CreateContactCommandHandler(ICreate<Contact> create, IValidator<C
         return new(created.Id.Value);
     }
 }
+
+// UpdateContactCommandHandler — validates, trims, updates via ExecuteUpdateAsync
+internal class UpdateContactCommandHandler(IUpdate<ContactId, Contact> update, IValidator<UpdateContactCommand> validator)
+    : IRequestHandler<UpdateContactCommand, UpdateContactCommandResponse>
+{
+    public async Task<UpdateContactCommandResponse> Handle(UpdateContactCommand request, CancellationToken ct)
+    {
+        await validator.ValidateAndThrowAsync(request, ct);
+        var contact = new Contact {
+            FirstName = request.FirstName.Trim(),
+            LastName  = request.LastName.Trim(),
+            Birthday  = request.Birthday
+        };
+        var found = await update.UpdateAsync(new ContactId(request.Id), contact);
+        return new(found);
+    }
+}
 ```
 
 #### 2e. Validation
 
-`CreateContactCommandValidator` (FluentValidation) enforces:[^8]
+`CreateContactCommandValidator` and `UpdateContactCommandValidator` (FluentValidation) enforce identical field rules:[^8]
 
 ```csharp
 RuleFor(x => x.FirstName).NotEmpty().MaximumLength(30);
@@ -281,16 +311,29 @@ public async Task<IReadOnlyCollection<Contact>> RetrieveManyAsync(GetFilteredCon
 public async Task<Contact?> TryRetrieveAsync(ContactId key) =>
     await dbContext.Contacts.Include(c => c.Phones).AsNoTracking()
         .FirstOrDefaultAsync(c => c.Id.Unwrap() == key.Value);
+
+// Bulk update via ExecuteUpdateAsync (no change-tracking overhead)
+public async Task<bool> UpdateAsync(ContactId key, Contact item)
+{
+    var rows = await dbContext.Contacts
+        .Where(c => c.Id.Unwrap() == key.Value)
+        .ExecuteUpdateAsync(s => s
+            .SetProperty(c => c.FirstName, item.FirstName)
+            .SetProperty(c => c.LastName, item.LastName)
+            .SetProperty(c => c.Birthday, item.Birthday));
+    return rows > 0;
+}
 ```
 
 **Seed data** ships with the migrations: 3 Ukrainian/Estonian phone operators, 2 demo contacts (John Doe, Jane Smith) with phones.[^10]
 
-**DI registration** (Interface Segregation): `AddressBookRepository` is registered 5 times, once per interface:[^11]
+**DI registration** (Interface Segregation): `AddressBookRepository` is registered 6 times, once per interface:[^11]
 ```csharp
 builder.Services.AddScoped<IRetrieveMany<GetFilteredContactsQuery, Contact>, AddressBookRepository>();
 builder.Services.AddScoped<IRetrieve<ContactId, Contact>,                    AddressBookRepository>();
 builder.Services.AddScoped<ICreate<Contact>,                                 AddressBookRepository>();
 builder.Services.AddScoped<IDelete<ContactId>,                               AddressBookRepository>();
+builder.Services.AddScoped<IUpdate<ContactId, Contact>,                      AddressBookRepository>();
 builder.Services.AddScoped<IExist<ContactId>,                                AddressBookRepository>();
 ```
 
@@ -527,13 +570,13 @@ sequenceDiagram
     participant Repo as AddressBookRepository
     participant DB as SQL Server (Azure)
 
-    Browser->>BlazorWASM: User action (search / create / delete)
-    BlazorWASM->>ApiSvc: GetFilteredContactsAsync / CreateContact / DeleteContact
+    Browser->>BlazorWASM: User action (search / create / update / delete)
+    BlazorWASM->>ApiSvc: GetFilteredContactsAsync / CreateContact / UpdateContact / DeleteContact
     ApiSvc->>PDHandler: HTTP Request
     PDHandler->>API: Forward Request
     API->>MediatR: sender.Send(query/command)
     MediatR->>Handler: Handle()
-    opt Create only
+    opt Create or Update
         Handler->>Validator: ValidateAndThrowAsync()
         Validator-->>Handler: ValidationException (if invalid)
         Handler-->>API: re-throws
@@ -586,7 +629,7 @@ graph LR
 | **No authentication** | `UseAuthorization()` and `UseHttpsRedirection()` are commented out. `OwnerId.Default()` always returns `new(1)` — explicit single-tenant placeholder for future work.[^15] |
 | **Swagger generation detection** | `Program.cs` detects `dotnet swagger tofile` to skip DB migration during OpenAPI spec generation.[^35] |
 | **`DeleteContactByIdQuery` naming** | Named a "Query" but performs a delete mutation — acknowledged naming inconsistency in the codebase.[^36] |
-| **`CreateContactCommand` is a class** | Unlike all other contracts which are `record` types, `CreateContactCommand` is a mutable `class` — unusual for a command.[^2] |
+| **`CreateContactCommand` / `UpdateContactCommand` are classes** | Unlike all other contracts which are `record` types, these two mutable commands are `class` — unusual for commands but consistent with each other.[^2] |
 | **Client-side pagination** | `GetFilteredContactsResponse` includes `TotalRows`, but sorting/paging is done client-side in `Contacts.razor` (not server-side). `TotalRows` is wired to MudTable's `TotalItems`.[^20] |
 
 ---
