@@ -17,6 +17,32 @@
 
 This project contains contracts only. It does not contain handlers, persistence, or transport-specific logic.
 
+## Prerequisites and Build
+
+### Prerequisites
+
+- .NET 10 SDK
+
+### Build
+
+```bash
+dotnet build src/AddressBook.Contracts/AddressBook.Contracts.csproj
+```
+
+Or as part of the solution:
+
+```bash
+dotnet build src/AddressBook.sln
+```
+
+### Dependencies
+
+| Package | Version |
+|---|---|
+| MediatR.Contracts | 2.0.1 |
+
+This is a class library — it has no standalone run configuration. It is consumed by `AddressBook.Api` and `AddressBook.Web` via project reference.
+
 ## 2. Package and Runtime Baseline
 
 ### 2.1 SDK and Framework

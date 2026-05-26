@@ -12,6 +12,95 @@ Core architecture and technologies:
 - Strongly-typed value-object IDs as sealed record wrappers over `int`
 - RFC 7807 `ProblemDetails` responses through a global exception handler
 
+## Prerequisites, Build, and Run
+
+### Prerequisites
+
+- .NET 10 SDK
+- SQL Server (LocalDB, SQL Express, or remote instance)
+
+### Build
+
+```bash
+dotnet build src/AddressBook.Api/AddressBook.Api.csproj
+```
+
+Or as part of the solution:
+
+```bash
+dotnet build src/AddressBook.sln
+```
+
+### Run locally
+
+Default profile (`http`) listens on `http://localhost:5000` with `ASPNETCORE_ENVIRONMENT=Development`:
+
+```bash
+cd src/AddressBook.Api
+dotnet run
+```
+
+Opens Swagger UI at `http://localhost:5000/swagger/` and Scalar at `http://localhost:5000/scalar/`.
+
+### Database connection
+
+The default connection string in `appsettings.json` targets local SQL Express with Windows Auth:
+
+```
+Server=localhost\SQLEXPRESS;Database=AddressBook;Trusted_Connection=true;TrustServerCertificate=True;MultipleActiveResultSets=true
+```
+
+Override credentials via configuration keys (CLI args, env vars, or appsettings):
+
+| Key | Purpose |
+|---|---|
+| `Database:Server` | SQL Server host (e.g., `sanyascr.database.windows.net`) |
+| `Database:User` | SQL auth username (disables Windows Auth) |
+| `Database:Password` | SQL auth password |
+
+Example with SQL auth:
+
+```bash
+dotnet run --Database:Password=MyPassword
+```
+
+### Launch profiles
+
+| Profile | URL | Environment |
+|---|---|---|
+| `http` | `http://localhost:5000` | Development |
+| `http-AWS` | `http://localhost:5000` | AWS |
+
+### Database migration
+
+EF Core migrations run automatically on startup (unless running `dotnet swagger tofile`). To apply manually:
+
+```bash
+cd src/AddressBook.Api
+dotnet ef database update
+```
+
+### Dependencies
+
+| Package | Version |
+|---|---|
+| FluentValidation.DependencyInjectionExtensions | 12.1.1 |
+| MediatR | 12.4.1 |
+| Microsoft.EntityFrameworkCore | 10.0.5 |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.5 |
+| Microsoft.EntityFrameworkCore.Tools | 10.0.5 |
+| Scalar.AspNetCore | 2.13.20 |
+| Swashbuckle.AspNetCore | 10.1.7 |
+
+### CI
+
+GitHub Actions workflow `build.yml` runs on every push:
+
+```bash
+dotnet restore src/AddressBook.sln
+dotnet build src/AddressBook.sln --configuration Release --no-restore
+```
+
 ## API Endpoints
 
 Controller: `ContactsController` (thin pass-through to MediatR `ISender`)

@@ -15,6 +15,69 @@ AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook2
 
 The project references AddressBook.Contracts for request/response and model types used by the API client.
 
+## 1a. Prerequisites, Build, and Run
+
+### Prerequisites
+
+- .NET 10 SDK
+
+### Build
+
+```bash
+dotnet build src/AddressBook.Web/AddressBook.Web.csproj
+```
+
+Or as part of the solution:
+
+```bash
+dotnet build src/AddressBook.sln
+```
+
+### Run locally
+
+Default profile (`http`) listens on `http://localhost:5156`:
+
+```bash
+cd src/AddressBook.Web
+dotnet run
+```
+
+### Launch profiles
+
+| Profile | URL | Notes |
+|---|---|---|
+| `http` | `http://localhost:5156` | Default |
+| `https` | `https://localhost:7187` (+ `http://localhost:5156`) | TLS enabled |
+
+Both profiles set `ASPNETCORE_ENVIRONMENT=Development` and support Blazor WASM debug proxy via `inspectUri`.
+
+### API connection
+
+The API base URL is configured in `wwwroot/appsettings.json`:
+
+```json
+{
+  "API_Prefix": "https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/"
+}
+```
+
+For local development with the API running on `http://localhost:5000`, override in `wwwroot/appsettings.Development.json` or change the value to `http://localhost:5000/api/`. The fallback default in `Program.cs` is `http://localhost:5000/api/`.
+
+### Dependencies
+
+| Package | Version |
+|---|---|
+| Microsoft.AspNetCore.Components.WebAssembly | 10.0.5 |
+| Microsoft.AspNetCore.Components.WebAssembly.DevServer | 10.0.5 |
+| Microsoft.Extensions.Http | 10.0.5 |
+| MudBlazor | 9.3.0 |
+
+### Azure deployment
+
+Deployed as Azure Static Web App. The `staticwebapp.config.json` in `wwwroot` ensures client-side routing works on refresh/deep links.
+
+Production URL: `https://happy-river-0d4a91803-preview.westeurope.6.azurestaticapps.net/`
+
 ## 2. Startup and Dependency Injection
 
 Source: `src/AddressBook.Web/Program.cs`
