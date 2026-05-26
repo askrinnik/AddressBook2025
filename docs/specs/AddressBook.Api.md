@@ -203,6 +203,12 @@ LastName: NotEmpty, MaximumLength(30)
 Birthday: LessThanOrEqualTo(today) when HasValue, message "Birthday cannot be in the future"
 ```
 
+### Business Rules (from FRS)
+
+- Each contact must have at least one identifying field (`FirstName` or `LastName`) — currently enforced as both required via `NotEmpty`
+- Phone numbers must be unique per contact
+- `PhoneNumber` max length in FRS is **20**, but current code uses **15** — potential discrepancy to reconcile
+
 ## Data Access (`DataAccess/`)
 
 ### AddressBookRepository

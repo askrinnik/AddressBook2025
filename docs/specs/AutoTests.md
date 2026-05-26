@@ -142,6 +142,42 @@ Note in source code: a Russian comment explains both checks are intentionally ke
 |---|---|
 | `delete contact by non-existed id` | Deletes ID `10000`; expects `404` |
 
+## Test Strategy
+
+> *Source: legacy Test Plan document (consolidated May 2026)*
+
+### Scope
+
+| Area | Coverage |
+|---|---|
+| **Functional testing** | CRUD operations, filtering, comments |
+| **Integration testing** | Backend ↔ Database connectivity |
+
+### Excluded from Testing
+
+- Authentication and authorization (not yet implemented)
+- Performance / load testing
+
+### Testing Tools
+
+| Tool | Purpose |
+|---|---|
+| Playwright (TypeScript) | Automated E2E API tests (this project) |
+| Swagger / Scalar | Manual API exploration |
+| Postman | Manual API testing |
+| DBeaver / SQL Server Management Studio | Direct database verification |
+
+### Target Environments
+
+- **OS:** Windows, Linux, Docker containers
+- **Browsers:** Chrome, Edge (API tests also run on Firefox, WebKit via Playwright)
+
+### Pass Criteria
+
+All functional test cases must pass without critical defects.
+
+---
+
 ## CI Integration
 
 Source: `.github/workflows/playwright.yml`

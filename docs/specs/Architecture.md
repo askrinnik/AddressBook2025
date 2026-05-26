@@ -13,6 +13,53 @@
 
 ---
 
+## Business Context
+
+> *Source: legacy BRD and FRS documents (consolidated May 2026)*
+
+**Goal:** Create an intuitive tool for managing and storing a user's address book.
+
+### In Scope
+
+- CRUD operations for contacts
+- Grouping / categorizing contacts
+- Search and filtering
+- User authentication and access control
+- Data import / export
+- Secure data storage and backup
+
+### Out of Scope
+
+- Integration with third-party services (social networks, CRM systems)
+- Multi-user collaboration features
+- Mobile application development
+
+### Compliance
+
+- Must comply with data-protection regulations (GDPR, CCPA)
+
+### Success Criteria
+
+- Users can manage contacts without technical expertise
+- Data is securely stored and retrieved efficiently
+- System performs well under normal and peak usage
+- UI/UX is user-friendly and meets accessibility standards
+
+### Business Rules (from FRS)
+
+- Each contact must have at least one identifying field (`FirstName` or `LastName`)
+- Phone numbers must be unique per contact
+- String field max lengths: `FirstName` 30, `LastName` 30, `PhoneNumber` 20 (FRS) / 15 (current code), `Phone.Comment` 200, `PhoneOperator.Name` 30, `PhoneOperator.Description` 200
+- Birthday cannot be in the future
+
+### Future Enhancements (from FRS)
+
+- Support for email addresses
+- Integration with external contact synchronization services
+- Custom categories for contacts
+
+---
+
 ## Key Repositories Summary
 
 | Repository | Language | Purpose |
@@ -88,13 +135,6 @@ askrinnik/AddressBook2025/
 │       ├── build.yml                # CI: dotnet build on every push
 │       └── playwright.yml           # E2E tests on push/PR to main
 ├── docs/
-│   ├── Old/                         # Legacy project documents
-│   │   ├── 01_Software_project_docs.md
-│   │   ├── 02_BRD.md
-│   │   ├── 03_FRS.md
-│   │   ├── Azure_environment.md
-│   │   ├── How_to_run_from_console.md
-│   │   └── Test plan.md
 │   └── specs/                       # Per-project technical specifications
 │       ├── AddressBook.Api.md
 │       ├── AddressBook.Contracts.md
@@ -272,6 +312,12 @@ graph LR
     SWA -->|"HTTP + CORS"| AppSvc
 ```
 
+### Deployment Operational Notes
+
+- **API cold start:** The App Service may need a warm-up request before the UI is usable (initial request after idle triggers startup).
+- **Blazor WASM client-side routing:** The Web UI includes `staticwebapp.config.json` in `wwwroot` to instruct Azure Static Web Apps to return `index.html` for all navigation requests (except static assets). This enables direct navigation and page refresh on routes like `/contacts` or `/create-contact`.
+- **Local run with DB credentials:** Use `dotnet run --Database:Password=<PASSWORD>` to override the database password via CLI. See also `Database:Server` and `Database:User` overrides in [AddressBook.Api.md](./AddressBook.Api.md).
+
 ---
 
 ## Notable Design Decisions
@@ -321,7 +367,7 @@ graph LR
 | No authentication (single-tenant) | **High** | `StartupExtensions.cs` commented-out auth, `OwnerId.Default()` |
 | Phone management not yet in API | **High** | No Phone endpoints in `ContactsController`; entities exist in domain |
 | Future plans (email, categories, multi-tenancy) | **Medium** | Inferred from FRS "Future Enhancements" + `OwnerId` design |
-| Test plan content | **Low** | `docs/Test plan.md` found but not fetched in full |
+| Test plan content | **High** | Consolidated from `docs/Old/Test plan.md` into AutoTests.md and Architecture.md |
 
 ---
 
