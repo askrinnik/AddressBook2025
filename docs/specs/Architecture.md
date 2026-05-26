@@ -99,6 +99,7 @@ askrinnik/AddressBook2025/
 │       ├── AddressBook.Api.md
 │       ├── AddressBook.Contracts.md
 │       ├── AddressBook.Web.md
+│       ├── Architecture.md
 │       └── AutoTests.md
 ├── src/
 │   ├── AddressBook.sln              # VS 2022 solution file
@@ -117,7 +118,7 @@ askrinnik/AddressBook2025/
 
 Thin shared library defining MediatR request/response types and DTOs, referenced by both the API and Web projects. Contains 5 commands/queries and 5 response/model records.
 
-→ Full specification: [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md)
+→ Full specification: [`AddressBook.Contracts.md`](./AddressBook.Contracts.md)
 
 ---
 
@@ -135,7 +136,7 @@ CQRS + MediatR backend with FluentValidation, EF Core 10 / SQL Server, strongly-
 | PUT | `/api/contacts/{id}` | 204 No Content | 404, 400 (validation) |
 | DELETE | `/api/contacts/{id}` | 204 No Content | 404 |
 
-→ Full specification: [`docs/specs/AddressBook.Api.md`](../../docs/specs/AddressBook.Api.md)
+→ Full specification: [`AddressBook.Api.md`](./AddressBook.Api.md)
 
 ---
 
@@ -143,7 +144,7 @@ CQRS + MediatR backend with FluentValidation, EF Core 10 / SQL Server, strongly-
 
 MudBlazor 9.3.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home). Deployed as Azure Static Web App.
 
-→ Full specification: [`docs/specs/AddressBook.Web.md`](../../docs/specs/AddressBook.Web.md)
+→ Full specification: [`AddressBook.Web.md`](./AddressBook.Web.md)
 
 ---
 
@@ -151,7 +152,7 @@ MudBlazor 9.3.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandl
 
 API-level E2E tests running against the live Azure API. Covers GET (list, search, by-ID), POST (create with/without birthday, validation errors), and DELETE scenarios across Chromium, Firefox, and WebKit.
 
-→ Full specification: [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md)
+→ Full specification: [`AutoTests.md`](./AutoTests.md)
 
 ---
 
@@ -204,7 +205,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 ### 8. Database Schema
 
-3 tables (`Contacts`, `Phones`, `PhoneOperators`) with seed data. See the [Api specification](../../docs/specs/AddressBook.Api.md#database-schema) for the full schema.
+3 tables (`Contacts`, `Phones`, `PhoneOperators`) with seed data. See the [Api specification](./AddressBook.Api.md#database-schema) for the full schema.
 
 ---
 
@@ -330,10 +331,10 @@ Detailed per-project specifications are maintained in `docs/specs/`:
 
 | Document | Covers |
 |---|---|
-| [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md) | All commands, queries, models — full type signatures and design decisions |
-| [`docs/specs/AddressBook.Api.md`](../../docs/specs/AddressBook.Api.md) | Domain model, repository interfaces, CQRS handlers, validation, data access, middleware pipeline, CORS, DB schema, build/run |
-| [`docs/specs/AddressBook.Web.md`](../../docs/specs/AddressBook.Web.md) | Blazor pages, API service, error handling subsystem, MudBlazor component usage, layout, build/run |
-| [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md) | Playwright API client, DTOs, all test scenarios, config, CI workflow |
+| [`AddressBook.Contracts.md`](./AddressBook.Contracts.md) | All commands, queries, models — full type signatures and design decisions |
+| [`AddressBook.Api.md`](./AddressBook.Api.md) | Domain model, repository interfaces, CQRS handlers, validation, data access, middleware pipeline, CORS, DB schema, build/run |
+| [`AddressBook.Web.md`](./AddressBook.Web.md) | Blazor pages, API service, error handling subsystem, MudBlazor component usage, layout, build/run |
+| [`AutoTests.md`](./AutoTests.md) | Playwright API client, DTOs, all test scenarios, config, CI workflow |
 
 These spec documents provide implementation-level detail complementing the architectural overview in this file.
 
