@@ -7,13 +7,40 @@ AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook2
 | Item | Value |
 |---|---|
 | Framework | .NET 10 Blazor WebAssembly (standalone, not hosted) |
-| UI library | MudBlazor 9.3.0 (Material Design components) |
+| UI library | [MudBlazor](https://mudblazor.com/) 9.3.0 (Material Design components) |
 | API access | Typed HttpClient via DI |
 | HTTP error pipeline | ProblemDetailsHandler delegating handler |
 | API base URL config | `API_Prefix` (fallback: `http://localhost:5000/api/`) |
 | Deployment target | Azure Static Web Apps |
 
 The project references AddressBook.Contracts for request/response and model types used by the API client.
+
+### MudBlazor References
+
+- Documentation: https://mudblazor.com/docs/overview
+- Source code: https://github.com/MudBlazor/MudBlazor/
+- NuGet: [MudBlazor 9.3.0](https://www.nuget.org/packages/MudBlazor/9.3.0)
+
+MudBlazor components used in this project:
+
+| Component | Usage |
+|---|---|
+| `MudTable<T>` | Server-reloading data table on Contacts page |
+| `MudTextField` | Text inputs on all forms, search field |
+| `MudDatePicker` | Birthday picker on Create/Edit pages |
+| `MudCard` / `MudCardContent` / `MudCardActions` | Form layout on Create/Edit pages |
+| `MudButton` | Actions (Create, Save, Cancel, Edit, Delete) |
+| `MudMessageBox` | Delete confirmation dialog |
+| `MudAlert` | Error/warning messages |
+| `MudGrid` / `MudItem` | Page layout grid |
+| `MudLayout` / `MudAppBar` / `MudDrawer` / `MudMainContent` | Application shell in MainLayout |
+| `MudThemeProvider` | Dark/light mode theming |
+| `MudToggleIconButton` | Dark mode toggle |
+| `MudNavMenu` / `MudNavLink` | Side navigation |
+| `MudTableSortLabel` | Column sort headers |
+| `MudTablePager` | Table pagination |
+| `MudSpacer` | Flexible spacer in toolbars |
+| `MudText` | Typography |
 
 ## 1a. Prerequisites, Build, and Run
 
