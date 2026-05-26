@@ -315,6 +315,10 @@ Authentication/authorization pipeline calls are currently commented out:
 - `app.UseAuthentication()`
 - `app.UseAuthorization()`
 
+### Issue #50 Resolution
+
+The `UseExceptionHandler` middleware is now placed first in the pipeline (before CORS, OpenAPI, and `MapControllers`), ensuring all exceptions — including those from downstream middleware — are caught by `GlobalExceptionHandler`. Previously it was placed after `MapControllers`, which meant controller exceptions bypassed the handler.
+
 ## File Structure
 
 Paths relative to `src/AddressBook.Api/`:
@@ -373,3 +377,5 @@ PhoneOperators:
   Name (NVARCHAR(30) NOT NULL)
   Description (NVARCHAR(100) NOT NULL)
 ```
+
+> **Note:** `PhoneNumber` max length is 15 in EF config (`PhoneConfiguration.cs`) vs. 20 in the FRS (`docs/03_FRS.md`) — a minor discrepancy.

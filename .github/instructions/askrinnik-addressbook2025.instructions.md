@@ -88,12 +88,18 @@ askrinnik/AddressBook2025/
 │       ├── build.yml                # CI: dotnet build on every push
 │       └── playwright.yml           # E2E tests on push/PR to main
 ├── docs/
-│   ├── 01_Software_project_docs.md  # Russian-language pre-dev checklist
-│   ├── 02_BRD.md                    # Business Requirements Document
-│   ├── 03_FRS.md                    # Functional Requirements Specification
-│   ├── Azure_environment.md         # Deployment guide
-│   ├── How_to_run_from_console.md   # Local run instructions
-│   └── Test plan.md                 # QA test plan
+│   ├── Old/                         # Legacy project documents
+│   │   ├── 01_Software_project_docs.md
+│   │   ├── 02_BRD.md
+│   │   ├── 03_FRS.md
+│   │   ├── Azure_environment.md
+│   │   ├── How_to_run_from_console.md
+│   │   └── Test plan.md
+│   └── specs/                       # Per-project technical specifications
+│       ├── AddressBook.Api.md
+│       ├── AddressBook.Contracts.md
+│       ├── AddressBook.Web.md
+│       └── AutoTests.md
 ├── src/
 │   ├── AddressBook.sln              # VS 2022 solution file
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
@@ -109,24 +115,7 @@ askrinnik/AddressBook2025/
 
 ### 1. `AddressBook.Contracts` — Shared Contracts Library
 
-The contracts project is a thin shared library referenced by both the API and the Web frontend. It defines all MediatR request/response types and shared DTOs.
-
-**Directory:**[^1]
-
-| File | Type | Description |
-|---|---|---|
-| `CreateContactCommand.cs` | `class` | Mutable command with `FirstName`, `LastName`, `DateOnly? Birthday` |
-| `UpdateContactCommand.cs` | `class` | Mutable command with `Id`, `FirstName`, `LastName`, `DateOnly? Birthday` — for PUT endpoint |
-| `DeleteContactByIdQuery.cs` | `record` | `DeleteContactByIdQuery(int Id)` |
-| `GetContactByIdQuery.cs` | `record` | `GetContactByIdQuery(int Id)` |
-| `GetFilteredContactsQuery.cs` | `record` | `GetFilteredContactsQuery(string? SearchText)` |
-| `Models/ContactModel.cs` | `record` | `ContactModel(int Id, string FirstName, string LastName, DateOnly? Birthday)` |
-| `Models/CreateContactCommandResponse.cs` | `record` | `CreateContactCommandResponse(int Id)` |
-| `Models/DeleteContactByIdResponse.cs` | `record` | `DeleteContactByIdResponse(bool Success)` |
-| `Models/GetFilteredContactsResponse.cs` | `record` | `GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<ContactModel> Rows)` |
-| `Models/UpdateContactCommandResponse.cs` | `record` | `UpdateContactCommandResponse(bool Found)` — signals 404 if contact not found |
-
-Complete contract definitions (code) → See [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md) for full type signatures and design notes.
+Thin shared library defining MediatR request/response types and DTOs, referenced by both the API and Web projects. Contains 5 commands/queries and 5 response/model records.
 
 → Full specification: [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md)
 
@@ -134,19 +123,7 @@ Complete contract definitions (code) → See [`docs/specs/AddressBook.Contracts.
 
 ### 2. `AddressBook.Api` — ASP.NET Core Web API
 
-#### 2a. Domain Model
-
-The domain uses **strongly-typed value-object IDs** (`sealed record` wrappers over `int`) to prevent primitive obsession.[^3]
-
-The domain includes `Contact` (aggregate root with `FirstName`, `LastName`, `Birthday`, `Phones`), `Phone`, and `PhoneOperator` entities. Phone management is not yet surfaced in the API.[^3][^4]
-
-#### 2b. Repository Interfaces (Port Abstraction)
-
-Six generic interfaces in `Interfaces/` define data access ports: `ICreate<T>`, `IDelete<T>`, `IExist<T>`, `IRetrieve<TKey,TOut>`, `IRetrieveMany<TKey,TOut>`, `IUpdate<TKey,T>`.[^5]
-
-#### 2c. Controller
-
-`ContactsController` is a thin pass-through to MediatR, using primary constructor injection of `ISender`.[^6]
+CQRS + MediatR backend with FluentValidation, EF Core 10 / SQL Server, strongly-typed value-object IDs, and RFC 7807 error responses via `GlobalExceptionHandler`.
 
 **API Endpoint Summary:**
 
@@ -158,71 +135,13 @@ Six generic interfaces in `Interfaces/` define data access ports: `ICreate<T>`, 
 | PUT | `/api/contacts/{id}` | 204 No Content | 404, 400 (validation) |
 | DELETE | `/api/contacts/{id}` | 204 No Content | 404 |
 
-#### 2d. CQRS Application Handlers
-
-Five handlers follow primary constructor injection: `CreateContactCommandHandler` (validate → trim → persist), `UpdateContactCommandHandler` (validate → trim → `ExecuteUpdateAsync`), `GetContactByIdQueryHandler` (returns `ContactModel?`), `GetFilteredContactsQueryHandler` (returns `GetFilteredContactsResponse`), `DeleteContactByIdQueryHandler` (returns success boolean).[^7]
-
-#### 2e. Validation
-
-`CreateContactCommandValidator` and `UpdateContactCommandValidator` (FluentValidation) enforce identical rules: `FirstName`/`LastName` required, max 30 chars; `Birthday` must not be in the future.[^8]
-
-#### 2f. Data Access (EF Core)
-
-`AddressBookRepository` implements all 6 repository interfaces using EF Core 10 with SQL Server.[^9] Key patterns: `Unwrap()` SQL function for strongly-typed ID LINQ queries, `AsNoTracking()` on reads, `ExecuteUpdateAsync` for bulk updates. Seed data includes 3 phone operators and 2 demo contacts.[^10]
-
-**DI registration** (Interface Segregation): `AddressBookRepository` is registered once per interface (6 registrations).[^11]
-
-#### 2g. Global Exception Handler (RFC 7807)
-
-`GlobalExceptionHandler` maps exceptions to structured RFC 7807 `ProblemDetails` responses: `ValidationException` → HTTP 400 with grouped field errors; other exceptions → HTTP 500.[^12]
-
-**Environment-aware error details:** In `Development`, 500 responses include `exception.GetType().Name` as the title, `exception.Message` as detail, the full stack trace, and any `exception.Data` entries. In production, 500s return a generic `"Internal Server Error"` title and `"An unexpected error occurred."` detail — preventing leakage of internal information (DB names, stack traces, etc.).
-
-> **✅ Resolved (Issue #50 / PR #51):** The `UseExceptionHandler` middleware is now placed *first* in the pipeline (before CORS, OpenAPI, and `MapControllers`), ensuring all exceptions are caught by `GlobalExceptionHandler`.[^13]
-
-#### 2h. Startup / Configuration
-
-The API supports **environment-specific database credentials** — the base connection string uses Windows Auth (`Trusted_Connection=true`) for local dev, but overrides are read at startup from `Database:Server`, `Database:User`, `Database:Password` configuration keys (injected via `--Database:Password=<PWD>` CLI arg in production).[^14]
-
-CORS is **production-aware**: when `AllowedOrigins` is configured (e.g., `AllowedOrigins__0=https://your-app.azurestaticapps.net`), only those origins are allowed; when empty/missing, `AllowAnyOrigin()` is used as a dev fallback with a `LogWarning` in non-Development environments. Only the `Location` header is exposed (for `201 Created` responses). Methods and headers remain open (`AllowAnyMethod / AllowAnyHeader`).[^15]
-
-OpenAPI is served via **Swashbuckle** (`/swagger`, `/swagger/ui`) and **Scalar** (`/scalar/v1`). Scalar is configured with `o.OpenApiRoutePattern = "/swagger/{documentName}/swagger.json"` to reuse the Swashbuckle-generated spec.[^15]
-
 → Full specification: [`docs/specs/AddressBook.Api.md`](../../docs/specs/AddressBook.Api.md)
 
 ---
 
 ### 3. `AddressBook.Web` — Blazor WebAssembly Frontend
 
-#### 3a. Setup & DI
-
-DI registers `ProblemDetailsHandler` (transient), `AddressBookApiService` (scoped via typed `HttpClient`), and MudBlazor services. The API base URL is configurable via `API_Prefix` in `appsettings.json` (defaults to `http://localhost:5000/api/`).[^16]
-
-#### 3b. API Service
-
-`AddressBookApiService` wraps all HTTP calls (`GetFilteredContactsAsync`, `DeleteContact`, `CreateContact`, `GetContactByIdAsync`, `UpdateContact`) and implements `IAddressBookApiService`. Creates `CreateContactCommand`/`UpdateContactCommand` from UI models, converting `DateTime?` → `DateOnly?`.[^17]
-
-#### 3c. Error Handling Pipeline
-
-HTTP errors flow through `ProblemDetailsHandler` → `ProblemDetailsException`, with supporting types `ClientProblemDetails` and `ProblemDetailsExtensions`. Pages catch `ProblemDetailsException` and map field errors via `ValidationMessageStore`.[^18][^19]
-
-#### 3d. Pages
-
-**`/contacts`** — MudBlazor `MudTable` with search, sort, edit (→ `/edit-contact/{id}`), delete (confirmation dialog). Uses code-behind pattern (`Contacts.razor.cs`).[^20]
-
-**`/create-contact`** — MudBlazor form (`MudTextField`×2 + `MudDatePicker`). Maps `ProblemDetailsException` field errors to form validation.[^21]
-
-**`/edit-contact/{Id:int}`** — Loads contact via `GetContactByIdAsync`; same form as Create; calls `PUT /api/contacts/{id}` on save.
-
-**`/`** — Static welcome page.[^22]
-
-#### 3e. Layout
-
-`MainLayout.razor` provides a MudBlazor shell with app bar (dark/light toggle), collapsible drawer with `NavMenu.razor`, and `Error.razor` cascading error banner.[^23]
-
-#### 3f. Azure Static Web Apps Routing
-
-A `staticwebapp.config.json` in `wwwroot` configures Azure Static Web Apps to return `index.html` for all non-asset routes, enabling client-side Blazor routing on page refresh (fixes issue #35).[^24]
+MudBlazor 9.3.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home). Deployed as Azure Static Web App.
 
 → Full specification: [`docs/specs/AddressBook.Web.md`](../../docs/specs/AddressBook.Web.md)
 
@@ -230,20 +149,7 @@ A `staticwebapp.config.json` in `wwwroot` configures Azure Static Web Apps to re
 
 ### 4. `AutoTests` — Playwright/TypeScript E2E Tests
 
-Tests run against the **live Azure API** at `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`.[^25]
-
-**Test coverage in `api-testing.spec.ts`:**[^26]
-
-| Test Group | Scenarios |
-|---|---|
-| GET /api/Contacts | Get all; search by term (`skr`); verify expected contact names (hardcoded expected: Alex Skr, Vera Skrynnik, Skrynnik Vera) |
-| GET /api/Contacts/{id} | Valid ID (1 → John Doe) → 200; Non-existent ID → 404 |
-| POST /api/Contacts | Create with birthday + verify + delete; create without birthday; create with 31-char names → 400; create with future date → 400 + `Birthday` field error |
-| DELETE /api/Contacts/{id} | Non-existent ID → 404 |
-
-The `ApiClient` class (`api-client.ts`) is a singleton wrapping `APIRequestContext`, with helpers for both "happy path" typed responses and raw `APIResponse` for error scenarios.[^27]
-
-**DTOs:** `Contact` (with factory methods for test data), `GetContactsResponse`, and `ProblemDetails` (RFC 7807 client model).[^28]
+API-level E2E tests running against the live Azure API. Covers GET (list, search, by-ID), POST (create with/without birthday, validation errors), and DELETE scenarios across Chromium, Firefox, and WebKit.
 
 → Full specification: [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md)
 
@@ -274,6 +180,8 @@ The project demonstrates heavy Copilot coding agent use:[^31]
 
 ### 7. Documentation (`docs/`)
 
+#### `docs/Old/` — Legacy documents
+
 | Document | Language | Content |
 |---|---|---|
 | `01_Software_project_docs.md` | Russian | ChatGPT-generated pre-dev checklist (BRD, FRS, NFR, SAD, SRS, Test Plan) |
@@ -283,13 +191,20 @@ The project demonstrates heavy Copilot coding agent use:[^31]
 | `How_to_run_from_console.md` | English | BAT script: `git pull` → `dotnet build` → `dotnet run --Database:Password=<PASSWORD>` |
 | `Test plan.md` | Mixed | QA test plan document |
 
+#### `docs/specs/` — Per-project technical specifications
+
+| Document | Covers |
+|---|---|
+| `AddressBook.Contracts.md` | Commands, queries, models — full type signatures |
+| `AddressBook.Api.md` | Domain, handlers, validation, data access, middleware, CORS, DB schema, build/run |
+| `AddressBook.Web.md` | Pages, API service, error handling, MudBlazor components, layout, build/run |
+| `AutoTests.md` | Playwright API client, DTOs, test scenarios, config, CI workflow |
+
 ---
 
 ### 8. Database Schema
 
-Database schema (3 tables: `Contacts`, `Phones`, `PhoneOperators`) with seed data is documented in the Api spec.[^10]
-
-> **Note:** `PhoneNumber` max length is 15 in EF config vs. 20 in the FRS — a minor discrepancy.[^33]
+3 tables (`Contacts`, `Phones`, `PhoneOperators`) with seed data. See the [Api specification](../../docs/specs/AddressBook.Api.md#database-schema) for the full schema.
 
 ---
 
@@ -426,39 +341,27 @@ These spec documents provide implementation-level detail complementing the archi
 
 ## Footnotes
 
-[^1]: [src/AddressBook.Contracts/ (directory)](https://github.com/askrinnik/AddressBook2025/tree/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts)
 [^2]: [src/AddressBook.Contracts/CreateContactCommand.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/CreateContactCommand.cs) SHA: `3dcc5faf` | [Models/ContactModel.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/ContactModel.cs) SHA: `bc2bd3a3` | [Models/GetFilteredContactsResponse.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/GetFilteredContactsResponse.cs) SHA: `14539636`
-[^3]: [src/AddressBook.Api/Domain/Contact.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Domain/Contact.cs) SHA: `32846cd5` | [Domain/ContactId.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Domain/ContactId.cs) SHA: `d4da3cb4` | [Domain/OwnerId.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Domain/OwnerId.cs) SHA: `7c15bf4e`
-[^4]: [src/AddressBook.Api/Domain/Phone.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Domain/Phone.cs) SHA: `42d17891` | [Domain/PhoneOperator.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Domain/PhoneOperator.cs) SHA: `5cdc6ca9`
-[^5]: [src/AddressBook.Api/Interfaces/ICreate.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Interfaces/ICreate.cs) SHA: `983e1557` | [IDelete.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Interfaces/IDelete.cs) SHA: `7400eea6` | [IRetrieve.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Interfaces/IRetrieve.cs) SHA: `dea938e5` | [IRetrieveMany.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Interfaces/IRetrieveMany.cs) SHA: `9bbc330e`
-[^6]: [src/AddressBook.Api/Controllers/ContactsController.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Controllers/ContactsController.cs) SHA: `d64c8556`
-[^7]: [src/AddressBook.Api/Application/CreateContactCommandHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Application/CreateContactCommandHandler.cs) SHA: `36498cd5` | [GetContactByIdQueryHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Application/GetContactByIdQueryHandler.cs) SHA: `7ca7ed37` | [GetFilteredContactsQueryHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Application/GetFilteredContactsQueryHandler.cs) SHA: `69fab1f8` | [DeleteContactByIdQueryHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Application/DeleteContactByIdQueryHandler.cs) SHA: `e5f801e7`
-[^8]: [src/AddressBook.Api/Application/CreateContactCommandValidator.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Application/CreateContactCommandValidator.cs) SHA: `e4b29e8d`
-[^9]: [src/AddressBook.Api/DataAccess/AddressBookRepository.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/AddressBookRepository.cs) SHA: `0757cef2`
-[^10]: [src/AddressBook.Api/DataAccess/ApplicationDbContext.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/ApplicationDbContext.cs) SHA: `35f0c846`
+
 [^11]: [src/AddressBook.Api/DataAccess/StartupExtensions.cs (DataAccess)](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/StartupExtensions.cs) SHA: `efcf28b8`
-[^12]: [src/AddressBook.Api/GlobalExceptionHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/GlobalExceptionHandler.cs) SHA: `efd1be6d`
+
 [^13]: GitHub Issue [#50](https://github.com/askrinnik/AddressBook2025/issues/50) | Draft PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51)
-[^14]: [src/AddressBook.Api/appsettings.json](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/appsettings.json) SHA: `f6a2ea23` | [docs/How_to_run_from_console.md](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/docs/How_to_run_from_console.md)
+
 [^15]: [src/AddressBook.Api/StartupExtensions.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/StartupExtensions.cs) SHA: `d653082b`
-[^16]: [src/AddressBook.Web/Program.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Program.cs) SHA: `0ae1eb71`
-[^17]: [src/AddressBook.Web/AddressBookApiService.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/AddressBookApiService.cs) SHA: `3ba13ab1`
-[^18]: [src/AddressBook.Web/ErrorHandling/ProblemDetailsHandler.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/ErrorHandling/ProblemDetailsHandler.cs) SHA: `3ea3867b` | [ProblemDetailsException.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/ErrorHandling/ProblemDetailsException.cs) SHA: `33139ac0`
-[^19]: [src/AddressBook.Web/Pages/CreateContact.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/CreateContact.razor) SHA: `bd03daa3`
+
 [^20]: [src/AddressBook.Web/Pages/Contacts.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor) SHA: `ee474d20` | [Contacts.razor.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor.cs) SHA: `3136afd7`
-[^21]: src/AddressBook.Web/Pages/CreateContact.razor SHA: `bd03daa3`
-[^22]: [src/AddressBook.Web/Pages/Home.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Home.razor) SHA: `2405e91d`
-[^23]: [src/AddressBook.Web/Layout/MainLayout.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Layout/MainLayout.razor) SHA: `ab2b909b` | [NavMenu.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Layout/NavMenu.razor) SHA: `dfa3e681`
-[^24]: [docs/Azure_environment.md](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/docs/Azure_environment.md) SHA: `d241ff75` | PR [#42](https://github.com/askrinnik/AddressBook2025/pull/42)
-[^25]: [src/AutoTests/tests/api-client.ts](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AutoTests/tests/api-client.ts) SHA: `9a256b97`
-[^26]: [src/AutoTests/tests/api-testing.spec.ts](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AutoTests/tests/api-testing.spec.ts) SHA: `377cc97c`
-[^27]: src/AutoTests/tests/api-client.ts SHA: `9a256b97`
-[^28]: [src/AutoTests/tests/dtos/contact.ts](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AutoTests/tests/dtos/contact.ts) SHA: `74f9555f` | [dtos/ProblemDetails.ts](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AutoTests/tests/dtos/ProblemDetails.ts) SHA: `c8091cc1`
+
 [^29]: [.github/workflows/build.yml](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/build.yml) SHA: `b66d3ac7`
+
 [^30]: [.github/workflows/playwright.yml](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/playwright.yml) SHA: `465b75ee`
+
 [^31]: PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51), PR [#48](https://github.com/askrinnik/AddressBook2025/pull/48), PR [#42](https://github.com/askrinnik/AddressBook2025/pull/42), PR [#41](https://github.com/askrinnik/AddressBook2025/pull/41)
+
 [^32]: [.github/copilot-instructions.md](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/copilot-instructions.md) SHA: `04cb6fa8`
-[^33]: [src/AddressBook.Api/DataAccess/PhoneConfiguration.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/PhoneConfiguration.cs) SHA: `b6386557` vs. [docs/03_FRS.md](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/docs/03_FRS.md)
+
 [^34]: [src/AddressBook.Api/DataAccess/ApplicationDbContext.cs:400-424](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/ApplicationDbContext.cs) (ValueObjectExtensions)
+
 [^35]: [src/AddressBook.Api/Program.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Program.cs) SHA: `a08642e1`
+
 [^36]: src/AddressBook.Contracts/DeleteContactByIdQuery.cs SHA: `79789132`
+
