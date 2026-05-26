@@ -3,7 +3,7 @@
 > **Repo:** [askrinnik/AddressBook2025](https://github.com/askrinnik/AddressBook2025)  
 > **Head commit:** `b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73`  
 > **Report date:** 2026-05-05  
-> **Last updated:** 2026-05-05 — added `PUT /api/contacts/{id}` Update Contact endpoint; added Edit Contact UI (`/edit-contact/{id}` page, Edit button on contacts list)
+> **Last updated:** 2026-05-26 — corrected CORS, exception handler, and Scalar documentation; added spec document references; marked Issue #50 as resolved
 
 ---
 
@@ -98,7 +98,7 @@ askrinnik/AddressBook2025/
 │   ├── AddressBook.sln              # VS 2022 solution file
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
-│   ├── AddressBook.Web/             # Blazor WebAssembly SPA
+│   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
 │   └── AutoTests/                   # Playwright TypeScript E2E tests
 └── README.md                        # Minimal: "pet project for address book development"
 ```
@@ -126,23 +126,9 @@ The contracts project is a thin shared library referenced by both the API and th
 | `Models/GetFilteredContactsResponse.cs` | `record` | `GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<ContactModel> Rows)` |
 | `Models/UpdateContactCommandResponse.cs` | `record` | `UpdateContactCommandResponse(bool Found)` — signals 404 if contact not found |
 
-**Complete Contract Definitions:**[^2]
+Complete contract definitions (code) → See [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md) for full type signatures and design notes.
 
-```csharp
-// CreateContactCommand.cs — mutable class (unlike other records)
-public class CreateContactCommand : IRequest<CreateContactCommandResponse>
-{
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName  { get; set; } = string.Empty;
-    public DateOnly? Birthday { get; set; }
-}
-
-// ContactModel.cs — shared read DTO
-public record ContactModel(int Id, string FirstName, string LastName, DateOnly? Birthday);
-
-// GetFilteredContactsResponse.cs — supports pagination UI
-public record GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<ContactModel> Rows);
-```
+→ Full specification: [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md)
 
 ---
 
@@ -152,82 +138,15 @@ public record GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<Con
 
 The domain uses **strongly-typed value-object IDs** (`sealed record` wrappers over `int`) to prevent primitive obsession.[^3]
 
-```csharp
-// Contact.cs — aggregate root
-public sealed class Contact : Entity<ContactId>
-{
-    public OwnerId OwnerId { get; set; } = OwnerId.Default(); // hardcoded to 1 (single-tenant)
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName  { get; set; } = string.Empty;
-    public DateOnly? Birthday { get; set; }
-    public List<Phone> Phones { get; set; } = [];
-}
-
-// ContactId.cs — strongly-typed ID
-public sealed record ContactId(int Value) { public static ContactId New() => new(0); }
-
-// OwnerId.cs — placeholder for future multi-tenancy
-public sealed record OwnerId(int Value) { public static OwnerId Default() => new(1); }
-```
-
-The domain also includes `Phone` and `PhoneOperator` entities (per the FRS), though Phone management is not yet surfaced in the API.[^4]
+The domain includes `Contact` (aggregate root with `FirstName`, `LastName`, `Birthday`, `Phones`), `Phone`, and `PhoneOperator` entities. Phone management is not yet surfaced in the API.[^3][^4]
 
 #### 2b. Repository Interfaces (Port Abstraction)
 
-Five generic interfaces in `src/AddressBook.Api/Interfaces/` define the data access ports:[^5]
-
-```csharp
-public interface ICreate<T>                              { Task<T>    CreateAsync(T item); }
-public interface IDelete<in T>                           { Task<int>  DeleteAsync(T key); }  // returns row count
-public interface IExist<in T>                            { Task<bool> ExistAsync(T key); }
-public interface IRetrieve<in TKey, TOut>                { Task<TOut?> TryRetrieveAsync(TKey key); }
-public interface IRetrieveMany<in TKey, TOut>            { Task<IReadOnlyCollection<TOut>> RetrieveManyAsync(TKey key); }
-public interface IUpdate<in TKey, in T>                  { Task<bool> UpdateAsync(TKey key, T item); }  // returns true if found
-```
+Six generic interfaces in `Interfaces/` define data access ports: `ICreate<T>`, `IDelete<T>`, `IExist<T>`, `IRetrieve<TKey,TOut>`, `IRetrieveMany<TKey,TOut>`, `IUpdate<TKey,T>`.[^5]
 
 #### 2c. Controller
 
-`ContactsController` is a thin pass-through to MediatR:[^6]
-
-```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class ContactsController(ISender sender) : ControllerBase
-{
-    [HttpGet]    // GET /api/contacts?search=...
-    public async Task<GetFilteredContactsResponse> Get([FromQuery] string? search, CancellationToken token)
-        => await sender.Send(new GetFilteredContactsQuery(search), token);
-
-    [HttpGet("{id:int}")]  // GET /api/contacts/{id}
-    public async Task<ActionResult<ContactModel>> GetById([FromRoute] int id, CancellationToken token)
-    {
-        var contactModel = await sender.Send(new GetContactByIdQuery(id), token);
-        return contactModel == null ? NotFound() : Ok(contactModel);
-    }
-
-    [HttpPost]   // POST /api/contacts → 201 Created + Location header
-    public async Task<ActionResult> CreateContact([FromBody] CreateContactCommand request, CancellationToken token)
-    {
-        var response = await sender.Send(request, token);
-        return CreatedAtAction(nameof(GetById), new { id = response.Id }, null);
-    }
-
-    [HttpDelete("{id:int}")]  // DELETE /api/contacts/{id} → 204 / 404
-    public async Task<ActionResult> DeleteContact([FromRoute] int id, CancellationToken token)
-    {
-        var response = await sender.Send(new DeleteContactByIdQuery(id), token);
-        return !response.Success ? NotFound() : NoContent();
-    }
-
-    [HttpPut("{id:int}")]  // PUT /api/contacts/{id} → 204 / 404 / 400
-    public async Task<ActionResult> UpdateContact([FromRoute] int id, [FromBody] UpdateContactCommand request, CancellationToken token)
-    {
-        request.Id = id;
-        var response = await sender.Send(request, token);
-        return response.Found ? NoContent() : NotFound();
-    }
-}
-```
+`ContactsController` is a thin pass-through to MediatR, using primary constructor injection of `ISender`.[^6]
 
 **API Endpoint Summary:**
 
@@ -241,130 +160,35 @@ public class ContactsController(ISender sender) : ControllerBase
 
 #### 2d. CQRS Application Handlers
 
-Each handler follows primary constructor injection (C# 12):[^7]
-
-```csharp
-// CreateContactCommandHandler — validates, trims, persists
-internal class CreateContactCommandHandler(ICreate<Contact> create, IValidator<CreateContactCommand> validator)
-    : IRequestHandler<CreateContactCommand, CreateContactCommandResponse>
-{
-    public async Task<CreateContactCommandResponse> Handle(CreateContactCommand request, CancellationToken ct)
-    {
-        await validator.ValidateAndThrowAsync(request, ct);
-        var contact = new Contact {
-            FirstName = request.FirstName.Trim(),
-            LastName  = request.LastName.Trim(),
-            Birthday  = request.Birthday,
-            OwnerId   = OwnerId.Default()
-        };
-        var created = await create.CreateAsync(contact);
-        return new(created.Id.Value);
-    }
-}
-
-// UpdateContactCommandHandler — validates, trims, updates via ExecuteUpdateAsync
-internal class UpdateContactCommandHandler(IUpdate<ContactId, Contact> update, IValidator<UpdateContactCommand> validator)
-    : IRequestHandler<UpdateContactCommand, UpdateContactCommandResponse>
-{
-    public async Task<UpdateContactCommandResponse> Handle(UpdateContactCommand request, CancellationToken ct)
-    {
-        await validator.ValidateAndThrowAsync(request, ct);
-        var contact = new Contact {
-            FirstName = request.FirstName.Trim(),
-            LastName  = request.LastName.Trim(),
-            Birthday  = request.Birthday
-        };
-        var found = await update.UpdateAsync(new ContactId(request.Id), contact);
-        return new(found);
-    }
-}
-```
+Five handlers follow primary constructor injection: `CreateContactCommandHandler` (validate → trim → persist), `UpdateContactCommandHandler` (validate → trim → `ExecuteUpdateAsync`), `GetContactByIdQueryHandler` (returns `ContactModel?`), `GetFilteredContactsQueryHandler` (returns `GetFilteredContactsResponse`), `DeleteContactByIdQueryHandler` (returns success boolean).[^7]
 
 #### 2e. Validation
 
-`CreateContactCommandValidator` and `UpdateContactCommandValidator` (FluentValidation) enforce identical field rules:[^8]
-
-```csharp
-RuleFor(x => x.FirstName).NotEmpty().MaximumLength(30);
-RuleFor(x => x.LastName).NotEmpty().MaximumLength(30);
-RuleFor(x => x.Birthday)
-    .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
-    .When(x => x.Birthday.HasValue)
-    .WithMessage("Birthday cannot be in the future");
-```
+`CreateContactCommandValidator` and `UpdateContactCommandValidator` (FluentValidation) enforce identical rules: `FirstName`/`LastName` required, max 30 chars; `Birthday` must not be in the future.[^8]
 
 #### 2f. Data Access (EF Core)
 
-`AddressBookRepository` implements all 5 repository interfaces and uses **EF Core 10 with SQL Server**.[^9] A custom `Unwrap()` extension trick (mapped as a transparent SQL function) allows LINQ to translate strongly-typed ID comparisons to SQL:
+`AddressBookRepository` implements all 6 repository interfaces using EF Core 10 with SQL Server.[^9] Key patterns: `Unwrap()` SQL function for strongly-typed ID LINQ queries, `AsNoTracking()` on reads, `ExecuteUpdateAsync` for bulk updates. Seed data includes 3 phone operators and 2 demo contacts.[^10]
 
-```csharp
-// Search by first or last name
-public async Task<IReadOnlyCollection<Contact>> RetrieveManyAsync(GetFilteredContactsQuery key)
-{
-    IQueryable<Contact> query = dbContext.Contacts;
-    if (!string.IsNullOrWhiteSpace(key.SearchText))
-        query = query.Where(c => c.FirstName.Contains(key.SearchText) || c.LastName.Contains(key.SearchText));
-    return await query.AsNoTracking().ToArrayAsync();
-}
-
-// Eager-load phones on GET by ID
-public async Task<Contact?> TryRetrieveAsync(ContactId key) =>
-    await dbContext.Contacts.Include(c => c.Phones).AsNoTracking()
-        .FirstOrDefaultAsync(c => c.Id.Unwrap() == key.Value);
-
-// Bulk update via ExecuteUpdateAsync (no change-tracking overhead)
-public async Task<bool> UpdateAsync(ContactId key, Contact item)
-{
-    var rows = await dbContext.Contacts
-        .Where(c => c.Id.Unwrap() == key.Value)
-        .ExecuteUpdateAsync(s => s
-            .SetProperty(c => c.FirstName, item.FirstName)
-            .SetProperty(c => c.LastName, item.LastName)
-            .SetProperty(c => c.Birthday, item.Birthday));
-    return rows > 0;
-}
-```
-
-**Seed data** ships with the migrations: 3 Ukrainian/Estonian phone operators, 2 demo contacts (John Doe, Jane Smith) with phones.[^10]
-
-**DI registration** (Interface Segregation): `AddressBookRepository` is registered 6 times, once per interface:[^11]
-```csharp
-builder.Services.AddScoped<IRetrieveMany<GetFilteredContactsQuery, Contact>, AddressBookRepository>();
-builder.Services.AddScoped<IRetrieve<ContactId, Contact>,                    AddressBookRepository>();
-builder.Services.AddScoped<ICreate<Contact>,                                 AddressBookRepository>();
-builder.Services.AddScoped<IDelete<ContactId>,                               AddressBookRepository>();
-builder.Services.AddScoped<IUpdate<ContactId, Contact>,                      AddressBookRepository>();
-builder.Services.AddScoped<IExist<ContactId>,                                AddressBookRepository>();
-```
+**DI registration** (Interface Segregation): `AddressBookRepository` is registered once per interface (6 registrations).[^11]
 
 #### 2g. Global Exception Handler (RFC 7807)
 
-`GlobalExceptionHandler` maps exceptions to structured `ProblemDetails` responses:[^12]
+`GlobalExceptionHandler` maps exceptions to structured RFC 7807 `ProblemDetails` responses: `ValidationException` → HTTP 400 with grouped field errors; other exceptions → HTTP 500.[^12]
 
-- **`FluentValidation.ValidationException`** → HTTP 400 with `errors` dictionary grouping messages by property name
-- **Any other exception** → HTTP 500 with exception type as title; stack trace included in Development environment
+**Environment-aware error details:** In `Development`, 500 responses include `exception.GetType().Name` as the title, `exception.Message` as detail, the full stack trace, and any `exception.Data` entries. In production, 500s return a generic `"Internal Server Error"` title and `"An unexpected error occurred."` detail — preventing leakage of internal information (DB names, stack traces, etc.).
 
-```csharp
-private static void SetValidationErrors(ProblemDetails pd, ValidationException ex)
-{
-    pd.Title  = "Validation Error";
-    pd.Status = StatusCodes.Status400BadRequest;
-    pd.Detail = "One or more validation errors occurred";
-    pd.Extensions["errors"] = ex.Errors
-        .GroupBy(e => e.PropertyName)
-        .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray());
-}
-```
-
-> **⚠️ Open Issue #50:** The `UseExceptionHandler` middleware is placed *after* `MapControllers()` in the pipeline, meaning exceptions thrown inside controllers bypass the handler. Draft PR #51 (Copilot-authored) moves `UseExceptionHandler` before the controller mapping to fix this.[^13]
+> **✅ Resolved (Issue #50 / PR #51):** The `UseExceptionHandler` middleware is now placed *first* in the pipeline (before CORS, OpenAPI, and `MapControllers`), ensuring all exceptions are caught by `GlobalExceptionHandler`.[^13]
 
 #### 2h. Startup / Configuration
 
 The API supports **environment-specific database credentials** — the base connection string uses Windows Auth (`Trusted_Connection=true`) for local dev, but overrides are read at startup from `Database:Server`, `Database:User`, `Database:Password` configuration keys (injected via `--Database:Password=<PWD>` CLI arg in production).[^14]
 
-CORS is fully open (`AllowAnyOrigin / Method / Header`) with all response headers exposed — designed for the Blazor WASM client.[^15]
+CORS is **production-aware**: when `AllowedOrigins` is configured (e.g., `AllowedOrigins__0=https://your-app.azurestaticapps.net`), only those origins are allowed; when empty/missing, `AllowAnyOrigin()` is used as a dev fallback with a `LogWarning` in non-Development environments. Only the `Location` header is exposed (for `201 Created` responses). Methods and headers remain open (`AllowAnyMethod / AllowAnyHeader`).[^15]
 
-OpenAPI is served via **Swashbuckle** (`/swagger`) and **Scalar** (`/scalar`).[^15]
+OpenAPI is served via **Swashbuckle** (`/swagger`, `/swagger/ui`) and **Scalar** (`/scalar/v1`). Scalar is configured with `o.OpenApiRoutePattern = "/swagger/{documentName}/swagger.json"` to reuse the Swashbuckle-generated spec.[^15]
+
+→ Full specification: [`docs/specs/AddressBook.Api.md`](../../docs/specs/AddressBook.Api.md)
 
 ---
 
@@ -372,124 +196,35 @@ OpenAPI is served via **Swashbuckle** (`/swagger`) and **Scalar** (`/scalar`).[^
 
 #### 3a. Setup & DI
 
-```csharp
-// Program.cs — Web frontend entry point
-builder.Services.AddTransient<ProblemDetailsHandler>();
-builder.Services.AddScoped<IAddressBookApiService, AddressBookApiService>();
-
-builder.Services.AddHttpClient<IAddressBookApiService, AddressBookApiService>(
-        client => client.BaseAddress = new(builder.Configuration["API_Prefix"] ?? "http://localhost:5000/api/"))
-    .AddHttpMessageHandler<ProblemDetailsHandler>();
-
-builder.Services.AddMudServices();
-```
-
-The API base URL is configurable via `API_Prefix` in `appsettings.json` (defaults to `http://localhost:5000/api/`).[^16]
+DI registers `ProblemDetailsHandler` (transient), `AddressBookApiService` (scoped via typed `HttpClient`), and MudBlazor services. The API base URL is configurable via `API_Prefix` in `appsettings.json` (defaults to `http://localhost:5000/api/`).[^16]
 
 #### 3b. API Service
 
-`AddressBookApiService` wraps all HTTP calls and implements `IAddressBookApiService`:[^17]
-
-```csharp
-// IAddressBookApiService — service contract
-Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken ct);
-Task DeleteContact(int id);
-Task<int> CreateContact(CreateContactModel model);
-Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken ct);   // GET contacts/{id}, 404 → null
-Task UpdateContact(int id, CreateContactModel model, CancellationToken ct); // PUT contacts/{id}
-```
-
-```csharp
-public async Task<GetFilteredContactsResponse?> GetFilteredContactsAsync(string searchTerm, CancellationToken ct)
-{
-    var requestUri = "contacts";
-    if (!string.IsNullOrWhiteSpace(searchTerm))
-        requestUri += $"?search={searchTerm}";
-    return await httpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri, ct);
-}
-
-public async Task<int> CreateContact(CreateContactModel model)
-{
-    var command = new CreateContactCommand { FirstName = model.FirstName, LastName = model.LastName,
-        Birthday = model.Birthday.HasValue ? DateOnly.FromDateTime(model.Birthday.Value) : null };
-    var response = await httpClient.PostAsJsonAsync("contacts", command);
-    if (response.IsSuccessStatusCode)
-    {
-        var idString = response.Headers.Location?.Segments.LastOrDefault();
-        return int.TryParse(idString, out var id) ? id : 0;
-    }
-    return 0;
-}
-
-public async Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken ct)
-{
-    var response = await httpClient.GetAsync($"contacts/{id}", ct);
-    if (response.StatusCode == HttpStatusCode.NotFound) return null;
-    response.EnsureSuccessStatusCode();
-    return await response.Content.ReadFromJsonAsync<ContactModel>(ct);
-}
-
-public async Task UpdateContact(int id, CreateContactModel model, CancellationToken ct)
-{
-    var command = new UpdateContactCommand { FirstName = model.FirstName, LastName = model.LastName,
-        Birthday = model.Birthday.HasValue ? DateOnly.FromDateTime(model.Birthday.Value) : null };
-    var response = await httpClient.PutAsJsonAsync($"contacts/{id}", command, ct);
-    response.EnsureSuccessStatusCode();
-}
-```
+`AddressBookApiService` wraps all HTTP calls (`GetFilteredContactsAsync`, `DeleteContact`, `CreateContact`, `GetContactByIdAsync`, `UpdateContact`) and implements `IAddressBookApiService`. Creates `CreateContactCommand`/`UpdateContactCommand` from UI models, converting `DateTime?` → `DateOnly?`.[^17]
 
 #### 3c. Error Handling Pipeline
 
-HTTP errors flow through `ProblemDetailsHandler` (a `DelegatingHandler`), which intercepts all non-2xx responses and deserializes the RFC 7807 body into a `ProblemDetailsException`:[^18]
-
-```csharp
-public class ProblemDetailsHandler : DelegatingHandler
-{
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-    {
-        var response = await base.SendAsync(request, ct);
-        if (response.IsSuccessStatusCode) return response;
-        var body = await response.Content.ReadAsStringAsync(ct);
-        throw new ProblemDetailsException(body.ToProblemDetails());
-    }
-}
-```
-
-The `CreateContact` and `EditContact` pages catch `ProblemDetailsException` and map server-side field errors back to individual form fields via `ValidationMessageStore`.[^19]
+HTTP errors flow through `ProblemDetailsHandler` → `ProblemDetailsException`, with supporting types `ClientProblemDetails` and `ProblemDetailsExtensions`. Pages catch `ProblemDetailsException` and map field errors via `ValidationMessageStore`.[^18][^19]
 
 #### 3d. Pages
 
-**`/contacts` (`Contacts.razor`)** — MudBlazor server-reloading table with search, sort, edit, delete:[^20]
-- Search box triggers `_contactTable.ReloadServerData()` on change
-- Sort is performed client-side on the page's data (not server-side pagination)
-- **Edit** button (blue, pencil icon) per row → navigates to `/edit-contact/{id}`
-- Delete shows a `MudMessageBox` confirmation dialog before calling the API
-- Error state shown via cascading `Error` component
+**`/contacts`** — MudBlazor `MudTable` with search, sort, edit (→ `/edit-contact/{id}`), delete (confirmation dialog). Uses code-behind pattern (`Contacts.razor.cs`).[^20]
 
-**`/create-contact` (`CreateContact.razor`)** — MudBlazor form with EditContext validation:[^21]
-- `MudDatePicker` for optional birthday
-- Submits via `HandleCreateContact()` → navigates to `/contacts` on success
-- Maps `ProblemDetailsException` field errors to form validation state
+**`/create-contact`** — MudBlazor form (`MudTextField`×2 + `MudDatePicker`). Maps `ProblemDetailsException` field errors to form validation.[^21]
 
-**`/edit-contact/{Id:int}` (`EditContact.razor`)** — Edit form for an existing contact:
-- Loads existing contact via `GetContactByIdAsync(Id)` on `OnInitializedAsync`; shows "Contact not found" alert on 404
-- Pre-fills the same MudCard form (MudTextField×2 + MudDatePicker)
-- Submits via `HandleUpdateContact()` → calls `PUT /api/contacts/{id}` → navigates to `/contacts` on success
-- Maps `ProblemDetailsException` field errors to form validation state (same as Create)
-- **Save** / **Cancel** (→ `/contacts`) buttons
+**`/edit-contact/{Id:int}`** — Loads contact via `GetContactByIdAsync`; same form as Create; calls `PUT /api/contacts/{id}` on save.
 
-**`/` (`Home.razor`)** — Static welcome page[^22]
+**`/`** — Static welcome page.[^22]
 
 #### 3e. Layout
 
-`MainLayout.razor` provides a MudBlazor Material Design shell with:[^23]
-- App bar with app name ("Contact Book"), dark/light mode toggle
-- Collapsible side drawer with `NavMenu.razor` (`Home`, `Contacts` nav links)
-- `Error.razor` cascading value wraps the entire app for global error banner display
+`MainLayout.razor` provides a MudBlazor shell with app bar (dark/light toggle), collapsible drawer with `NavMenu.razor`, and `Error.razor` cascading error banner.[^23]
 
 #### 3f. Azure Static Web Apps Routing
 
 A `staticwebapp.config.json` in `wwwroot` configures Azure Static Web Apps to return `index.html` for all non-asset routes, enabling client-side Blazor routing on page refresh (fixes issue #35).[^24]
+
+→ Full specification: [`docs/specs/AddressBook.Web.md`](../../docs/specs/AddressBook.Web.md)
 
 ---
 
@@ -501,22 +236,16 @@ Tests run against the **live Azure API** at `https://addressbook-api-h5gmdghdcyf
 
 | Test Group | Scenarios |
 |---|---|
-| GET /api/Contacts | Get all; search by term (`skr`); verify expected contact names |
+| GET /api/Contacts | Get all; search by term (`skr`); verify expected contact names (hardcoded expected: Alex Skr, Vera Skrynnik, Skrynnik Vera) |
 | GET /api/Contacts/{id} | Valid ID (1 → John Doe) → 200; Non-existent ID → 404 |
 | POST /api/Contacts | Create with birthday + verify + delete; create without birthday; create with 31-char names → 400; create with future date → 400 + `Birthday` field error |
 | DELETE /api/Contacts/{id} | Non-existent ID → 404 |
 
 The `ApiClient` class (`api-client.ts`) is a singleton wrapping `APIRequestContext`, with helpers for both "happy path" typed responses and raw `APIResponse` for error scenarios.[^27]
 
-**DTO classes:**[^28]
-```typescript
-export class Contact {
-    static createCorrectContactWithBirthday()    // → Petr Petrov, 2011-11-11
-    static createCorrectContactWithoutBirthday() // → Petr Petrov, no birthday
-    static createIncorrectContact()              // → 31-char first/last (over limit)
-    static createContactWithFutureDate()         // → Petr Petrov, 2100-11-11
-}
-```
+**DTOs:** `Contact` (with factory methods for test data), `GetContactsResponse`, and `ProblemDetails` (RFC 7807 client model).[^28]
+
+→ Full specification: [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md)
 
 ---
 
@@ -558,31 +287,7 @@ The project demonstrates heavy Copilot coding agent use:[^31]
 
 ### 8. Database Schema
 
-Derived from EF Core entity configurations and seed data:[^10]
-
-```
-Contacts
-  Id          INT  IDENTITY PK
-  OwnerId     INT  NOT NULL          (always 1 in current impl)
-  FirstName   NVARCHAR(30) NOT NULL
-  LastName    NVARCHAR(30) NOT NULL
-  Birthday    DATE  NULL
-
-Phones
-  Id                INT  IDENTITY PK
-  ContactId         INT  FK → Contacts.Id
-  PhoneOperatorId   INT  FK → PhoneOperators.Id
-  PhoneNumber       NVARCHAR(15) NOT NULL
-  Comment           NVARCHAR(100) NULL
-
-PhoneOperators
-  Id           INT  IDENTITY PK
-  Name         NVARCHAR(30) NOT NULL
-  Description  NVARCHAR(100) NOT NULL
-
-Seed: Vodafone UA, Kyivstar UA, Super EE (Estonia)
-Seed: John Doe (1990-01-01), Jane Smith (1992-02-02) with 2 phones each
-```
+Database schema (3 tables: `Contacts`, `Phones`, `PhoneOperators`) with seed data is documented in the Api spec.[^10]
 
 > **Note:** `PhoneNumber` max length is 15 in EF config vs. 20 in the FRS — a minor discrepancy.[^33]
 
@@ -669,11 +374,11 @@ graph LR
 
 ## Issues & Development History
 
-### Open Issue
+### Resolved Issues (previously open)
 
-| # | Title | Description |
+| # | Title | Resolution |
 |---|---|---|
-| **#50** | Handle exceptions in API | Wrong DB name → GET contact → 500 with no details instead of `ProblemDetails`; being fixed by Draft PR #51[^13] |
+| **#50** | Handle exceptions in API | Fixed — `UseExceptionHandler` moved to first position in pipeline; PR #51 merged[^13] |
 
 ### Completed Feature Milestones (closed issues)
 
@@ -701,6 +406,21 @@ graph LR
 | Phone management not yet in API | **High** | No Phone endpoints in `ContactsController`; entities exist in domain |
 | Future plans (email, categories, multi-tenancy) | **Medium** | Inferred from FRS "Future Enhancements" + `OwnerId` design |
 | Test plan content | **Low** | `docs/Test plan.md` found but not fetched in full |
+
+---
+
+## Specification Documents
+
+Detailed per-project specifications are maintained in `docs/specs/`:
+
+| Document | Covers |
+|---|---|
+| [`docs/specs/AddressBook.Contracts.md`](../../docs/specs/AddressBook.Contracts.md) | All commands, queries, models — full type signatures and design decisions |
+| [`docs/specs/AddressBook.Api.md`](../../docs/specs/AddressBook.Api.md) | Domain model, repository interfaces, CQRS handlers, validation, data access, middleware pipeline, CORS, DB schema, build/run |
+| [`docs/specs/AddressBook.Web.md`](../../docs/specs/AddressBook.Web.md) | Blazor pages, API service, error handling subsystem, MudBlazor component usage, layout, build/run |
+| [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md) | Playwright API client, DTOs, all test scenarios, config, CI workflow |
+
+These spec documents provide implementation-level detail complementing the architectural overview in this file.
 
 ---
 
