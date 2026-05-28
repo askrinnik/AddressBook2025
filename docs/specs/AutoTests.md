@@ -47,7 +47,7 @@ Source: `src/AutoTests/tests/api-client.ts`
 
 `ApiClient` is implemented as a singleton wrapper over Playwright `APIRequestContext`.
 
-- Base URL: `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
+- Base URL: resolves from `process.env.BASE_URL` with fallback to `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
 - Contacts path segment: `Contacts`
 - Assertion strategy:
   - Positive-path methods use in-method assertions (`expect.soft(...)`) and return typed payloads.
@@ -92,6 +92,7 @@ export class Contact {
 
 Source: `src/AutoTests/tests/dtos/GetContactsResponse.ts`
 
+- `GetContactsResponse` is a TypeScript **interface** (not a class).
 - `totalRows: number`
 - `rows: Contact[]`
 
@@ -102,8 +103,10 @@ Source: `src/AutoTests/tests/dtos/ProblemDetails.ts`
 Client-side RFC 7807 model used for validation-error assertions.
 
 - Core fields: `type`, `title`, `status`, `detail`, `instance`, `errors`
-- `hasErrors(): boolean`
-- `messagesFor(propertyName: string): string[]`
+- `errors` type: `string[] | Record<string, string[]>` (supports both flat and keyed error maps)
+- `hasErrors(): boolean` — returns true when at least one error message is present
+- `get messages: string[]` — flattens all error messages into a single array
+- `messagesFor(propertyName: string): string[]` — returns messages for a specific keyed property
 - `static fromJSON(json: any): ProblemDetails`
 
 ## Test Scenarios
