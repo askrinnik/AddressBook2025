@@ -42,9 +42,9 @@ Your task is to ensure .NET/C# code in ${selection} meets the best practices spe
 
 ## Testing Standards
 
-- Use XUnit framework with FluentAssertions for assertions
+- Use MSTest framework with FluentAssertions for assertions
 - Follow AAA pattern (Arrange, Act, Assert)
-- Use NSubstitute for mocking dependencies
+- Use Moq for mocking dependencies
 - Test both success and failure scenarios
 - Include null parameter validation tests
 
@@ -71,7 +71,7 @@ Your task is to ensure .NET/C# code in ${selection} meets the best practices spe
 
 ## Performance & Security
 
-- Use C# 14+ features and .NET 10 optimizations where applicable
+- Use C# 12+ features and .NET 8 optimizations where applicable
 - Implement proper input validation and sanitization
 - Use parameterized queries for database operations
 - Follow secure coding practices for AI/ML operations

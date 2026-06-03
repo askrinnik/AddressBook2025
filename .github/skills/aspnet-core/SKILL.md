@@ -5,6 +5,8 @@ description: Build, review, refactor, or architect ASP.NET Core web applications
 
 # ASP.NET Core
 
+> Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
+
 ## Overview
 
 Choose the right ASP.NET Core application model, compose the host and request pipeline correctly, and implement features in the framework style Microsoft documents today.

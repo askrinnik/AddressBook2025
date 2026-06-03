@@ -39,8 +39,6 @@ Your goal is to help me follow best practices for asynchronous programming in C#
 - Avoid mixing blocking and async code
 - Don't create async void methods (except for event handlers)
 - Always await Task-returning methods
-- **Faulted task caching:** `_task ??= LoadAsync()` caches a faulted `Task` permanently — the state never recovers for the object's lifetime. Clear the cached field on fault: `_task ??= LoadAsync().ContinueWith(t => { if (t.IsFaulted) _task = null; return t; }, TaskScheduler.Default).Unwrap();` — or use a try/catch in `LoadAsync` to prevent propagation.
-- **Process stdout/stderr deadlock:** When `RedirectStandardOutput` and `RedirectStandardError` are both `true`, start reading both streams *before* calling `WaitForExitAsync` — reading after the process exits deadlocks when output exceeds the OS pipe buffer: `var stdoutTask = process.StandardOutput.ReadToEndAsync(ct); var stderrTask = process.StandardError.ReadToEndAsync(ct); await process.WaitForExitAsync(ct); string stdout = await stdoutTask; string stderr = await stderrTask;`
 
 ## Implementation Patterns
 

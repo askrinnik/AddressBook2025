@@ -13,7 +13,6 @@ Your goal is to help me write effective unit tests with XUnit, covering both sta
 - Reference Microsoft.NET.Test.Sdk, xunit, and xunit.runner.visualstudio packages
 - Create test classes that match the classes being tested (e.g., `CalculatorTests` for `Calculator`)
 - Use .NET SDK test commands: `dotnet test` for running tests
-- In this repository, run `dotnet build AIAssistant.slnx -p:FastBuild=true -p:SkipFrontendBuild=true /m` before running test commands after code changes
 
 ## Test Structure
 
@@ -59,7 +58,6 @@ Your goal is to help me write effective unit tests with XUnit, covering both sta
 - Mock dependencies to isolate units under test
 - Use interfaces to facilitate mocking
 - Consider using a DI container for complex test setups
-- When an API adds a new optional parameter and you update a mock assertion to compile, using `Arg.Any<T>()` is only an interim fix — add a dedicated test that asserts the specific default value; `Arg.Any<T>()` passes even when the value is 0, -1, or `int.MinValue`.
 
 ## Test Organization
 
