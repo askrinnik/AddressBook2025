@@ -1,6 +1,6 @@
 ---
-description: "Blazor WebAssembly and MudBlazor conventions for AddressBook2025 frontend. Use when creating or modifying Razor pages, components, layouts, or the API service layer."
-applyTo: "src/AddressBook.Web/**"
+description: "Blazor WebAssembly and MudBlazor conventions for the frontend. Use when creating or modifying Razor pages, components, layouts, or the API service layer."
+applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 ---
 # Blazor & MudBlazor Conventions
 
