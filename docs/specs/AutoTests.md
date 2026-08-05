@@ -4,10 +4,11 @@
 
 `AutoTests` is a Playwright (TypeScript) end-to-end API test suite for the AddressBook solution.
 
-- Test target: live Azure API at `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
+- Test target: configurable via `BASE_URL`, defaulting to the local API at `http://localhost:5000/api/`
+- Remote target: the live Azure API at `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/` via the `test:remote` script or `BASE_URL` (see [Running Tests](#running-tests))
 - Test scope: API-level E2E scenarios for Contacts endpoints
 - Status code assertions: `http-status-codes` npm package (`StatusCodes` constants)
-- Cross-browser execution: Chromium, Firefox, WebKit
+- Execution model: a single `api` project (pure HTTP tests, no browser engine)
 
 ## Runtime and Tooling
 
@@ -15,6 +16,7 @@
 - Language: TypeScript
 - Linting: ESLint
 - Formatting: Prettier
+- Cross-platform env vars: `cross-env`
 - Package manager: npm
 
 ## Playwright Configuration
@@ -31,13 +33,24 @@ Source: `src/AutoTests/playwright.config.ts`
 | `reporter` | `html` |
 | `use.trace` | `on-first-retry` |
 
-### Browser Projects
+### Projects
 
-| Project Name | Device Profile |
+| Project Name | Description |
 |---|---|
-| `chromium` | `Desktop Chrome` |
-| `firefox` | `Desktop Firefox` |
-| `webkit` | `Desktop Safari` |
+| `api` | Single project for HTTP API tests; no browser engine is configured |
+
+## Running Tests
+
+Source: `src/AutoTests/package.json`
+
+| Script | Command | Purpose |
+|---|---|---|
+| `test` | `npx playwright test` | Run against the local API (default `BASE_URL`) |
+| `test:report` | `npx playwright test && playwright show-report` | Run locally and open the HTML report |
+| `test:remote` | `cross-env BASE_URL=https://addressbook-api-...azurewebsites.net/api/ playwright test` | Run against the remote Azure API |
+| `test:remote:report` | same as `test:remote`, then `playwright show-report` | Run against Azure and open the HTML report |
+| `lint` | `eslint tests` | Lint the test sources |
+| `prettier:check` / `prettier:format` | Prettier check / write | Formatting |
 
 ## API Client Specification
 
@@ -47,7 +60,7 @@ Source: `src/AutoTests/tests/api-client.ts`
 
 `ApiClient` is implemented as a singleton wrapper over Playwright `APIRequestContext`.
 
-- Base URL: resolves from `process.env.BASE_URL` with fallback to `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
+- Base URL: resolves from `process.env.BASE_URL` with fallback to `http://localhost:5000/api/`
 - Contacts path segment: `Contacts`
 - Assertion strategy:
   - Positive-path methods use in-method assertions (`expect.soft(...)`) and return typed payloads.
@@ -118,10 +131,10 @@ Source: `src/AutoTests/tests/api-testing.spec.ts`
 | Test | Description |
 |---|---|
 | `get all contacts` | Fetches all contacts; verifies `rows.length > 0` and `rows.length === totalRows` |
-| `get all contacts by letters` | Searches with `skr`; verifies each returned name contains search term |
-| `GET contacts by search term, verifying CORRECT names` | Searches with `skr`; verifies exact expected contacts: Alex Skr (1972-07-14), Vera Skrynnik (1998-12-11), Skrynnik Vera (no birthday) |
+| `get all contacts by letters` | Searches with `skr`; verifies each returned name contains the search term |
+| `create contacts, verify search returns them, and delete` | Create → Verify → Delete: creates three contacts sharing a unique per-run search token (`Skr${Date.now()}`), verifies the search returns exactly those contacts, then deletes them in a `finally` block. Independent of seeded data. |
 
-Note in source code: a Russian comment explains both checks are intentionally kept to demonstrate two testing approaches.
+Note: both search tests are kept intentionally to demonstrate two testing approaches (source comment).
 
 ### GET /api/Contacts/{id}
 
@@ -186,7 +199,7 @@ All functional test cases must pass without critical defects.
 Source: `.github/workflows/playwright.yml`
 
 - Workflow name: `Playwright Tests`
-- Trigger: `push` and `pull_request` for `main` and `master`
+- Trigger: `workflow_dispatch` (manual). The `push` / `pull_request` triggers for `main` / `master` are present but commented out.
 - Runner: `ubuntu-latest`
 - Timeout: `60` minutes
 - Working directory for test commands: `src/AutoTests`
