@@ -7,8 +7,9 @@
     "prettier:check": "prettier --check \"tests/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "lint": "eslint tests",
     "test": "npx playwright test",
-    "test:local": "cross-env BASE_URL=http://localhost:5000/api/ playwright test",
-    "test:local:report": "cross-env BASE_URL=http://localhost:5000/api/ playwright test && playwright show-report"
+    "test:report": "npx playwright test && playwright show-report",
+    "test:remote": "cross-env BASE_URL=https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/ playwright test",
+    "test:remote:report": "cross-env BASE_URL=https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/ playwright test && playwright show-report"
   },
   "keywords": [],
   "author": "",

@@ -4,8 +4,8 @@
 
 `AutoTests` is a Playwright (TypeScript) end-to-end API test suite for the AddressBook solution.
 
-- Test target: configurable via `BASE_URL`, defaulting to the live Azure API at `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
-- Local target: `http://localhost:5000/api/` via the `test:local` script (see [Running Tests](#running-tests))
+- Test target: configurable via `BASE_URL`, defaulting to the local API at `http://localhost:5000/api/`
+- Remote target: the live Azure API at `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/` via the `test:remote` script or `BASE_URL` (see [Running Tests](#running-tests))
 - Test scope: API-level E2E scenarios for Contacts endpoints
 - Status code assertions: `http-status-codes` npm package (`StatusCodes` constants)
 - Execution model: a single `api` project (pure HTTP tests, no browser engine)
@@ -45,9 +45,10 @@ Source: `src/AutoTests/package.json`
 
 | Script | Command | Purpose |
 |---|---|---|
-| `test` | `npx playwright test` | Run against the default (Azure) `BASE_URL` |
-| `test:local` | `cross-env BASE_URL=http://localhost:5000/api/ playwright test` | Run against the local API |
-| `test:local:report` | same as `test:local`, then `playwright show-report` | Run locally and open the HTML report |
+| `test` | `npx playwright test` | Run against the local API (default `BASE_URL`) |
+| `test:report` | `npx playwright test && playwright show-report` | Run locally and open the HTML report |
+| `test:remote` | `cross-env BASE_URL=https://addressbook-api-...azurewebsites.net/api/ playwright test` | Run against the remote Azure API |
+| `test:remote:report` | same as `test:remote`, then `playwright show-report` | Run against Azure and open the HTML report |
 | `lint` | `eslint tests` | Lint the test sources |
 | `prettier:check` / `prettier:format` | Prettier check / write | Formatting |
 
@@ -59,7 +60,7 @@ Source: `src/AutoTests/tests/api-client.ts`
 
 `ApiClient` is implemented as a singleton wrapper over Playwright `APIRequestContext`.
 
-- Base URL: resolves from `process.env.BASE_URL` with fallback to `https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/`
+- Base URL: resolves from `process.env.BASE_URL` with fallback to `http://localhost:5000/api/`
 - Contacts path segment: `Contacts`
 - Assertion strategy:
   - Positive-path methods use in-method assertions (`expect.soft(...)`) and return typed payloads.

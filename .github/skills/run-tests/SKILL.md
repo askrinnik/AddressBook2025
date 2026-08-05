@@ -30,41 +30,47 @@ npx playwright install
 
 ## Running Tests
 
-### Against the remote Azure API (default)
-
-No configuration needed — the existing Azure URL is used as the fallback:
-
-```bash
-cd src/AutoTests
-npx playwright test
-```
-
-### Against a locally running API
+### Against a locally running API (default)
 
 Start the local API first (see the [run-api](../run-api/SKILL.md) skill), then run the
-cross-platform npm script — it sets `BASE_URL=http://localhost:5000/api/` for you:
+tests — the default `BASE_URL` fallback is `http://localhost:5000/api/`:
 
 ```bash
 cd src/AutoTests
-npm run test:local
+npm test
 ```
 
 To run and open the HTML report afterwards:
 
 ```bash
-npm run test:local:report
+npm run test:report
+```
+
+### Against the remote Azure API
+
+Use the cross-platform npm script — it sets the Azure `BASE_URL` for you:
+
+```bash
+cd src/AutoTests
+npm run test:remote
+```
+
+To run and open the HTML report afterwards:
+
+```bash
+npm run test:remote:report
 ```
 
 Alternatively, set `BASE_URL` manually before running:
 
 **bash / zsh**
 ```bash
-BASE_URL=http://localhost:5000/api/ npx playwright test
+BASE_URL=https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/ npx playwright test
 ```
 
 **PowerShell**
 ```powershell
-$env:BASE_URL = "http://localhost:5000/api/"
+$env:BASE_URL = "https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/"
 npx playwright test
 ```
 
@@ -72,8 +78,10 @@ npx playwright test
 
 | Command | Purpose |
 |---|---|
-| `npm run test:local` | Run all tests against the local API (`http://localhost:5000/api/`) |
-| `npm run test:local:report` | Run against the local API, then open the HTML report |
+| `npm test` | Run all tests against the local API (`http://localhost:5000/api/`) |
+| `npm run test:report` | Run against the local API, then open the HTML report |
+| `npm run test:remote` | Run all tests against the remote Azure API |
+| `npm run test:remote:report` | Run against the remote Azure API, then open the HTML report |
 | `npx playwright test -g "create"` | Run tests matching a name pattern |
 | `npx playwright show-report` | Open the last HTML test report |
 

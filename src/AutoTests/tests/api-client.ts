@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { GetContactsResponse } from './dtos/GetContactsResponse';
 import { Contact } from './dtos/contact';
 
-const serviceURL = process.env.BASE_URL ?? 'https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/';
+const serviceURL = process.env.BASE_URL ?? 'http://localhost:5000/api/';
 const contactsPath = 'Contacts';
 
 export class ApiClient {
