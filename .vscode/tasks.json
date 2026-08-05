@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install AutoTests dependencies",
+      "type": "shell",
+      "command": "npm ci",
+      "options": {
+        "cwd": "${workspaceFolder}/src/AutoTests"
+      },
+      "runOptions": {
+        "runOn": "worktreeCreated"
+      },
+      "inAgents": true
+    },
+    {
+      "label": "Build .NET solution",
+      "type": "shell",
+      "command": "dotnet build src/AddressBook.sln",
+      "inAgents": true
+    },
+    {
+      "label": "Run API",
+      "type": "shell",
+      "command": "dotnet run --project src/AddressBook.Api",
+      "inAgents": true
+    },
+    {
+      "label": "Run Playwright tests",
+      "type": "shell",
+      "command": "npm test",
+      "options": {
+        "cwd": "${workspaceFolder}/src/AutoTests"
+      },
+      "inAgents": true
+    },
+    {
+      "label": "Lint AutoTests",
+      "type": "shell",
+      "command": "npm run lint",
+      "options": {
+        "cwd": "${workspaceFolder}/src/AutoTests"
+      },
+      "inAgents": true
+    }
+  ]
+}
