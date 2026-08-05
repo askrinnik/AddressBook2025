@@ -94,7 +94,7 @@ src/ApiTests/
 ### Фаза 1 — Инфраструктура
 
 - [x] **T3** ([#56](https://github.com/askrinnik/AddressBook2025/issues/56)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, таймауты) + dotenv.
-- [ ] **T4** ([#63](https://github.com/askrinnik/AddressBook2025/issues/63)) `schemas/contact.schema.ts` — zod-схемы `Contact` / `ListResponse` / `ProblemDetails`.
+- [x] **T4** ([#63](https://github.com/askrinnik/AddressBook2025/issues/63)) `schemas/contact.schema.ts` — zod-схемы `Contact` / `ListResponse` / `ProblemDetails`.
 - [ ] **T5** ([#62](https://github.com/askrinnik/AddressBook2025/issues/62)) `clients/base-api-client.ts` + `contacts-client.ts` (5 методов, без ассертов, парсинг `Location` через `/\/Contacts\/(\d+)$/`).
 - [ ] **T6** ([#57](https://github.com/askrinnik/AddressBook2025/issues/57)) `models/problem-details.ts` — порт RFC7807-хелпера (`messagesFor`, `messages`, `hasErrors`).
 - [ ] **T7** ([#64](https://github.com/askrinnik/AddressBook2025/issues/64)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + граничные варианты.
