@@ -28,31 +28,44 @@ test.describe('GET /api/Contacts', () => {
     expect.soft(contactsArray.length).toBe(contactsBody.totalRows);
   });
 
-  //хочу оставить обе проверки, чтобы показать два подхода к тестированию
-  test('GET contacts by search term, verifying CORRECT names', async ({ request }) => {
+  // Both search tests are kept intentionally to demonstrate two testing approaches
+  test('create contacts, verify search returns them, and delete', async ({ request }) => {
     const apiClient = ApiClient.getInstance(request);
-    const searchTerm = 'skr';
-    const contactsBody = await apiClient.getContactsByTerm(searchTerm);
-    const contactsArray = contactsBody.rows;
+    // Unique token keeps the test independent of seeded data and environment
+    const searchTerm = `Skr${Date.now()}`;
 
-    const EXPECTED_CORRECT_CONTACTS = [
-      new Contact('Alex', 'Skr', '1972-07-14'),
-      new Contact('Vera', 'Skrynnik', '1998-12-11'),
-      new Contact('Skrynnik', 'Vera'),
+    const expectedContacts = [
+      new Contact('Alex', searchTerm, '1972-07-14'),
+      new Contact('Vera', `${searchTerm}ynnik`, '1998-12-11'),
+      new Contact(`${searchTerm}ynnik`, 'Vera'),
     ];
 
-    expect.soft(contactsArray.length).toBe(EXPECTED_CORRECT_CONTACTS.length);
+    const createdIds: number[] = [];
+    try {
+      for (const contact of expectedContacts) {
+        createdIds.push(await apiClient.createContact(contact));
+      }
 
-    // Проверка 2: Каждый возвращенный контакт должен быть в списке ожидаемых
-    for (const actualContact of contactsArray) {
-      // Ищем соответствие в массиве ожидаемых контактов
-      const expectedMatch = EXPECTED_CORRECT_CONTACTS.find(
-        (expectedContact) =>
-          expectedContact.firstName === actualContact.firstName &&
-          expectedContact.lastName === actualContact.lastName,
-      );
+      const contactsBody = await apiClient.getContactsByTerm(searchTerm);
+      const contactsArray = contactsBody.rows;
 
-      expect.soft(expectedMatch).toBeDefined();
+      expect.soft(contactsArray.length).toBe(expectedContacts.length);
+      expect.soft(contactsBody.totalRows).toBe(expectedContacts.length);
+
+      // Every returned contact must be among the created ones
+      for (const actualContact of contactsArray) {
+        const expectedMatch = expectedContacts.find(
+          (expectedContact) =>
+            expectedContact.firstName === actualContact.firstName &&
+            expectedContact.lastName === actualContact.lastName,
+        );
+
+        expect.soft(expectedMatch).toBeDefined();
+      }
+    } finally {
+      for (const contactId of createdIds) {
+        await apiClient.deleteContactById(contactId);
+      }
     }
   });
 });
