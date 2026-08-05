@@ -89,7 +89,7 @@ src/ApiTests/
 ### Фаза 0 — Каркас
 
 - [x] **T1** ([#61](https://github.com/askrinnik/AddressBook2025/issues/61)) Scaffold `src/ApiTests`: `package.json` (скрипты `test`, `test:report`, `test:remote`, `test:ui`, `test:debug`, `lint`, `format`), `tsconfig.json`, `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`, README-заглушка. Создать этот файл плана в `docs/tasks/`.
-- [ ] **T2** ([#58](https://github.com/askrinnik/AddressBook2025/issues/58)) Установить зависимости + `playwright.config.ts` (webServer `dotnet run` + `reuseExistingServer`, reporters `list`+`html`, `trace: on-first-retry`, `baseURL` из env).
+- [x] **T2** ([#58](https://github.com/askrinnik/AddressBook2025/issues/58)) Установить зависимости + `playwright.config.ts` (webServer `dotnet run` + `reuseExistingServer`, reporters `list`+`html`, `trace: on-first-retry`, `baseURL` из env).
 
 ### Фаза 1 — Инфраструктура
 
