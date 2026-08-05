@@ -11,6 +11,7 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
   IRetrieve<ContactId, Contact>,
   ICreate<Contact>,
   IDelete<ContactId>,
+  IUpdate<ContactId, Contact>,
   IExist<ContactId>
 {
   public async Task<IReadOnlyCollection<Contact>> RetrieveManyAsync(GetFilteredContactsQuery key)
@@ -36,6 +37,17 @@ internal class AddressBookRepository(ApplicationDbContext dbContext) :
 
   public async Task<int> DeleteAsync(ContactId key) => 
       await dbContext.Contacts.Where(c => c.Id.Unwrap() == key.Value).ExecuteDeleteAsync();
+
+  public async Task<bool> UpdateAsync(ContactId key, Contact item)
+  {
+    var rows = await dbContext.Contacts
+      .Where(c => c.Id.Unwrap() == key.Value)
+      .ExecuteUpdateAsync(s => s
+        .SetProperty(c => c.FirstName, item.FirstName)
+        .SetProperty(c => c.LastName, item.LastName)
+        .SetProperty(c => c.Birthday, item.Birthday));
+    return rows > 0;
+  }
 
   public async Task<bool> ExistAsync(ContactId key) => 
       await dbContext.Contacts.AnyAsync(c => c.Id.Unwrap() == key.Value);

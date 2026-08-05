@@ -69,4 +69,21 @@ public class ContactsController(
         var response = await sender.Send(new DeleteContactByIdQuery(id), token);
         return !response.Success ? NotFound() : NoContent();
     }
+
+    /// <summary>
+    /// Update contact by ID
+    /// </summary>
+    /// <param name="id">Contact ID</param>
+    /// <param name="request">Updated contact info</param>
+    /// <param name="token"><see cref="CancellationToken"/></param>
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> UpdateContact([FromRoute] int id, [FromBody] UpdateContactCommand request, CancellationToken token)
+    {
+        request.Id = id;
+        var response = await sender.Send(request, token);
+        return response.Found ? NoContent() : NotFound();
+    }
 }

@@ -20,6 +20,7 @@ public static class StartupExtensions
     builder.Services.AddScoped<IRetrieve<ContactId, Contact>, AddressBookRepository>();
     builder.Services.AddScoped<ICreate<Contact>, AddressBookRepository>();
     builder.Services.AddScoped<IDelete<ContactId>, AddressBookRepository>();
+    builder.Services.AddScoped<IUpdate<ContactId, Contact>, AddressBookRepository>();
     builder.Services.AddScoped<IExist<ContactId>, AddressBookRepository>();
 
     ConfigureDbContext(builder);

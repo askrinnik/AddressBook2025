@@ -1,0 +1,55 @@
+name: Security Vulnerability Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run every Monday at 08:00 UTC to catch newly disclosed CVEs
+    - cron: '0 8 * * 1'
+
+jobs:
+  dotnet-vulnerability-scan:
+    name: .NET NuGet Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore src/AddressBook.sln
+
+      - name: Check for vulnerable NuGet packages
+        run: |
+          OUTPUT=$(dotnet list src/AddressBook.sln package --vulnerable --include-transitive)
+          echo "$OUTPUT"
+          # dotnet list --vulnerable exits 0 even when vulnerabilities are found; check output text
+          if echo "$OUTPUT" | grep -q "has the following vulnerable packages"; then
+            echo "::error::Vulnerable NuGet packages detected. Review the output above."
+            exit 1
+          fi
+
+  npm-vulnerability-scan:
+    name: npm Vulnerabilities (AutoTests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install dependencies
+        working-directory: src/AutoTests
+        run: npm ci
+
+      - name: Audit npm packages
+        working-directory: src/AutoTests
+        # --audit-level=high fails only on high/critical severity
+        run: npm audit --audit-level=high

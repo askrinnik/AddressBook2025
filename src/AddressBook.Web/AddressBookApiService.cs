@@ -44,4 +44,25 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
 
         return 0;
     }
+
+    public async Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var response = await httpClient.GetAsync($"contacts/{id}", cancellationToken);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return null;
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ContactModel>(cancellationToken);
+    }
+
+    public async Task UpdateContact(int id, CreateContactModel model, CancellationToken cancellationToken)
+    {
+        var command = new UpdateContactCommand
+        {
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Birthday = model.Birthday.HasValue ? DateOnly.FromDateTime(model.Birthday.Value) : null
+        };
+        var response = await httpClient.PutAsJsonAsync($"contacts/{id}", command, cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
 }
