@@ -6,7 +6,9 @@
     "prettier:format": "prettier --write \"tests/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prettier:check": "prettier --check \"tests/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "lint": "eslint tests",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "test:local": "cross-env BASE_URL=http://localhost:5000/api/ playwright test",
+    "test:local:report": "cross-env BASE_URL=http://localhost:5000/api/ playwright test && playwright show-report"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "@eslint/js": "^9.12.0",
     "@playwright/test": "^1.48.0",
     "@types/node": "^22.7.5",
+    "cross-env": "^7.0.3",
     "eslint": "^9.12.0",
     "globals": "^15.11.0",
     "http-status-codes": "^2.3.0",
