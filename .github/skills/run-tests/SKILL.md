@@ -41,7 +41,21 @@ npx playwright test
 
 ### Against a locally running API
 
-Set `BASE_URL` to point at the local instance before running:
+Start the local API first (see the [run-api](../run-api/SKILL.md) skill), then run the
+cross-platform npm script — it sets `BASE_URL=http://localhost:5000/api/` for you:
+
+```bash
+cd src/AutoTests
+npm run test:local
+```
+
+To run and open the HTML report afterwards:
+
+```bash
+npm run test:local:report
+```
+
+Alternatively, set `BASE_URL` manually before running:
 
 **bash / zsh**
 ```bash
@@ -54,18 +68,17 @@ $env:BASE_URL = "http://localhost:5000/api/"
 npx playwright test
 ```
 
-> Start the local API first — see the [run-api](../run-api/SKILL.md) skill.
-
 ## Useful Flags
 
 | Command | Purpose |
 |---|---|
-| `npx playwright test --project=chromium` | Run in Chromium only |
-| `npx playwright test --project=firefox` | Run in Firefox only |
-| `npx playwright test --project=webkit` | Run in WebKit only |
-| `npx playwright test --headed` | Run with visible browser windows |
+| `npm run test:local` | Run all tests against the local API (`http://localhost:5000/api/`) |
+| `npm run test:local:report` | Run against the local API, then open the HTML report |
 | `npx playwright test -g "create"` | Run tests matching a name pattern |
 | `npx playwright show-report` | Open the last HTML test report |
+
+> These are HTTP API tests, so the config uses a single `api` project — there are no
+> per-browser projects to select.
 
 ## Test Structure Overview
 
