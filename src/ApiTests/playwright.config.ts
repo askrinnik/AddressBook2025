@@ -1,17 +1,8 @@
 import { defineConfig } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const rootDir = path.dirname(fileURLToPath(import.meta.url));
-
-// Local overrides live in .env.local; defaults are documented in .env.example.
-dotenv.config({ path: path.resolve(rootDir, '.env.local') });
-
-const baseURL = process.env.BASE_URL ?? 'http://localhost:5000/api/';
+import { env } from './src/config/env.js';
 
 // webServer needs a readiness URL that answers 200; the contacts list endpoint does.
-const readinessURL = new URL('Contacts', baseURL).toString();
+const readinessURL = new URL('Contacts', env.baseURL).toString();
 
 export default defineConfig({
   testDir: './tests',
@@ -20,8 +11,12 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [['list'], ['html']],
+  timeout: env.apiTimeout,
+  expect: {
+    timeout: env.expectTimeout,
+  },
   use: {
-    baseURL,
+    baseURL: env.baseURL,
     trace: 'on-first-retry',
   },
 
