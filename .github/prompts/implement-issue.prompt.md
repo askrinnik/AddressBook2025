@@ -35,7 +35,7 @@ Use the **`github-issue`** skill to read issue `<issue>` (body, comments, parent
   - **API**: command/query handlers and validators in `src/AddressBook.Api/Application/`, the controller in `src/AddressBook.Api/Controllers/`, the repository in `src/AddressBook.Api/DataAccess/`, domain types in `src/AddressBook.Api/Domain/`.
   - **Contracts / DTOs**: `src/AddressBook.Contracts/` (commands, queries, `Models/`).
   - **Web (Blazor WASM + MudBlazor)**: pages in `src/AddressBook.Web/Pages/`, components in `Components/`, the API layer `AddressBookApiService.cs` / `IAddressBookApiService.cs`, models in `Models/`.
-  - **E2E tests**: `src/AutoTests/tests/` (Playwright).
+  - **Tests**: API E2E tests live in `src/ApiTests` (Playwright); UI E2E tests live in `src/UiTests` (Playwright), when that suite exists.
 - Find the closest existing feature that already does something similar and follow its shape — reuse existing abstractions (the CQRS handler/validator pattern, `ApiClient` and the DTO factories in the tests, the shared Blazor components) instead of inventing new ones.
 - Follow `api-architecture.instructions.md` for anything under `src/AddressBook.Api/**` and `blazor.project-specific.instructions.md` for anything under the Web project.
 
@@ -58,9 +58,9 @@ Use the **`github-issue`** skill to read issue `<issue>` (body, comments, parent
 ## 6. Implement
 
 - Once the plan is approved, implement it. Keep changes focused and consistent with `.github/copilot-instructions.md` and the relevant instruction files for the file types touched.
-- **Feature mode:** wire the whole vertical slice: domain/repository, CQRS handler + validator, the DTOs in `AddressBook.Contracts`, the controller endpoint, and the MudBlazor UI — a half-wired feature is not done. New or changed API behaviour must ship with Playwright E2E tests in `src/AutoTests/tests/`; skip tests only for the explicitly-justified no-API-change case recorded in the plan.
-- **Test-authoring mode:** the Playwright tests are the deliverable — add or extend the specs in `src/AutoTests/tests/` for the existing behaviour and do not touch production code.
-- All Playwright tests, in either mode, follow `playwright-conventions.instructions.md` (route calls through `ApiClient`, use DTO factories, Create → Verify → Delete isolation) and cover the happy path, boundaries, and the negatives.
+- **Feature mode:** wire the whole vertical slice: domain/repository, CQRS handler + validator, the DTOs in `AddressBook.Contracts`, the controller endpoint, and the MudBlazor UI — a half-wired feature is not done. New or changed API behaviour must ship with Playwright API tests in `src/ApiTests`; skip tests only for the explicitly-justified no-API-change case recorded in the plan.
+- **Test-authoring mode:** the Playwright tests are the deliverable — add or extend the API specs in `src/ApiTests` (or the UI E2E specs in `src/UiTests`) for the existing behaviour and do not touch production code.
+- All Playwright tests, in either mode, follow `playwright-conventions.instructions.md` (route calls through the API client, use the data factories, Create → Verify → Delete isolation) and cover the happy path, boundaries, and the negatives.
 - If the plan turns out to be wrong once you are in the code, say so, update the plan file, and confirm with me before diverging materially from it.
 
 ## 7. Build

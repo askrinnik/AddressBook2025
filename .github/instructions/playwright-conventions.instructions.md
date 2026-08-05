@@ -1,6 +1,6 @@
 ---
 description: "Playwright TypeScript E2E test conventions for AddressBook2025. Use when writing, modifying, or reviewing API end-to-end tests."
-applyTo: "src/AutoTests/**"
+applyTo: "src/ApiTests/**, src/AutoTests/**"
 ---
 # Playwright E2E Test Conventions
 

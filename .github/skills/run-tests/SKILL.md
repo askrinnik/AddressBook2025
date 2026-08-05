@@ -7,9 +7,11 @@ description: >
   first time.
 ---
 
-# Run AddressBook E2E Tests (Playwright)
+# Run AddressBook API Tests (Playwright)
 
 > Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
+
+> Folder convention: API E2E tests live in `src/ApiTests` (this skill). UI end-to-end tests live in their own `src/UiTests` folder and are run separately. This skill targets the `src/ApiTests` framework described in `docs/tasks/api-tests-framework-plan.md`.
 
 ## Prerequisites
 
@@ -21,7 +23,7 @@ description: >
 ## One-Time Setup
 
 ```bash
-cd src/AutoTests
+cd src/ApiTests
 npm install
 npx playwright install
 ```
@@ -36,7 +38,7 @@ Start the local API first (see the [run-api](../run-api/SKILL.md) skill), then r
 tests — the default `BASE_URL` fallback is `http://localhost:5000/api/`:
 
 ```bash
-cd src/AutoTests
+cd src/ApiTests
 npm test
 ```
 
@@ -51,7 +53,7 @@ npm run test:report
 Use the cross-platform npm script — it sets the Azure `BASE_URL` for you:
 
 ```bash
-cd src/AutoTests
+cd src/ApiTests
 npm run test:remote
 ```
 
@@ -92,8 +94,8 @@ npx playwright test
 
 | Concept | Details |
 |---|---|
-| **ApiClient** | Singleton wrapper (`tests/api-client.ts`) — all HTTP calls go through it, never raw `request` |
-| **DTOs** | TypeScript classes in `tests/dtos/` mirror backend models; use static factory methods for test data |
+| **API client** | Wrapper in `src/clients/` (`base-api-client.ts` + per-endpoint clients) — all HTTP calls go through it, never raw `request` |
+| **Schemas & data** | zod schemas in `src/schemas/` validate responses; data factories in `src/data/` build test payloads and boundary variants |
 | **Assertions** | `expect.soft()` for non-critical checks (test continues); `expect()` for must-halt assertions |
 | **Test isolation** | Follow **Create → Verify → Delete** pattern — every test cleans up its own data |
 | **Grouping** | Tests grouped by `test.describe('VERB /api/Endpoint', ...)` |
@@ -101,7 +103,7 @@ npx playwright test
 ## Viewing the HTML Report
 
 ```bash
-cd src/AutoTests
+cd src/ApiTests
 npx playwright show-report
 ```
 

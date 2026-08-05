@@ -27,12 +27,12 @@ Start each server as **your own background terminal** so you keep control of it 
 
 ## API-level verification
 
-- Run the Playwright E2E suite with the `run-tests` skill (`npm test` in `src/AutoTests`, default `BASE_URL=http://localhost:5000/api/`).
+- Run the Playwright API suite with the `run-tests` skill (`npm test` in `src/ApiTests`, default `BASE_URL=http://localhost:5000/api/`).
 - All tests must pass. Add cases for the new/changed behaviour if they are missing; for a defect fix, add a regression test that fails before the fix and passes after.
 
 ## UI-level verification
 
-- Walk **every** acceptance criterion in a real browser against `http://localhost:5156` using the Playwright browser tools, capturing a screenshot per item.
+- If a UI E2E suite exists in `src/UiTests`, run it and let it drive the acceptance walk. Otherwise walk **every** acceptance criterion manually in a real browser against `http://localhost:5156` using the Playwright browser tools, capturing a screenshot per item.
 - Check the **browser console and network requests** for errors even when the happy path looks right.
 - Exercise the obvious negatives: validation on empty/invalid input, cancel, and a page reload / navigate-away to confirm state persists as intended.
 
