@@ -99,7 +99,7 @@ src/ApiTests/
 - [x] **T6** ([#57](https://github.com/askrinnik/AddressBook2025/issues/57)) `models/problem-details.ts` — порт RFC7807-хелпера (`messagesFor`, `messages`, `hasErrors`).
 - [x] **T7** ([#64](https://github.com/askrinnik/AddressBook2025/issues/64)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + граничные варианты.
 - [x] **T8** ([#60](https://github.com/askrinnik/AddressBook2025/issues/60)) `fixtures/api.fixtures.ts` — `test.extend` (client + factory + авто-очистка созданных контактов).
-- [ ] **T9** ([#59](https://github.com/askrinnik/AddressBook2025/issues/59)) `utils/assertions.ts` — хелперы проверки схем и problem-details.
+- [x] **T9** ([#59](https://github.com/askrinnik/AddressBook2025/issues/59)) `utils/assertions.ts` — хелперы проверки схем и problem-details.
 
 ### Фаза 2 — Тесты
 
