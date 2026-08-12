@@ -108,7 +108,7 @@ src/ApiTests/
 - [x] **T12** ([#69](https://github.com/askrinnik/AddressBook2025/issues/69)) `tests/contacts/create.spec.ts` — валидный с/без birthday, границы 30/31, пусто, пробелы `"   "` → `400` (корректно отклоняется, «баг» не подтвердился), будущая дата → `400` + problem-details, «сегодня» → OK.
 - [x] **T13** ([#73](https://github.com/askrinnik/AddressBook2025/issues/73)) `tests/contacts/update.spec.ts` — **PUT (новое покрытие)**: полное/частичное обновление, `404`, валидация `400`, границы.
 - [x] **T14** ([#68](https://github.com/askrinnik/AddressBook2025/issues/68)) `tests/contacts/delete.spec.ts` — удаление созданного (`204`) → затем `404`, удаление неизвестного → `404`.
-- [ ] **T15** ([#72](https://github.com/askrinnik/AddressBook2025/issues/72)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной create → read → update → read → delete → `404`.
+- [x] **T15** ([#72](https://github.com/askrinnik/AddressBook2025/issues/72)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной create → read → update → read → delete → `404`.
 - [ ] **T16** ([#70](https://github.com/askrinnik/AddressBook2025/issues/70)) `tests/contract/schema.spec.ts` — валидация всех ответов против zod-схем.
 
 ### Фаза 3 — Обвязка и документация
