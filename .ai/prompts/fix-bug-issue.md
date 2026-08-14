@@ -45,7 +45,7 @@ Also follow the `api-architecture`, `blazor.project-specific`, `aspnet-rest-apis
 
 ## 7. Implement the fix
 
-- Once the plan is approved, implement it. Keep changes focused and consistent with `.github/copilot-instructions.md` and the relevant instruction files for the file types touched. Fix the root cause, not the symptom.
+- Once the plan is approved, implement it. Keep changes focused and consistent with `CLAUDE.md` and the relevant instruction files for the file types touched. Fix the root cause, not the symptom.
 
 ## 8. Verify the fix works
 

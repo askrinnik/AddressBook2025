@@ -29,7 +29,7 @@ Before starting, check for these optional context sources (read them if they exi
 - `Agents.md` or `AGENTS.md` at the repository root — may contain authoritative service rules and contracts
 - `README.md` — project overview and setup instructions
 - `ARCHITECTURE.md`, `docs/architecture.md`, or similar — existing architecture documentation
-- `.github/copilot-instructions.md` — project-specific AI instructions
+- `CLAUDE.md` — project-specific AI instructions (read by both Claude Code and GitHub Copilot)
 
 ---
 
@@ -95,7 +95,7 @@ Build a complete understanding of the codebase before writing anything.
 Check for and read (if they exist):
 1. `Agents.md` or `AGENTS.md` at the repository root
 2. `README.md`
-3. `.github/copilot-instructions.md`
+3. `CLAUDE.md`
 4. `ARCHITECTURE.md`, `docs/` directory, `CONTRIBUTING.md`
 
 #### 1b. Detect Technology Stack

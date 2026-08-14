@@ -53,7 +53,7 @@ The steps below apply to both modes; where they differ, the mode is called out.
 
 ## 6. Implement
 
-- Once the plan is approved, implement it. Keep changes focused and consistent with `.github/copilot-instructions.md` and the relevant instruction files for the file types touched.
+- Once the plan is approved, implement it. Keep changes focused and consistent with `CLAUDE.md` and the relevant instruction files for the file types touched.
 - **Feature mode:** wire the whole vertical slice: domain/repository, CQRS handler + validator, the DTOs in `AddressBook.Contracts`, the controller endpoint, and the MudBlazor UI — a half-wired feature is not done. New or changed API behaviour must ship with Playwright API tests in `src/ApiTests`; skip tests only for the explicitly-justified no-API-change case recorded in the plan.
 - **Test-authoring mode:** the Playwright tests are the deliverable — add or extend the API specs in `src/ApiTests` (or the UI E2E specs in `src/UiTests`) for the existing behaviour and do not touch production code.
 - All Playwright tests, in either mode, follow `playwright-conventions.instructions.md` (route calls through the API client, use the data factories, Create → Verify → Delete isolation) and cover the happy path, boundaries, and the negatives.
