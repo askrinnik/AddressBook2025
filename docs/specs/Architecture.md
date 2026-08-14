@@ -129,24 +129,37 @@ graph TB
 ```
 askrinnik/AddressBook2025/
 ├── .github/
-│   ├── copilot-instructions.md      # "Source code supports non-English comments"
+│   ├── agents/                      # Custom agent definitions (GitHub Copilot)
+│   ├── instructions/                # Path-scoped coding standards (applyTo globs)
+│   ├── prompts/                     # Copilot command wrappers (*.prompt.md)
+│   ├── skills/                      # Reusable skills (source of truth; _local.* = repo-local)
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
 │       ├── build.yml                # CI: dotnet build on every push
 │       └── playwright.yml           # E2E tests on push/PR to main
+├── .ai/
+│   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
+│   └── prompts/                     # Shared, tool-neutral command bodies
+├── .claude/
+│   ├── agents/                      # Claude Code agents (curated subset of .github/agents)
+│   ├── commands/                    # Claude command wrappers (/<name>)
+│   └── skills/                      # Byte-for-byte mirror of .github/skills
+├── CLAUDE.md                        # Single instruction hub (read by Claude Code + Copilot)
 ├── docs/
-│   └── specs/                       # Per-project technical specifications
-│       ├── AddressBook.Api.md
-│       ├── AddressBook.Contracts.md
-│       ├── AddressBook.Web.md
-│       ├── Architecture.md
-│       └── AutoTests.md
+│   ├── specs/                       # Per-project technical specifications
+│   │   ├── AddressBook.Api.md
+│   │   ├── AddressBook.Contracts.md
+│   │   ├── AddressBook.Web.md
+│   │   ├── Architecture.md
+│   │   └── AutoTests.md
+│   └── tasks/                       # Implementation plans (e.g. ui-tests-framework-plan.md)
 ├── src/
 │   ├── AddressBook.sln              # VS 2022 solution file
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
-│   └── AutoTests/                   # Playwright TypeScript E2E tests
+│   ├── ApiTests/                    # Playwright TypeScript API E2E tests (current suite)
+│   └── AutoTests/                   # Legacy Playwright E2E tests (reference only)
 └── README.md                        # Minimal: "pet project for address book development"
 ```
 
@@ -204,7 +217,7 @@ API-level E2E tests running against the live Azure API. Covers GET (list, search
 
 ---
 
-### 6. GitHub Copilot Integration
+### 6. AI Tooling Integration (Copilot + Claude Code)
 
 The project demonstrates heavy Copilot coding agent use:[^8]
 
@@ -215,7 +228,15 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 | #42 | `copilot-swe-agent[bot]` | Fix Azure SWA 404 on page refresh (`staticwebapp.config.json`) |
 | #41 | `copilot-swe-agent[bot]` | Add future-birthday validation to `CreateContactCommandValidator` |
 
-`.github/copilot-instructions.md` contains a single instruction: *"Source code supports non-English comments"* — allowing Russian-language comments in code.[^9]
+> **Updated 2026-08-15:** the AI-customizations layout below reflects the current repository, which has expanded beyond the commit this report otherwise pins to.
+
+**Cross-tool AI customizations.** The repository shares its AI configuration across **GitHub Copilot** (`.github/`) and **Claude Code** (`.claude/`), governed by `.ai/customizations.policy.json`:[^9]
+
+- **Root instructions** — `CLAUDE.md` is the single hub, read by both tools; it replaced the former one-line `.github/copilot-instructions.md`. It still carries the *"source code supports non-English comments"* rule (Russian-language comments are allowed) and points to the specs and instruction files rather than duplicating them.
+- **File-type standards** — `.github/instructions/*.instructions.md`; Copilot auto-applies them via `applyTo` globs, while Claude Code reads them through the pointer table in `CLAUDE.md`.
+- **Skills** — `.github/skills/` is the source of truth, mirrored byte-for-byte to `.claude/skills/`; repo-local workflow skills use the `_local.` prefix. A `sync-ai-customizations` skill audits parity (`check.ps1`).
+- **Commands** — one shared body per command in `.ai/prompts/`, with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude): `implement-issue`, `fix-bug-issue`.
+- **Agents** — `.github/agents/` holds the full Copilot set; a curated subset is translated into `.claude/agents/` for Claude Code (the rest of the roles are covered by Claude Code built-ins).
 
 ---
 
@@ -404,7 +425,7 @@ These spec documents provide implementation-level detail complementing the archi
 
 [^8]: PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51), PR [#48](https://github.com/askrinnik/AddressBook2025/pull/48), PR [#42](https://github.com/askrinnik/AddressBook2025/pull/42), PR [#41](https://github.com/askrinnik/AddressBook2025/pull/41)
 
-[^9]: [.github/copilot-instructions.md](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/copilot-instructions.md) SHA: `04cb6fa8`
+[^9]: [CLAUDE.md](https://github.com/askrinnik/AddressBook2025/blob/main/CLAUDE.md) | [.ai/customizations.policy.json](https://github.com/askrinnik/AddressBook2025/blob/main/.ai/customizations.policy.json) — the cross-tool AI-customizations hub and sync policy (current `main`; supersedes the former `.github/copilot-instructions.md`, which held the single *"source code supports non-English comments"* rule).
 
 [^10]: [src/AddressBook.Api/DataAccess/ApplicationDbContext.cs:400-424](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/ApplicationDbContext.cs) (ValueObjectExtensions)
 
