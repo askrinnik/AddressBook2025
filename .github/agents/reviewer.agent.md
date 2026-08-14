@@ -1,6 +1,6 @@
 ---
 name: Reviewer
-description: Review agent for correctness, security, and regression risk in Sabrewing AIAssistant.
+description: Review agent for correctness, security, and regression risk in AddressBook2025.
 model: GPT-5.3-Codex (copilot)
 tools: ['vscode', 'execute', 'read', 'agent', 'context7/*', 'github/*', 'search', 'web', 'vscode/memory', 'todo']
 ---

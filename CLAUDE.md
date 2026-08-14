@@ -47,6 +47,24 @@ Read the matching instruction file before working on these file types. **Copilot
 
 For conventions important enough to auto-load in Claude Code, add a directory-scoped `CLAUDE.md` next to the code (Claude Code loads those when working in that subtree). Keep it short and non-duplicating; the `.github/instructions/*` file stays the single source of truth.
 
+## Custom agents
+
+- **GitHub Copilot** loads the full set from `.github/agents/<name>.agent.md` — this folder is Copilot's, and its contents are curated for Copilot, not pruned by Claude Code's capabilities.
+- **Claude Code** loads a **curated subset** from `.claude/agents/<name>.md` (invoked via the Agent tool, `subagent_type` = the agent name). Only the agents whose role is **not already covered by a Claude Code built-in** are translated here; the body stays aligned with the Copilot source, the front matter is translated (lowercase `name` matching the filename, Claude tool names, short `model` alias).
+
+The subset currently exposed to Claude Code:
+
+- **architect** — designs changes that preserve project boundaries; surfaces trade-offs (design before implementation).
+- **software-engineer** — implements features/fixes across the API + Blazor stack.
+- **csharp-dotnet-janitor** — C#/.NET cleanup, modernization, tech-debt remediation.
+- **playwright-tester** — writes/stabilises the Playwright API/UI E2E tests.
+- **project-documenter** — generates project documentation (read-only on source).
+- **orchestrator** — decomposes a multi-step request and delegates to the specialists.
+
+Not translated to `.claude/agents` because a **Claude Code** built-in already covers the role (this is a Claude-Code judgement only — it says nothing about whether Copilot needs the corresponding `.github/agents` file): planning → the `Plan` agent; research → `Explore` / general-purpose; review → the `/code-review` skill; plus debugging/QA/design/regression roles handled inline or by general-purpose.
+
+> Agent parity is **manual** — the `sync-ai-customizations` audit covers skills and prompts, **not** agents. `.claude/agents` is a deliberate subset of `.github/agents`, so it is not expected to match one-to-one. After editing a shared agent on one side, mirror the change (body aligned, front matter translated) on the other.
+
 ## Cross-tool skills & commands
 
 Layout, mirroring rules, and the exclusion list are defined in [.ai/customizations.policy.json](.ai/customizations.policy.json); the mechanics and audit are the `sync-ai-customizations` skill. In short: `.github/skills/` is the source of truth, mirrored byte-for-byte to `.claude/skills/`; repo-local skills use the `_local.` prefix and are still invoked as `/<name>`. Commands keep their body once in `.ai/prompts/<name>.md` with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude). Audit the layout with:

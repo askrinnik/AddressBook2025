@@ -1,22 +1,8 @@
 ---
-name: 'Project Documenter'
+name: project-documenter
 description: Generates professional project documentation for AddressBook2025 — discovers the stack and architecture, produces Markdown with C4 diagrams and a Word (.docx) output. Read-only on source; only writes under docs/. Use to produce or refresh project docs.
-tools:
-  [
-    "execute/runInTerminal",
-    "read/readFile",
-    "read/problems",
-    "read/terminalSelection",
-    "read/terminalLastCommand",
-    "edit/createDirectory",
-    "edit/createFile",
-    "edit/editFiles",
-    "search/codebase",
-    "search/fileSearch",
-    "search/listDirectory",
-    "search/textSearch",
-    "todo",
-  ]
+tools: Read, Write, Edit, Bash, Grep, Glob
+model: inherit
 ---
 
 # Project Documenter

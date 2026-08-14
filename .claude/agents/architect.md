@@ -1,8 +1,8 @@
 ---
-name: Architect
+name: architect
 description: Designs changes that preserve clear boundaries across the AddressBook2025 API (CQRS/FluentValidation), Contracts, Blazor/MudBlazor UI, and Playwright test layers. Surfaces trade-offs and migration risks; recommends reuse over new frameworks. Use for design decisions before implementation.
-model: Claude Opus 4.6 (copilot)
-tools: ['vscode', 'execute', 'read', 'edit', 'agent', 'context7/*', 'github/*', 'search', 'web', 'vscode/memory', 'todo']
+tools: Read, Grep, Glob, Bash, Agent
+model: opus
 ---
 
 <!-- Based on/Inspired by: https://github.com/github/awesome-copilot/blob/main/agents/dotnet-self-learning-architect.agent.md -->

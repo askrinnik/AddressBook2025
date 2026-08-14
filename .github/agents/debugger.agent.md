@@ -1,6 +1,6 @@
 ---
 name: Debugger
-description: Debugging agent for Sabrewing AIAssistant issues across .NET, Blazor, and test runners.
+description: Debugging agent for AddressBook2025 issues across the .NET API, the Blazor frontend, and the Playwright test runners.
 model: Claude Opus 4.6 (copilot)
 tools: ['vscode', 'execute', 'read', 'edit', 'agent', 'context7/*', 'github/*', 'search', 'web', 'vscode/memory', 'todo']
 ---

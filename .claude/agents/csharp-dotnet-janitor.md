@@ -1,7 +1,8 @@
 ---
-name: 'C#/.NET Janitor'
+name: csharp-dotnet-janitor
 description: Performs janitorial tasks on the AddressBook2025 C#/.NET code — cleanup, modernization, and tech-debt remediation (modern syntax, nullable types, dead-code removal, perf, XML docs). Use for incremental, test-validated code hygiene passes.
-tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/runTask, execute/createAndRunTask, execute/runTests, execute/runInTerminal, execute/testFailure, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, read/problems, read/readFile, 'github/*', 'microsoft.docs.mcp/*', edit/editFiles, search, web]
+tools: Read, Edit, Write, Bash, Grep, Glob
+model: sonnet
 ---
 
 # C#/.NET Janitor

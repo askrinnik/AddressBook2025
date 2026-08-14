@@ -1,8 +1,7 @@
 ---
-name: 'Playwright Tester'
+name: playwright-tester
 description: Explores the running AddressBook2025 app with the Playwright MCP server, then writes, runs and stabilises TypeScript Playwright specs under src/ApiTests (API) and src/UiTests (UI, planned). Captures a DOM snapshot before generating any locator. Use for adding or fixing end-to-end test coverage.
-model: Claude Sonnet 4
-tools: ["changes", "codebase", "edit/editFiles", "fetch", "findTestFiles", "problems", "runCommands", "runTasks", "runTests", "search", "searchResults", "terminalLastCommand", "terminalSelection", "testFailure", "playwright"]
+model: sonnet
 ---
 
 # Playwright Tester
@@ -19,7 +18,7 @@ You add and stabilise Playwright + TypeScript end-to-end tests for AddressBook20
 
 Two suites, both Playwright + TypeScript:
 - **`src/ApiTests`** — the **API** E2E suite (exists). Route calls through the API client, use the data factories, and keep tests self-contained with the Create → Verify → Delete pattern. The database is a **shared SQL Server with no reset between runs**, so isolate every test with a unique run token and never assert on absolute counts or "the first row".
-- **`src/UiTests`** — the **UI** E2E suite (planned; follow [docs/tasks/ui-tests-framework-plan.md](../../docs/tasks/ui-tests-framework-plan.md)). Do not invent its internals — build them per the plan (fixture-composed page objects, API-seeded data).
+- **`src/UiTests`** — the **UI** E2E suite (planned; follow [docs/tasks/ui-tests-framework-plan.md](docs/tasks/ui-tests-framework-plan.md)). Do not invent its internals — build them per the plan (fixture-composed page objects, API-seeded data).
 
 Starting the apps (each as its own background task you control; stop it via the same handle):
 - API: `dotnet run --project src/AddressBook.Api` → `http://localhost:5000`.

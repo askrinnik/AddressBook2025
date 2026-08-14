@@ -1,8 +1,8 @@
 ---
-name: Software Engineer
+name: software-engineer
 description: Implements features and fixes across the AddressBook2025 .NET 10 stack. Use for writing code and wiring the API (CQRS/EF Core/FluentValidation), the Contracts layer, and the Blazor/MudBlazor frontend together, with Playwright tests for new API behaviour.
-model: GPT-5.3-Codex (copilot)
-tools: ['vscode', 'execute', 'read', 'edit', 'agent', 'context7/*', 'github/*', 'search', 'web', 'vscode/memory', 'todo']
+tools: Read, Edit, Write, Bash, Grep, Glob, Agent
+model: sonnet
 ---
 
 <!-- Based on/Inspired by: https://github.com/github/awesome-copilot/blob/main/agents/expert-dotnet-software-engineer.agent.md -->
