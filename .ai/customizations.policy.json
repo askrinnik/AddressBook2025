@@ -1,0 +1,19 @@
+{
+  "skills": {
+    "sourceOfTruth": ".github/skills",
+    "mirror": ".claude/skills",
+    "excludedFromMirror": ["generate-docs"]
+  },
+  "prompts": {
+    "sharedBodyDir": ".ai/prompts",
+    "copilotWrapperDir": ".github/prompts",
+    "copilotWrapperSuffix": ".prompt.md",
+    "claudeWrapperDir": ".claude/commands",
+    "claudeWrapperSuffix": ".md",
+    "maxWrapperBodyLines": 12
+  },
+  "naming": {
+    "kebabPattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+    "localPrefix": "_local."
+  }
+}
