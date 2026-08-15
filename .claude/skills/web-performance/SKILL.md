@@ -1,7 +1,8 @@
 ---
-applyTo: '**'
-description: 'Comprehensive web performance standards based on Core Web Vitals (LCP, INP, CLS), with 50+ anti-patterns, detection regex, framework-specific fixes for modern web frameworks, and modern API guidance.'
+name: web-performance
+description: 'Web performance checklist — Core Web Vitals (LCP, INP, CLS) anti-patterns for the frontend, with detection and framework-specific fixes. Use when optimizing front-end/Blazor performance.'
 ---
+
 
 # Performance Standards
 

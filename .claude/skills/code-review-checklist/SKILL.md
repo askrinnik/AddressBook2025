@@ -1,8 +1,8 @@
 ---
-description: 'Generic code review instructions that can be customized for any project using GitHub Copilot'
-applyTo: '**'
-excludeAgent: ["coding-agent"]
+name: code-review-checklist
+description: 'Structured generic code-review checklist covering quality, security, testing, and architecture. Use for a manual, thorough code review pass.'
 ---
+
 
 # Generic Code Review Instructions
 

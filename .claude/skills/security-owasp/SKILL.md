@@ -1,7 +1,8 @@
 ---
-applyTo: '**'
-description: 'Comprehensive secure coding standards based on OWASP Top 10 2025, with 55+ anti-patterns, detection regex, framework-specific fixes for modern web and backend frameworks, and AI/LLM security guidance.'
+name: security-owasp
+description: 'Security review checklist based on OWASP Top 10 (2025) — anti-patterns for injection, authentication, authorization, and secrets, each with severity, detection, and corrective code. Use for a security pass over backend or frontend code.'
 ---
+
 
 # Security Standards
 

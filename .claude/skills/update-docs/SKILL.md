@@ -1,7 +1,8 @@
 ---
-description: 'Automatically update README.md and documentation files when application code changes require documentation updates'
-applyTo: '**/*.{md,js,mjs,cjs,ts,tsx,jsx,py,java,cs,go,rb,php,rs,cpp,c,h,hpp}'
+name: update-docs
+description: 'Keep README and documentation in sync with code changes — how to detect when docs need updating and how to update them. Use after code changes that affect documented behavior.'
 ---
+
 
 # Update Documentation on Code Change
 

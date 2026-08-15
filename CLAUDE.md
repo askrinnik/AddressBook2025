@@ -34,16 +34,12 @@ Read the matching instruction file before working on these file types. **Copilot
 |---|---|
 | API architecture (`src/AddressBook.Api/**`) | `.github/instructions/api-architecture.instructions.md` |
 | C# (`**/*.cs`) | `.github/instructions/csharp.instructions.md` |
-| ASP.NET REST APIs (`**/*.cs`, `**/*.json`) | `.github/instructions/aspnet-rest-apis.instructions.md` |
-| Blazor (`*.razor`, `*.razor.cs`, `*.razor.css`) | `.github/instructions/blazor.instructions.md` |
 | Blazor project-specific (MudBlazor / WASM) | `.github/instructions/blazor.project-specific.instructions.md` |
 | Playwright E2E (`src/ApiTests/**`, `src/AutoTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
-| Security / OWASP (`**`) | `.github/instructions/security-and-owasp.instructions.md` |
-| Performance (`**`) | `.github/instructions/performance-optimization.instructions.md` |
-| Code review (`**`) | `.github/instructions/code-review-generic.instructions.md` |
-| Docs sync on code change | `.github/instructions/update-docs-on-code-change.instructions.md` |
 
 > When the `src/UiTests` suite is created, add `src/UiTests/**` to the `applyTo` glob of `playwright-conventions.instructions.md` so both tools apply it there too.
+
+The four generic, always-on instruction files that used to load on every file (security/OWASP, web performance, generic code review, docs-sync) are now **on-demand skills** instead — `security-owasp`, `web-performance`, `code-review-checklist`, `update-docs` — so they no longer sit in context permanently; invoke them (or the built-in `/code-review` and `/security-review`) when that pass is actually needed.
 
 For conventions important enough to auto-load in Claude Code, add a directory-scoped `CLAUDE.md` next to the code (Claude Code loads those when working in that subtree). Keep it short and non-duplicating; the `.github/instructions/*` file stays the single source of truth.
 
