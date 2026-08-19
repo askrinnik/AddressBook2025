@@ -140,7 +140,7 @@ src/UiTests/
   `test:debug`, `test:headed`, `test:remote`, `lint`, `format`), `tsconfig.json`,
   `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`,
   README-заглушка. Создать этот файл плана в `docs/tasks/`.
-- [ ] **U2** ([#93](https://github.com/askrinnik/AddressBook2025/issues/93)) Установить зависимости + браузеры (`npx playwright install`). `playwright.config.ts`:
+- [x] **U2** ([#93](https://github.com/askrinnik/AddressBook2025/issues/93)) Установить зависимости + браузеры (`npx playwright install`). `playwright.config.ts`:
   проект(ы) браузеров (chromium; опц. firefox/webkit), `baseURL`, `ignoreHTTPSErrors`, `trace`,
   `screenshot`, `video`, reporters `list`+`html`, массив `webServer` (API + Web,
   `reuseExistingServer` локально).
