@@ -19,14 +19,14 @@ else if (_model != null)
             <MudItem xs="12" sm="7">
                 <MudCard>
                     <MudCardContent>
-                        <MudTextField Label="First name" @bind-Value="_model.FirstName" For="@(() => _model.FirstName)" />
-                        <MudTextField Label="Last Name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" />
-                        <MudDatePicker Label="Birthday" @bind-Date="_model.Birthday" For="@(() => _model.Birthday)" />
+                        <MudTextField Label="First name" @bind-Value="_model.FirstName" For="@(() => _model.FirstName)" data-testid="contact-form-first-name" />
+                        <MudTextField Label="Last Name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" data-testid="contact-form-last-name" />
+                        <MudDatePicker Label="Birthday" @bind-Date="_model.Birthday" For="@(() => _model.Birthday)" data-testid="contact-form-birthday" />
                         <ValidationSummary Model="_model" class="mt-4"/>
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" disabled="@_isLoading">Save</MudButton>
-                        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="Cancel" Class="ms-2">Cancel</MudButton>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" disabled="@_isLoading" data-testid="contact-form-submit">Save</MudButton>
+                        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="Cancel" Class="ms-2" data-testid="contact-form-cancel">Cancel</MudButton>
                     </MudCardActions>
                 </MudCard>
             </MudItem>

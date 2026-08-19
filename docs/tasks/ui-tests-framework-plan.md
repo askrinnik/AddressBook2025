@@ -149,7 +149,7 @@ src/UiTests/
 
 - [x] **U3** ([#94](https://github.com/askrinnik/AddressBook2025/issues/94)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, `API_URL`, таймауты,
   `HEADLESS`) + dotenv (`.env.local`/`.env.ci`).
-- [ ] **U4** ([#95](https://github.com/askrinnik/AddressBook2025/issues/95)) Enabler: добавить ненавязчивые `data-testid` в `AddressBook.Web` (через
+- [x] **U4** ([#95](https://github.com/askrinnik/AddressBook2025/issues/95)) Enabler: добавить ненавязчивые `data-testid` в `AddressBook.Web` (через
   `UserAttributes`) для иконочных кнопок Edit/Delete, кнопок Create/Save/Cancel, полей формы,
   строк таблицы, диалога удаления, тумблера темы. Задокументировать соглашение об именах
   `data-testid`. `utils/testids.ts` — централизованные константы.
