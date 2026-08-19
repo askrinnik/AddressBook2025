@@ -136,7 +136,7 @@ src/UiTests/
 
 ### Фаза 0 — Каркас
 
-- [ ] **U1** ([#92](https://github.com/askrinnik/AddressBook2025/issues/92)) Scaffold `src/UiTests`: `package.json` (скрипты `test`, `test:report`, `test:ui`,
+- [x] **U1** ([#92](https://github.com/askrinnik/AddressBook2025/issues/92)) Scaffold `src/UiTests`: `package.json` (скрипты `test`, `test:report`, `test:ui`,
   `test:debug`, `test:headed`, `test:remote`, `lint`, `format`), `tsconfig.json`,
   `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`,
   README-заглушка. Создать этот файл плана в `docs/tasks/`.
