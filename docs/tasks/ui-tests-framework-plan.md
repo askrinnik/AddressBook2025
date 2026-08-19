@@ -155,7 +155,7 @@ src/UiTests/
   `data-testid`. `utils/testids.ts` — централизованные константы.
 - [x] **U5** ([#96](https://github.com/askrinnik/AddressBook2025/issues/96)) `api/contacts-api.ts` — обёртка над `APIRequestContext` для seed/cleanup контактов
   (create → id из `Location`, delete по id). Переиспользуем факты об API из `src/ApiTests`.
-- [ ] **U6** ([#97](https://github.com/askrinnik/AddressBook2025/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
+- [x] **U6** ([#97](https://github.com/askrinnik/AddressBook2025/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
   варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата) + уникальный токен.
 - [ ] **U7** ([#98](https://github.com/askrinnik/AddressBook2025/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
   `date-picker` (popover), `confirm-dialog` (MudMessageBox).
