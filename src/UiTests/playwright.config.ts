@@ -1,29 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
+import { env } from './src/config/env.js';
 
-/*
- * Configuration is read directly from process.env with defaults here.
- * The typed zod/dotenv loader (src/config/env.ts) is introduced in U3 (#94);
- * once it exists this config will be refactored to import it.
- */
+// CI-ness is a runner concern, not app config, so it stays a direct process.env read.
 const isCI = !!process.env.CI;
 
-// Web app under test (Blazor WASM, https launch profile).
-const baseURL = process.env.BASE_URL ?? 'https://localhost:7187/';
-// API used for hybrid seed/cleanup and as the webServer readiness probe.
-const apiURL = process.env.API_URL ?? 'http://localhost:5000/api/';
-const headless = (process.env.HEADLESS ?? 'true').toLowerCase() !== 'false';
-
-const num = (value: string | undefined, fallback: number): number => {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-};
-
-const expectTimeout = num(process.env.EXPECT_TIMEOUT, 10_000);
-const actionTimeout = num(process.env.ACTION_TIMEOUT, 15_000);
-const navigationTimeout = num(process.env.NAVIGATION_TIMEOUT, 30_000);
-
 // webServer readiness needs a URL that answers 200; the contacts list endpoint does.
-const apiReadinessURL = new URL('Contacts', apiURL).toString();
+const apiReadinessURL = new URL('Contacts', env.apiURL).toString();
 
 export default defineConfig({
   testDir: './tests',
@@ -33,14 +15,14 @@ export default defineConfig({
   workers: isCI ? 1 : undefined,
   reporter: [['list'], ['html']],
   expect: {
-    timeout: expectTimeout,
+    timeout: env.expectTimeout,
   },
   use: {
-    baseURL,
-    headless,
+    baseURL: env.baseURL,
+    headless: env.headless,
     ignoreHTTPSErrors: true,
-    actionTimeout,
-    navigationTimeout,
+    actionTimeout: env.actionTimeout,
+    navigationTimeout: env.navigationTimeout,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -74,7 +56,7 @@ export default defineConfig({
     },
     {
       command: 'dotnet run --project ../AddressBook.Web --launch-profile https',
-      url: baseURL,
+      url: env.baseURL,
       reuseExistingServer: !isCI,
       ignoreHTTPSErrors: true,
       timeout: 120_000,
