@@ -153,7 +153,7 @@ src/UiTests/
   `UserAttributes`) для иконочных кнопок Edit/Delete, кнопок Create/Save/Cancel, полей формы,
   строк таблицы, диалога удаления, тумблера темы. Задокументировать соглашение об именах
   `data-testid`. `utils/testids.ts` — централизованные константы.
-- [ ] **U5** ([#96](https://github.com/askrinnik/AddressBook2025/issues/96)) `api/contacts-api.ts` — обёртка над `APIRequestContext` для seed/cleanup контактов
+- [x] **U5** ([#96](https://github.com/askrinnik/AddressBook2025/issues/96)) `api/contacts-api.ts` — обёртка над `APIRequestContext` для seed/cleanup контактов
   (create → id из `Location`, delete по id). Переиспользуем факты об API из `src/ApiTests`.
 - [ ] **U6** ([#97](https://github.com/askrinnik/AddressBook2025/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
   варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата) + уникальный токен.
