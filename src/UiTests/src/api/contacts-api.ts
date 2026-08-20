@@ -16,6 +16,14 @@ export interface CreateContactCommand {
   birthday?: string | null;
 }
 
+/** A contact row as the API returns it (camelCase JSON; `birthday` is `yyyy-MM-dd` or null). */
+export interface ContactRow {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthday: string | null;
+}
+
 /**
  * Thin wrapper over Playwright's `APIRequestContext` for seeding and cleaning up contacts.
  * The context is expected to be created with `baseURL = env.apiURL` (which ends with `/api/`),
@@ -44,6 +52,22 @@ export class ContactsApi {
       );
     }
     return id;
+  }
+
+  /**
+   * List contacts filtered by `search` (matched against first/last name), returning the `rows`.
+   * Used by UI specs to look up the id of a contact created through the UI — for a
+   * culture-independent birthday assertion and for teardown.
+   */
+  async getFilteredContacts(search: string): Promise<ContactRow[]> {
+    const response = await this.request.get(CONTACTS_PATH, { params: { search } });
+    if (response.status() !== 200) {
+      throw new Error(
+        `Failed to list contacts: expected 200, got ${response.status()} — ${await response.text()}`,
+      );
+    }
+    const body = (await response.json()) as { rows: ContactRow[] };
+    return body.rows;
   }
 
   /**
