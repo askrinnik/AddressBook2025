@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { AppShell } from '../components/app-shell.component.js';
+import { waitForBlazorReady } from '../utils/blazor.js';
 
 /*
  * Abstract base for every page object.
@@ -9,12 +10,9 @@ import { AppShell } from '../components/app-shell.component.js';
  * expose their own `goto(...)` and route through `open(path)`, which navigates and then waits
  * for the app to be ready.
  *
- * Readiness signal: the app-bar title ("Contact Book") becomes visible only once Blazor WASM
- * has booted and MainLayout has rendered — a reliable, delay-free "ready" marker that also
- * holds on the edit not-found branch (which still renders the layout).
- *
- * Note: the framework plan places a dedicated `utils/blazor.ts` readiness helper in U9;
- * `waitUntilReady()` is the inline stand-in until then.
+ * Readiness is delegated to `utils/blazor.ts` (the app-bar title becomes visible only once
+ * Blazor WASM has booted and MainLayout has rendered — a reliable, delay-free marker that also
+ * holds on the edit not-found branch, which still renders the layout).
  */
 export abstract class BasePage {
   readonly shell: AppShell;
@@ -31,6 +29,6 @@ export abstract class BasePage {
 
   /** Wait until Blazor has booted and the shell is rendered. */
   async waitUntilReady(): Promise<void> {
-    await this.shell.appBarTitle.waitFor({ state: 'visible' });
+    await waitForBlazorReady(this.page);
   }
 }
