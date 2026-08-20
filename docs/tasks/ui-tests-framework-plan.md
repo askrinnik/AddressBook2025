@@ -157,7 +157,7 @@ src/UiTests/
   (create → id из `Location`, delete по id). Переиспользуем факты об API из `src/ApiTests`.
 - [x] **U6** ([#97](https://github.com/askrinnik/AddressBook2025/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
   варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата) + уникальный токен.
-- [ ] **U7** ([#98](https://github.com/askrinnik/AddressBook2025/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
+- [x] **U7** ([#98](https://github.com/askrinnik/AddressBook2025/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
   `date-picker` (popover), `confirm-dialog` (MudMessageBox).
 - [ ] **U8** ([#99](https://github.com/askrinnik/AddressBook2025/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
   `edit-contact` (используют component objects, ленивые локаторы).
