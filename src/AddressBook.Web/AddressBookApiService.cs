@@ -1,6 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using AddressBook.Contracts;
 using AddressBook.Contracts.Models;
+using AddressBook.Web.ErrorHandling;
 using AddressBook.Web.Models;
 
 namespace AddressBook.Web;
@@ -47,11 +49,19 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
 
     public async Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var response = await httpClient.GetAsync($"contacts/{id}", cancellationToken);
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        // A 404 here is normal control flow ("contact not found"), not an error. The
+        // ProblemDetailsHandler turns every non-success response into a ProblemDetailsException
+        // before we can inspect the status, so recognise the 404 from the exception and return
+        // null — EditContact.razor renders its "Contact not found." branch on null.
+        try
+        {
+            var response = await httpClient.GetAsync($"contacts/{id}", cancellationToken);
+            return await response.Content.ReadFromJsonAsync<ContactModel>(cancellationToken);
+        }
+        catch (ProblemDetailsException ex) when (ex.ProblemDetails?.Status == (int)HttpStatusCode.NotFound)
+        {
             return null;
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ContactModel>(cancellationToken);
+        }
     }
 
     public async Task UpdateContact(int id, CreateContactModel model, CancellationToken cancellationToken)
