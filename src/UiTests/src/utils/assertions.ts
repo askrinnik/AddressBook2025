@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import type { ContactRow, ContactsApi } from '../api/contacts-api.js';
 import type { ContactForm, NamedField } from '../components/contact-form.component.js';
 import type { ContactsTable } from '../components/contacts-table.component.js';
 
@@ -27,16 +28,27 @@ export async function expectContactRow(
 }
 
 /** Assert no contact row is rendered for `id` (e.g. after a delete or a non-matching search). */
-export async function expectNoContactRow(
-  table: ContactsTable,
-  id: number | string,
-): Promise<void> {
+export async function expectNoContactRow(table: ContactsTable, id: number | string): Promise<void> {
   await expect(table.rowById(id), `contact row ${id} should be absent`).toHaveCount(0);
 }
 
 /** Assert the table shows its empty state ("No matching records found"). */
 export async function expectNoRecords(table: ContactsTable): Promise<void> {
   await expect(table.noRecords).toBeVisible();
+}
+
+/**
+ * Assert that exactly one contact matches `token` (looked up via the API) and return it. Used by the
+ * UI CRUD specs to isolate the row they created/edited on the shared DB and read back its persisted
+ * state (e.g. a culture-independent `yyyy-MM-dd` birthday).
+ */
+export async function expectSingleContact(
+  contactsApi: ContactsApi,
+  token: string,
+): Promise<ContactRow> {
+  const rows = await contactsApi.getFilteredContacts(token);
+  expect(rows, `exactly one contact should match token ${token}`).toHaveLength(1);
+  return rows[0];
 }
 
 /**
