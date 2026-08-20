@@ -15,7 +15,7 @@ import { DatePicker } from './date-picker.component.js';
  */
 const FIELD_ERROR = '.mud-input-helper-text.mud-input-error';
 
-type NamedField = 'firstName' | 'lastName';
+export type NamedField = 'firstName' | 'lastName';
 
 const FIELD_TEST_IDS: Record<NamedField, string> = {
   firstName: TestIds.contactFormFirstName,
@@ -45,8 +45,15 @@ export class ContactForm {
     return this.page.getByTestId(TestIds.contactFormCancel);
   }
 
+  /**
+   * The `<ValidationSummary>` messages (model-level / server "general" errors). Blazor renders
+   * each as `<li class="validation-message">`; the `<ul class="validation-errors">` wrapper is
+   * NOT matched here because the page passes `class="mt-4"`, which Blazor splats over the
+   * built-in "validation-errors" class on the `<ul>`. Field-level errors use a different class
+   * (`.mud-input-helper-text.mud-input-error`, see FIELD_ERROR), so there is no collision.
+   */
   get validationSummary(): Locator {
-    return this.page.locator('.validation-errors');
+    return this.page.locator('.validation-message');
   }
 
   async fillFirstName(value: string): Promise<void> {
@@ -95,7 +102,6 @@ export class ContactForm {
 
   /** The model-level / server error messages listed in the `<ValidationSummary>`. */
   async summaryErrors(): Promise<string[]> {
-    const items = this.validationSummary.locator('.validation-message');
-    return (await items.allInnerTexts()).map((text) => text.trim());
+    return (await this.validationSummary.allInnerTexts()).map((text) => text.trim());
   }
 }
