@@ -1,7 +1,10 @@
-import type { ContactRow, ContactsApi } from '../../src/api/contacts-api.js';
 import { newTestToken } from '../../src/data/tokens.js';
 import { expect, test } from '../../src/fixtures/test-fixtures.js';
-import { expectContactRow, expectNoRecords } from '../../src/utils/assertions.js';
+import {
+  expectContactRow,
+  expectNoRecords,
+  expectSingleContact,
+} from '../../src/utils/assertions.js';
 
 /*
  * Create Contact through the UI (U13): the `/create-contact` form creates a contact with or without
@@ -14,13 +17,6 @@ import { expectContactRow, expectNoRecords } from '../../src/utils/assertions.js
  * deletes it in `finally`, so a mid-test failure cannot leak data. The birthday is asserted against
  * the API's `yyyy-MM-dd` value, not the culture-formatted table cell. All UI checks are web-first.
  */
-
-// Look up the single contact matching `token`, failing loudly if it is missing or ambiguous.
-async function findOnlyContact(contactsApi: ContactsApi, token: string): Promise<ContactRow> {
-  const rows = await contactsApi.getFilteredContacts(token);
-  expect(rows, `exactly one contact should match token ${token}`).toHaveLength(1);
-  return rows[0];
-}
 
 test.describe('contacts — create', () => {
   test('creates a contact with a birthday and shows it in the list', async ({
@@ -40,7 +36,7 @@ test.describe('contacts — create', () => {
       await expect(page).toHaveURL(/\/contacts$/);
 
       // Persisted with the birthday (checked via the API's yyyy-MM-dd value, culture-independent).
-      const created = await findOnlyContact(contactsApi, token);
+      const created = await expectSingleContact(contactsApi, token);
       createdId = created.id;
       expect(created.firstName).toBe(contact.firstName);
       expect(created.lastName).toBe(contact.lastName);
@@ -74,7 +70,7 @@ test.describe('contacts — create', () => {
       await expect(page).toHaveURL(/\/contacts$/);
 
       // Persisted with no birthday.
-      const created = await findOnlyContact(contactsApi, token);
+      const created = await expectSingleContact(contactsApi, token);
       createdId = created.id;
       expect(created.firstName).toBe(contact.firstName);
       expect(created.lastName).toBe(contact.lastName);
