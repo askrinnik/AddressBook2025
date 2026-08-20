@@ -35,9 +35,9 @@ Read the matching instruction file before working on these file types. **Copilot
 | API architecture (`src/AddressBook.Api/**`) | `.github/instructions/api-architecture.instructions.md` |
 | C# (`**/*.cs`) | `.github/instructions/csharp.instructions.md` |
 | Blazor project-specific (MudBlazor / WASM) | `.github/instructions/blazor.project-specific.instructions.md` |
-| Playwright E2E (`src/ApiTests/**`, `src/AutoTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
+| Playwright E2E — API (`src/ApiTests/**`, `src/AutoTests/**`) and UI (`src/UiTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
 
-> When the `src/UiTests` suite is created, add `src/UiTests/**` to the `applyTo` glob of `playwright-conventions.instructions.md` so both tools apply it there too.
+> The Playwright conventions file covers both the API suites and the UI E2E suite (`src/UiTests`, in its own section). Claude Code also auto-loads `src/UiTests/CLAUDE.md` when working in that subtree.
 
 The four generic, always-on instruction files that used to load on every file (security/OWASP, web performance, generic code review, docs-sync) are now **on-demand skills** instead — `security-owasp`, `web-performance`, `code-review-checklist`, `update-docs` — so they no longer sit in context permanently; invoke them (or the built-in `/code-review` and `/security-review`) when that pass is actually needed.
 

@@ -1,8 +1,12 @@
 ---
-description: "Playwright TypeScript E2E test conventions for AddressBook2025. Use when writing, modifying, or reviewing API end-to-end tests."
-applyTo: "src/ApiTests/**, src/AutoTests/**"
+description: "Playwright TypeScript E2E test conventions for AddressBook2025. Use when writing, modifying, or reviewing the API (src/ApiTests, src/AutoTests) and UI (src/UiTests) end-to-end tests."
+applyTo: "src/ApiTests/**, src/AutoTests/**, src/UiTests/**"
 ---
 # Playwright E2E Test Conventions
+
+> The sections up to **UI E2E tests** describe the **API** test suites (`src/ApiTests`,
+> `src/AutoTests`). The UI E2E suite (`src/UiTests`) has a different architecture — see the
+> dedicated section at the end.
 
 ## API Client Pattern
 
@@ -39,3 +43,44 @@ applyTo: "src/ApiTests/**, src/AutoTests/**"
 - Use comments to explain **why** two similar tests exist (e.g., demonstrating different testing approaches)
 
 → Full specification: [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md)
+
+# UI E2E tests (`src/UiTests`)
+
+A separate, hybrid-E2E suite for `AddressBook.Web` (Blazor WASM + MudBlazor): data is seeded/cleaned
+fast over the REST API, assertions run through the real UI. It does **not** use the API-suite
+patterns above (`ApiClient` singleton, `tests/dtos/`, `expect.soft`).
+
+## Fixtures & structure
+
+- Import `test` / `expect` from `src/fixtures/test-fixtures.js` — **not** from `@playwright/test`
+  directly. A spec declares only the fixtures it needs in the test signature
+  (`{ contactsPage, contactsApi, data }`) — never `new` up page/component objects in the test.
+- Fixture-composed Page Object Model: thin **page objects** (`src/pages/`) and **component objects**
+  (`src/components/`) with lazy locators. MudBlazor-specific markup fragility (table, date-picker,
+  pager, confirm dialog) is encapsulated **only** inside its component object, never in a spec.
+- Group with `test.describe('contacts — <feature>', …)`; name tests by observable behaviour.
+
+## Test data & isolation (shared SQL Server DB)
+
+- Build contacts **only** through `ContactFactory` (`src/data/`). For a search-isolated contact use
+  **`ContactFactory.tokenized(token, overrides?)`** — the single builder (`overrides.firstName` /
+  `overrides.lastName` set the *prefix* before the token; other overrides apply as-is). Do **not**
+  reintroduce per-spec ad-hoc builders.
+- Mint a fresh `newTestToken()` per test; the token rides in the names so `search(token)` /
+  `getFilteredContacts(token)` isolate exactly this test's rows under parallel workers.
+- Seed/clean over REST via the `contactsApi` fixture — contacts **it** creates are auto-deleted in
+  teardown. A contact created **through the UI** is *not* tracked: look its id up with
+  `contactsApi.getFilteredContacts(token)` and delete it in a `finally` so a mid-test failure never
+  leaks data.
+
+## Assertions & locators
+
+- **Web-first only:** auto-waiting `expect(locator)` / `expect.poll`; **never** `waitForTimeout`.
+  Let the table component's `waitForLoaded()` settle the MudTable server-reload ("Loading…").
+- Locator priority: `getByRole` / `getByLabel` → `getByTestId` (constants in `src/utils/testids.ts`,
+  mirroring the Razor `data-testid`s) → CSS only as a last resort.
+- Assert dates against the **API** value (`yyyy-MM-dd`), not the culture-formatted table cell.
+- Cover happy path, boundaries, and negatives; keep every test self-contained (create → verify →
+  clean up its own data).
+
+→ Full design, directory layout & task list: [`docs/tasks/ui-tests-framework-plan.md`](../../docs/tasks/ui-tests-framework-plan.md)
