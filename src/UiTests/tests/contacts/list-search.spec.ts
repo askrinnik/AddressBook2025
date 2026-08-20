@@ -1,8 +1,10 @@
-import { expect, test } from '../../src/fixtures/test-fixtures.js';
 import { newTestToken } from '../../src/data/tokens.js';
-import type { CreateContactCommand } from '../../src/api/contacts-api.js';
-import type { ContactFactory } from '../../src/data/contact.factory.js';
-import { expectContactRow, expectNoContactRow, expectNoRecords } from '../../src/utils/assertions.js';
+import { expect, test } from '../../src/fixtures/test-fixtures.js';
+import {
+  expectContactRow,
+  expectNoContactRow,
+  expectNoRecords,
+} from '../../src/utils/assertions.js';
 
 /*
  * Contacts list display + search (U11): created contacts show up in the MudTable, the toolbar
@@ -10,23 +12,18 @@ import { expectContactRow, expectNoContactRow, expectNoRecords } from '../../src
  * clearing the search brings the rows back.
  *
  * Isolation on the shared SQL Server DB: each test mints a fresh `newTestToken()` and seeds
- * contacts whose first/last names embed it, so searching that token returns exactly this test's
- * rows regardless of seed data or parallel workers. Seeding is the hybrid REST path (fast, no UI)
- * via the U9 `contactsApi` fixture, which auto-deletes every created contact in teardown. All
- * checks are web-first (the U7 table component and the U9 domain assertions auto-wait); no delays.
+ * contacts with `data.tokenized(token)` (first/last names carry the token), so searching that token
+ * returns exactly this test's rows regardless of seed data or parallel workers. Seeding is the
+ * hybrid REST path (fast, no UI) via the U9 `contactsApi` fixture, which auto-deletes every created
+ * contact in teardown. All checks are web-first (the U7 table component and the U9 domain assertions
+ * auto-wait); no delays.
  */
-
-// A contact whose first and last name both embed `token` (kept within the API's 30-char limit),
-// so the server's `FirstName.Contains OR LastName.Contains` filter isolates it by that token.
-function tokenNamedContact(data: typeof ContactFactory, token: string): CreateContactCommand {
-  return data.validContact({ firstName: `First-${token}`, lastName: `Last-${token}` });
-}
 
 test.describe('contacts — list & search', () => {
   test('displays created contacts in the list', async ({ contactsApi, contactsPage, data }) => {
     const token = newTestToken();
-    const first = tokenNamedContact(data, token);
-    const second = tokenNamedContact(data, token);
+    const first = data.tokenized(token);
+    const second = data.tokenized(token);
     const firstId = await contactsApi.createContact(first);
     const secondId = await contactsApi.createContact(second);
 
@@ -51,9 +48,9 @@ test.describe('contacts — list & search', () => {
   }) => {
     const tokenA = newTestToken();
     const tokenB = newTestToken();
-    const contactA = tokenNamedContact(data, tokenA);
+    const contactA = data.tokenized(tokenA);
     const idA = await contactsApi.createContact(contactA);
-    const idB = await contactsApi.createContact(tokenNamedContact(data, tokenB));
+    const idB = await contactsApi.createContact(data.tokenized(tokenB));
 
     await contactsPage.goto();
     await contactsPage.table.search(tokenA);
@@ -72,7 +69,7 @@ test.describe('contacts — list & search', () => {
     data,
   }) => {
     // Seed a real row so the empty state is proven to come from the filter, not an empty DB.
-    const id = await contactsApi.createContact(tokenNamedContact(data, newTestToken()));
+    const id = await contactsApi.createContact(data.tokenized(newTestToken()));
 
     await contactsPage.goto();
     await contactsPage.table.search(newTestToken());
@@ -82,7 +79,7 @@ test.describe('contacts — list & search', () => {
   });
 
   test('clearing the search restores the list', async ({ contactsApi, contactsPage, data }) => {
-    await contactsApi.createContact(tokenNamedContact(data, newTestToken()));
+    await contactsApi.createContact(data.tokenized(newTestToken()));
 
     await contactsPage.goto();
     await contactsPage.table.search(newTestToken());

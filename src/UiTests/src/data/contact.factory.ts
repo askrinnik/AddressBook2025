@@ -57,6 +57,25 @@ export class ContactFactory {
     return { ...baseValidContact(), ...overrides };
   }
 
+  /**
+   * A valid contact whose first/last names carry `token` as a `<prefix>-<token>` suffix, so a
+   * search-by-token isolates exactly this contact on the shared DB. `overrides.firstName` /
+   * `overrides.lastName` set the PREFIX before the token (default `First` / `Last`); every other
+   * override (e.g. `birthday`) is applied as-is. Prefixes are meant to stay short so the resulting
+   * name keeps within the API's 30-char limit. This is the one builder the UI specs use to mint
+   * token-isolated contacts (list/search, sort/paginate, create, …).
+   */
+  static tokenized(token: string, overrides?: Partial<CreateContactCommand>): CreateContactCommand {
+    const firstPrefix = overrides?.firstName ?? 'First';
+    const lastPrefix = overrides?.lastName ?? 'Last';
+    return {
+      ...baseValidContact(),
+      ...overrides,
+      firstName: `${firstPrefix}-${token}`,
+      lastName: `${lastPrefix}-${token}`,
+    };
+  }
+
   static validContactWithoutBirthday(
     overrides?: Partial<CreateContactCommand>,
   ): CreateContactCommand {

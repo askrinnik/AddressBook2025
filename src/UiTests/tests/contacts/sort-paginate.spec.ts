@@ -22,7 +22,8 @@ import { expect, test } from '../../src/fixtures/test-fixtures.js';
  * (`expect.poll` retries the table's dynamic reads); reloads settle via the component; no delays.
  */
 
-// Build a token-named contact so `search(token)` isolates it (the token sits in the first name).
+// Thin wrapper over `data.tokenized`: the first/last args are name PREFIXES (the factory appends
+// the token), so `search(token)` isolates the row while the names still sort in a controlled order.
 function named(
   data: typeof ContactFactory,
   firstName: string,
@@ -30,11 +31,7 @@ function named(
   birthday: string,
   token: string,
 ): CreateContactCommand {
-  return data.validContact({
-    firstName: `${firstName}-${token}`,
-    lastName: `${lastName}-${token}`,
-    birthday,
-  });
+  return data.tokenized(token, { firstName, lastName, birthday });
 }
 
 // Seed `count` contacts whose first names sort as P00, P01, … so paging order is deterministic.
