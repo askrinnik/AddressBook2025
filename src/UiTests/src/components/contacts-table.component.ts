@@ -1,10 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import {
-  TestIds,
-  contactDeleteButton,
-  contactEditButton,
-  contactRow,
-} from '../utils/testids.js';
+import { TestIds, contactDeleteButton, contactEditButton, contactRow } from '../utils/testids.js';
 
 /*
  * Component object for the contacts `MudTable` (server-reload) and its toolbar.
@@ -105,13 +100,21 @@ export class ContactsTable {
     await this.waitForLoaded();
   }
 
+  get nextButton(): Locator {
+    return this.pagerButton('Next page');
+  }
+
+  get previousButton(): Locator {
+    return this.pagerButton('Previous page');
+  }
+
   async nextPage(): Promise<void> {
-    await this.pagerButton('Next page').click();
+    await this.nextButton.click();
     await this.waitForLoaded();
   }
 
   async previousPage(): Promise<void> {
-    await this.pagerButton('Previous page').click();
+    await this.previousButton.click();
     await this.waitForLoaded();
   }
 
@@ -131,6 +134,36 @@ export class ContactsTable {
   /** Number of data rows currently rendered. */
   async rowCount(): Promise<number> {
     return this.bodyRows.count();
+  }
+
+  /**
+   * The First-Name column values across the current page, in render order. Reads the first cell
+   * of every body row — the column whose text the specs control — so sort order can be asserted
+   * without parsing the culture-formatted Birthday cell.
+   */
+  async firstNameColumn(): Promise<string[]> {
+    const cells = await this.root.locator('tbody tr td:nth-child(1)').allInnerTexts();
+    return cells.map((text) => text.trim());
+  }
+
+  /** The pager caption locator (`X-Y of Z`). */
+  get paginationInfo(): Locator {
+    return this.root.locator('.mud-table-page-number-information');
+  }
+
+  /** The pager caption text (`X-Y of Z`), trimmed. */
+  async pageRangeText(): Promise<string> {
+    return (await this.paginationInfo.innerText()).trim();
+  }
+
+  /** Total row count parsed from the pager caption (`… of Z` → `TotalItems`/`TotalRows`). */
+  async totalRows(): Promise<number> {
+    const text = await this.pageRangeText();
+    const match = /of\s+(\d+)/i.exec(text);
+    if (!match) {
+      throw new Error(`Could not parse total rows from pager caption: "${text}"`);
+    }
+    return Number(match[1]);
   }
 
   private sortLabel(columnText: string): Locator {
