@@ -159,7 +159,7 @@ src/UiTests/
   варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата) + уникальный токен.
 - [x] **U7** ([#98](https://github.com/askrinnik/AddressBook2025/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
   `date-picker` (popover), `confirm-dialog` (MudMessageBox).
-- [ ] **U8** ([#99](https://github.com/askrinnik/AddressBook2025/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
+- [x] **U8** ([#99](https://github.com/askrinnik/AddressBook2025/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
   `edit-contact` (используют component objects, ленивые локаторы).
 - [ ] **U9** ([#100](https://github.com/askrinnik/AddressBook2025/issues/100)) `fixtures/test-fixtures.ts` — `test.extend`: инжект страниц/компонентов +
   `contactsApi` + `data` + авто-cleanup созданных контактов. `utils/assertions.ts`,
