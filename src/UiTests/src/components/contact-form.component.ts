@@ -15,11 +15,14 @@ import { DatePicker } from './date-picker.component.js';
  */
 const FIELD_ERROR = '.mud-input-helper-text.mud-input-error';
 
-export type NamedField = 'firstName' | 'lastName';
+export type NamedField = 'firstName' | 'lastName' | 'birthday';
 
 const FIELD_TEST_IDS: Record<NamedField, string> = {
   firstName: TestIds.contactFormFirstName,
   lastName: TestIds.contactFormLastName,
+  // Server field errors for a bad birthday (e.g. a future date) render inline under the
+  // MudDatePicker, not in the <ValidationSummary>, so `errorFor('birthday')` reads them there.
+  birthday: TestIds.contactFormBirthday,
 };
 
 export class ContactForm {
