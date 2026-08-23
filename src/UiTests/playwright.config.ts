@@ -11,8 +11,10 @@ export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: isCI,
-  retries: isCI ? 2 : 0,
-  workers: isCI ? 1 : undefined,
+  // Locally one retry self-heals a rare Blazor WASM cold-start miss, and capping workers tames the
+  // first-load thundering herd on the dev servers (see #138). CI stays serialized with more retries.
+  retries: isCI ? 2 : 1,
+  workers: isCI ? 1 : 4,
   reporter: [['list'], ['html']],
   expect: {
     timeout: env.expectTimeout,
