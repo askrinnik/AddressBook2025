@@ -60,6 +60,13 @@ test.describe('smoke — app shell', () => {
     await expect.poll(() => appShell.isDrawerOpen()).toBe(true);
   });
 
+  test('app bar exposes no dead "More options" control', async ({ page, homePage }) => {
+    await homePage.goto();
+    // Regression guard for #135: the actionless MoreVert app-bar button was removed. Re-adding a
+    // control with that accessible name (and no effect) should fail here.
+    await expect(page.getByRole('button', { name: 'More options' })).toHaveCount(0);
+  });
+
   test('toggles the theme', async ({ homePage, appShell }) => {
     await homePage.goto();
     // MainLayout starts in light mode (`_isDarkMode = false`).
