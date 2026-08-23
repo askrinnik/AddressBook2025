@@ -161,32 +161,32 @@ src/UiTests/
   `date-picker` (popover), `confirm-dialog` (MudMessageBox).
 - [x] **U8** ([#99](https://github.com/askrinnik/AddressBook2025/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
   `edit-contact` (используют component objects, ленивые локаторы).
-- [ ] **U9** ([#100](https://github.com/askrinnik/AddressBook2025/issues/100)) `fixtures/test-fixtures.ts` — `test.extend`: инжект страниц/компонентов +
+- [x] **U9** ([#100](https://github.com/askrinnik/AddressBook2025/issues/100)) `fixtures/test-fixtures.ts` — `test.extend`: инжект страниц/компонентов +
   `contactsApi` + `data` + авто-cleanup созданных контактов. `utils/assertions.ts`,
   `utils/blazor.ts` (готовность WASM).
 
 ### Фаза 2 — Тесты
 
-- [ ] **U10** ([#101](https://github.com/askrinnik/AddressBook2025/issues/101)) `tests/smoke/app-shell.spec.ts` — загрузка приложения, навигация Home↔Contacts,
+- [x] **U10** ([#101](https://github.com/askrinnik/AddressBook2025/issues/101)) `tests/smoke/app-shell.spec.ts` — загрузка приложения, навигация Home↔Contacts,
   переключение темы, toggle drawer, заголовки страниц.
-- [ ] **U11** ([#102](https://github.com/askrinnik/AddressBook2025/issues/102)) `tests/contacts/list-search.spec.ts` — отображение созданных контактов, поиск по
+- [x] **U11** ([#102](https://github.com/askrinnik/AddressBook2025/issues/102)) `tests/contacts/list-search.spec.ts` — отображение созданных контактов, поиск по
   токену, пустой результат («No matching records found»), очистка поиска.
-- [ ] **U12** ([#103](https://github.com/askrinnik/AddressBook2025/issues/103)) `tests/contacts/sort-paginate.spec.ts` — сортировка по First/Last/Birthday,
+- [x] **U12** ([#103](https://github.com/askrinnik/AddressBook2025/issues/103)) `tests/contacts/sort-paginate.spec.ts` — сортировка по First/Last/Birthday,
   пагинация (rows-per-page, next/prev), `TotalRows`.
-- [ ] **U13** ([#104](https://github.com/askrinnik/AddressBook2025/issues/104)) `tests/contacts/create.spec.ts` — создание с birthday и без, появление в списке,
+- [x] **U13** ([#104](https://github.com/askrinnik/AddressBook2025/issues/104)) `tests/contacts/create.spec.ts` — создание с birthday и без, появление в списке,
   отмена (Cancel → без создания).
-- [ ] **U14** ([#105](https://github.com/askrinnik/AddressBook2025/issues/105)) `tests/contacts/edit.spec.ts` — редактирование существующего (данные
+- [x] **U14** ([#105](https://github.com/askrinnik/AddressBook2025/issues/105)) `tests/contacts/edit.spec.ts` — редактирование существующего (данные
   предзаполнены, сохранение отражается в списке), not-found для несуществующего id, отмена.
-- [ ] **U15** ([#106](https://github.com/askrinnik/AddressBook2025/issues/106)) `tests/contacts/delete.spec.ts` — confirm-диалог: «Cancel» не удаляет, «Yes»
+- [x] **U15** ([#106](https://github.com/askrinnik/AddressBook2025/issues/106)) `tests/contacts/delete.spec.ts` — confirm-диалог: «Cancel» не удаляет, «Yes»
   удаляет и обновляет таблицу.
-- [ ] **U16** ([#107](https://github.com/askrinnik/AddressBook2025/issues/107)) `tests/contacts/validation.spec.ts` — клиент: пустые First/Last name блокируют
+- [x] **U16** ([#107](https://github.com/askrinnik/AddressBook2025/issues/107)) `tests/contacts/validation.spec.ts` — клиент: пустые First/Last name блокируют
   сабмит (`Required`); сервер: длина > 30 и будущая дата → 400 → сообщения на полях формы.
-- [ ] **U17** ([#108](https://github.com/askrinnik/AddressBook2025/issues/108)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной UI-сценарий: create → найти
+- [x] **U17** ([#108](https://github.com/askrinnik/AddressBook2025/issues/108)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной UI-сценарий: create → найти
   поиском → edit → проверить → delete → убедиться, что исчез.
 
 ### Фаза 3 — Обвязка и документация
 
-- [ ] **U18** ([#109](https://github.com/askrinnik/AddressBook2025/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
+- [x] **U18** ([#109](https://github.com/askrinnik/AddressBook2025/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
   на Home/Contacts/Create.
 - [ ] **U19** ([#110](https://github.com/askrinnik/AddressBook2025/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
 - [ ] **U20** ([#111](https://github.com/askrinnik/AddressBook2025/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
