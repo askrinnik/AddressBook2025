@@ -38,8 +38,8 @@
                 <MudTd DataLabel="Last Name">@context.LastName</MudTd>
                 <MudTd DataLabel="Birthday">@context.Birthday?.ToShortDateString()</MudTd>
                 <MudTd>
-                    <MudButton Variant="Variant.Filled" OnClick="@(_ => Navigation.NavigateTo($"/edit-contact/{context.Id}"))" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" data-testid="@($"contact-edit-{context.Id}")"></MudButton>
-                    <MudButton Variant="Variant.Filled" OnClick="@(_ => DeleteContactAsync(context.Id))" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Class="ms-2" data-testid="@($"contact-delete-{context.Id}")"></MudButton>
+                    <MudButton Variant="Variant.Filled" OnClick="@(_ => Navigation.NavigateTo($"/edit-contact/{context.Id}"))" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" aria-label="Edit contact" data-testid="@($"contact-edit-{context.Id}")"></MudButton>
+                    <MudButton Variant="Variant.Filled" OnClick="@(_ => DeleteContactAsync(context.Id))" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Class="ms-2" aria-label="Delete contact" data-testid="@($"contact-delete-{context.Id}")"></MudButton>
                 </MudTd>
             </RowTemplate>
             <NoRecordsContent>
