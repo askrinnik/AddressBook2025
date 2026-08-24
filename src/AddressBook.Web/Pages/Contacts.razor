@@ -51,7 +51,23 @@
                 <MudText>Loading...</MudText>
             </LoadingContent>
             <PagerContent>
-                <MudTablePager />
+                @* MudTablePager's built-in rows-per-page <MudSelect> renders a role="combobox" with no
+                   accessible name and exposes no parameter to set one (MudBlazor 9.7.0/9.8.0/dev — see
+                   docs/tasks/issue-136-a11y-pager-rows-per-page-name.md). Hide it and supply our own
+                   labeled select so the control keeps working AND has an accessible name (axe
+                   aria-input-field-name). MudBlazor-only, no JS. Keep the mud-table-pagination-select
+                   class so the stock styling and the UI-test locator still apply. *@
+                <div class="d-flex align-center justify-end flex-grow-1 flex-wrap">
+                    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption mr-2">Rows per page:</MudText>
+                    <MudSelect T="int" Value="_rowsPerPage" ValueChanged="OnRowsPerPageChanged" Dense="true"
+                        Underline="false" aria-label="Rows per page" Class="mud-table-pagination-select">
+                        @foreach (var size in PageSizeOptions)
+                        {
+                            <MudSelectItem T="int" Value="@size">@size</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTablePager HideRowsPerPage="true" />
+                </div>
             </PagerContent>
         </MudTable>
     </MudItem>

@@ -202,6 +202,7 @@ test.describe('contacts — sort & paginate', () => {
     contactsApi,
     contactsPage,
     data,
+    page,
   }) => {
     const token = newTestToken();
     await seedPagedContacts(contactsApi, data, token, 12);
@@ -209,6 +210,10 @@ test.describe('contacts — sort & paginate', () => {
 
     await contactsPage.goto();
     await table.search(token);
+
+    // The rows-per-page control is our own labeled MudSelect (issue #136): the built-in pager select
+    // had no accessible name. Pin the accessible name so a regression fails here, not only in axe.
+    await expect(page.getByRole('combobox', { name: 'Rows per page' })).toBeVisible();
 
     // Default 10/page → two pages; raising it to 25 collapses all 12 rows onto a single page.
     await expectRowCount(table, 10);

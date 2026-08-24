@@ -18,24 +18,24 @@ import { expect, test } from '../../src/fixtures/test-fixtures.js';
  * rendered via search, so the scan actually covers table rows and the Edit/Delete icon buttons
  * instead of an empty table. All waiting is web-first — no delays.
  *
- * Known baseline (issue #132): the icon-button `button-name` violations were fixed by adding
- * `aria-label`s in the Web markup, so Home and Create are now enforced at zero. The one remaining
- * tolerated rule is `aria-input-field-name` on Contacts — the rows-per-page `<MudSelect>` inside
- * MudBlazor's `MudTablePager` (9.7.0) renders a `role=combobox` with no accessible name and exposes
- * no parameter to set one; it is an upstream limitation (see docs/tasks/issue-132-a11y-accessible-names.md).
- * This is an explicit, documented tolerance scoped to one rule on one page — not a blanket disable:
- * a fresh violation of any other rule (a new `button-name` regression included) still fails. When the
- * upstream gap is closed, drop the entry so the scan enforces zero violations everywhere.
+ * All three pages are now enforced at zero WCAG A/AA violations:
+ * - issue #132: the icon-button `button-name` violations were fixed by adding `aria-label`s in the
+ *   Web markup (Home, Create, and the Contacts row buttons);
+ * - issue #136: the Contacts rows-per-page `aria-input-field-name` violation — the `<MudSelect>`
+ *   inside MudBlazor's `MudTablePager` renders a `role=combobox` with no accessible name and exposes
+ *   no parameter to set one, and no MudBlazor version (9.7.0/9.8.0/dev) fixes it — was resolved by
+ *   replacing the built-in pager select with our own labeled one (see
+ *   docs/tasks/issue-136-a11y-pager-rows-per-page-name.md).
+ * The baseline is therefore empty for every page: any WCAG A/AA violation fails the scan.
  */
 
 const WCAG_A_AA_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
-// Violation rule ids tolerated per page — see issue #132. Anything not listed here is treated as a
-// regression and fails the test. Home/Create are enforced at zero; Contacts tolerates only the
-// upstream MudTablePager `aria-input-field-name` gap.
+// Violation rule ids tolerated per page (issues #132, #136). Every page is now enforced at zero:
+// any violation is treated as a regression and fails the test.
 const KNOWN_VIOLATIONS: Record<string, ReadonlySet<string>> = {
   home: new Set<string>(),
-  contacts: new Set(['aria-input-field-name']),
+  contacts: new Set<string>(),
   create: new Set<string>(),
 };
 
