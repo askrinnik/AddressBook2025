@@ -1,0 +1,88 @@
+name: API E2E Tests
+
+# Runs the src/ApiTests Playwright suite against a live API started by Playwright's own
+# webServer block. These are HTTP API tests (APIRequestContext) — no browser is needed.
+# Fires on any push (like build.yml) and on demand.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  api-e2e:
+    name: API E2E (src/ApiTests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # The API needs a real SQL Server; on Linux we point it at this service container
+    # via the Database__* env overrides below (Development defaults use SQLEXPRESS/Windows auth).
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          # Throwaway CI-only SA password, supplied via a repository secret (see README / repo settings).
+          MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+    env:
+      # Override the API connection string (env beats appsettings.Development.json). Non-empty
+      # Database:User/Password make StartupExtensions switch to SQL auth; DefaultConnection already
+      # carries Database=AddressBook + TrustServerCertificate=True. Migrations run on API startup.
+      Database__Server: "localhost,1433"
+      Database__User: "sa"
+      Database__Password: ${{ secrets.MSSQL_SA_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+
+      - name: Wait for SQL Server
+        # The service boots concurrently with the steps above; make sure it accepts connections
+        # before Playwright starts the API (whose startup migration needs a live database).
+        run: |
+          for i in $(seq 1 30); do
+            if (echo > /dev/tcp/127.0.0.1/1433) >/dev/null 2>&1; then
+              echo "SQL Server is accepting connections."
+              exit 0
+            fi
+            echo "Waiting for SQL Server... ($i)"
+            sleep 2
+          done
+          echo "SQL Server did not become ready in time." >&2
+          exit 1
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/ApiTests
+
+      - name: Run API E2E tests
+        # CI=true (set by GitHub) makes playwright.config start a fresh API via webServer.
+        # No `playwright install` — these tests use APIRequestContext, not a browser.
+        run: npm test
+        working-directory: src/ApiTests
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: api-playwright-report
+          path: src/ApiTests/playwright-report/
+          retention-days: 30
+
+      - name: Upload test artifacts (traces)
+        uses: actions/upload-artifact@v7
+        if: ${{ failure() }}
+        with:
+          name: api-test-results
+          path: src/ApiTests/test-results/
+          retention-days: 30

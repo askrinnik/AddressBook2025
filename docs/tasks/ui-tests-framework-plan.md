@@ -189,7 +189,7 @@ src/UiTests/
 - [x] **U18** ([#109](https://github.com/askrinnik/AddressBook2025/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
   на Home/Contacts/Create.
 - [ ] **U19** ([#110](https://github.com/askrinnik/AddressBook2025/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
-- [ ] **U20** ([#111](https://github.com/askrinnik/AddressBook2025/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
+- [x] **U20** ([#111](https://github.com/askrinnik/AddressBook2025/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
   --with-deps`, прогон, публикация HTML-репорта) + обновление skills/instructions.
 - [ ] **U21** ([#112](https://github.com/askrinnik/AddressBook2025/issues/112)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
 

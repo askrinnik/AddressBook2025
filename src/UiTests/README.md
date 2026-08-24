@@ -185,6 +185,47 @@ npm run test:remote
   «залечивает» редкий промах холодного старта Blazor WASM (см. [#138](https://github.com/askrinnik/AddressBook2025/issues/138)).
   При отладке гонок бывает полезно сузить параллелизм: `npx playwright test --workers=1`.
 
+## CI
+
+Набор прогоняется в GitHub Actions воркфлоу
+[`.github/workflows/ui-tests.yml`](../../.github/workflows/ui-tests.yml) — на **любой push** и по
+ручному запуску (`workflow_dispatch`). На `ubuntu-latest` воркфлоу:
+
+- поднимает **SQL Server 2022** как services-контейнер;
+- ставит **.NET 10 SDK** и **Node LTS**, генерирует HTTPS dev-cert (`dotnet dev-certs https`);
+- `npm ci` → `npx playwright install --with-deps` → `npm test` в `src/UiTests`. В CI
+  (`process.env.CI`) `webServer` сам поднимает API (порт 5000) и Web (`https://localhost:7187`);
+  API направлен на контейнер через env-оверрайды `Database__Server` / `Database__User` /
+  `Database__Password`;
+- публикует HTML-репорт как artifact `playwright-report` (30 дней); при падении — трейсы/видео
+  (`test-results`).
+
+### Настройка секрета `MSSQL_SA_PASSWORD`
+
+Воркфлоу требует repository secret **`MSSQL_SA_PASSWORD`** — пароль SA для контейнера SQL Server
+(используется и как `MSSQL_SA_PASSWORD` контейнера, и как `Database__Password` для API). Без него
+прогон падает на старте SQL. Значение должно удовлетворять политике SQL Server: **≥ 8 символов** и
+минимум **3 из 4** категорий (заглавная, строчная, цифра, спецсимвол).
+
+Через веб-интерфейс:
+
+1. Репозиторий → **Settings** → **Secrets and variables** → **Actions**.
+2. Вкладка **Secrets** → **New repository secret**.
+3. **Name:** `MSSQL_SA_PASSWORD`, **Secret:** надёжный пароль (см. требования выше).
+4. **Add secret**.
+
+Или через GitHub CLI (значение спросит интерактивно, не попадёт в историю оболочки):
+
+```bash
+gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook2025
+```
+
+Запуск вручную:
+
+```bash
+gh workflow run ui-tests.yml
+```
+
 ## Соглашения
 
 - **Изоляция и очистка.** Данные создаются через `contactsApi`; фикстура удаляет их в teardown —
