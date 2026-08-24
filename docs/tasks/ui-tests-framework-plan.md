@@ -1,6 +1,6 @@
 # План: Современный фреймворк UI (E2E) автотестов `src/UiTests`
 
-> **Статус:** черновик / в работе
+> **Статус:** выполнен — все задачи U1–U21 закрыты
 > **Целевая папка:** `src/UiTests` (новая; `src/ApiTests` и `src/AutoTests` не трогаем)
 > **Тестируемое приложение:** `src/AddressBook.Web` — Blazor WebAssembly + MudBlazor 9.3.0
 > **Локальный запуск сайта:** `https://localhost:7187/` (профиль `https`), API на `http://localhost:5000/api/`
@@ -188,10 +188,10 @@ src/UiTests/
 
 - [x] **U18** ([#109](https://github.com/askrinnik/AddressBook2025/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
   на Home/Contacts/Create.
-- [ ] **U19** ([#110](https://github.com/askrinnik/AddressBook2025/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
+- [x] **U19** ([#110](https://github.com/askrinnik/AddressBook2025/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
 - [x] **U20** ([#111](https://github.com/askrinnik/AddressBook2025/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
   --with-deps`, прогон, публикация HTML-репорта) + обновление skills/instructions.
-- [ ] **U21** ([#112](https://github.com/askrinnik/AddressBook2025/issues/112)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
+- [x] **U21** ([#112](https://github.com/askrinnik/AddressBook2025/issues/112)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/ApiTests`
 
