@@ -150,8 +150,25 @@ npm run test:remote
 - публикует HTML-репорт как artifact `api-playwright-report` (30 дней); при падении — трейсы
   (`api-test-results`).
 
-Требуется repository secret **`MSSQL_SA_PASSWORD`** (пароль SA для контейнера SQL Server):
-Settings → Secrets and variables → Actions → New repository secret.
+### Настройка секрета `MSSQL_SA_PASSWORD`
+
+Воркфлоу требует repository secret **`MSSQL_SA_PASSWORD`** — пароль SA для контейнера SQL Server
+(используется и как `MSSQL_SA_PASSWORD` контейнера, и как `Database__Password` для API). Без него
+прогон падает на старте SQL. Значение должно удовлетворять политике SQL Server: **≥ 8 символов** и
+минимум **3 из 4** категорий (заглавная, строчная, цифра, спецсимвол).
+
+Через веб-интерфейс:
+
+1. Репозиторий → **Settings** → **Secrets and variables** → **Actions**.
+2. Вкладка **Secrets** → **New repository secret**.
+3. **Name:** `MSSQL_SA_PASSWORD`, **Secret:** надёжный пароль (см. требования выше).
+4. **Add secret**.
+
+Или через GitHub CLI (значение спросит интерактивно, не попадёт в историю оболочки):
+
+```bash
+gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook2025
+```
 
 Запуск вручную:
 
