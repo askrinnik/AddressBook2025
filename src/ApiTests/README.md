@@ -4,9 +4,6 @@
 Полностью покрывает пять эндпоинтов `Contacts` (GET-список, GET-по-id, POST, PUT, DELETE),
 негативные сценарии, границы и contract-схемы.
 
-> Существующий набор `src/AutoTests` не затрагивается — это независимый, заново спроектированный
-> фреймворк.
-
 ## Стек
 
 `@playwright/test` · `zod` · `@faker-js/faker` · `dotenv` · `cross-env` · `http-status-codes` ·

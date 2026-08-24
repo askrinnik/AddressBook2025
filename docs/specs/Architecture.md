@@ -102,8 +102,12 @@ graph TB
         Models["Models\n(ContactModel, Responses)"]
     end
 
-    subgraph "src/AutoTests"
-        Playwright["Playwright TypeScript\nE2E API Tests"]
+    subgraph "src/ApiTests"
+        ApiE2E["Playwright TypeScript\nAPI E2E Tests"]
+    end
+
+    subgraph "src/UiTests"
+        UiE2E["Playwright TypeScript\nUI E2E Tests"]
     end
 
     UI --> API
@@ -119,7 +123,9 @@ graph TB
     Controller -.->|"uses contracts"| Queries
     Handlers -.->|"uses contracts"| Models
     ApiSvc -.->|"uses contracts"| Models
-    Playwright -->|"tests live API"| API
+    ApiE2E -->|"tests live API"| API
+    UiE2E -->|"drives UI"| UI
+    UiE2E -.->|"seeds/cleans via API"| API
 ```
 
 ---
@@ -152,16 +158,15 @@ askrinnik/AddressBook2025/
 │   │   ├── AddressBook.Api.md
 │   │   ├── AddressBook.Contracts.md
 │   │   ├── AddressBook.Web.md
-│   │   ├── Architecture.md
-│   │   └── AutoTests.md
+│   │   └── Architecture.md
 │   └── tasks/                       # Implementation plans (e.g. ui-tests-framework-plan.md)
 ├── src/
 │   ├── AddressBook.sln              # VS 2022 solution file
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
-│   ├── ApiTests/                    # Playwright TypeScript API E2E tests (current suite)
-│   └── AutoTests/                   # Legacy Playwright E2E tests (reference only)
+│   ├── ApiTests/                    # Playwright TypeScript API E2E tests
+│   └── UiTests/                     # Playwright TypeScript UI E2E tests
 └── README.md                        # Minimal: "pet project for address book development"
 ```
 
@@ -203,11 +208,11 @@ MudBlazor 9.3.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandl
 
 ---
 
-### 4. `AutoTests` — Playwright/TypeScript E2E Tests
+### 4. `ApiTests` & `UiTests` — Playwright/TypeScript E2E Tests
 
-API-level E2E tests running against the live Azure API. Covers GET (list, search, by-ID), POST (create with/without birthday, validation errors), and DELETE scenarios across Chromium, Firefox, and WebKit.
+Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST API (the five `Contacts` endpoints, negatives, boundaries, and contract schemas). `src/UiTests` is a hybrid UI E2E suite for the Blazor WASM frontend — it drives the real browser and seeds/cleans data fast over the API. Both start the app themselves via Playwright's `webServer` and run in CI (see below).
 
-→ Full specification: [`AutoTests.md`](./AutoTests.md)
+→ Full specifications: [`src/ApiTests/README.md`](../../src/ApiTests/README.md), [`src/UiTests/README.md`](../../src/UiTests/README.md)
 
 ---
 
@@ -221,7 +226,7 @@ API-level E2E tests running against the live Azure API. Covers GET (list, search
 
 **`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
 
-> The legacy `playwright.yml` (manual-dispatch runner for the reference-only `src/AutoTests` suite) was removed once CI moved to running the current API and UI suites entirely inside GitHub Actions.
+> The legacy `playwright.yml` workflow and the reference-only `src/AutoTests` suite it ran were removed once CI moved to running the current API and UI suites entirely inside GitHub Actions.
 
 ---
 
@@ -268,7 +273,6 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 | `AddressBook.Contracts.md` | Commands, queries, models — full type signatures |
 | `AddressBook.Api.md` | Domain, handlers, validation, data access, middleware, CORS, DB schema, build/run |
 | `AddressBook.Web.md` | Pages, API service, error handling, MudBlazor components, layout, build/run |
-| `AutoTests.md` | Playwright API client, DTOs, test scenarios, config, CI workflow |
 
 ---
 
@@ -409,7 +413,6 @@ Detailed per-project specifications are maintained in `docs/specs/`:
 | [`AddressBook.Contracts.md`](./AddressBook.Contracts.md) | All commands, queries, models — full type signatures and design decisions |
 | [`AddressBook.Api.md`](./AddressBook.Api.md) | Domain model, repository interfaces, CQRS handlers, validation, data access, middleware pipeline, CORS, DB schema, build/run |
 | [`AddressBook.Web.md`](./AddressBook.Web.md) | Blazor pages, API service, error handling subsystem, MudBlazor component usage, layout, build/run |
-| [`AutoTests.md`](./AutoTests.md) | Playwright API client, DTOs, all test scenarios, config, CI workflow |
 
 These spec documents provide implementation-level detail complementing the architectural overview in this file.
 

@@ -1,12 +1,11 @@
 ---
-description: "Playwright TypeScript E2E test conventions for AddressBook2025. Use when writing, modifying, or reviewing the API (src/ApiTests, src/AutoTests) and UI (src/UiTests) end-to-end tests."
-applyTo: "src/ApiTests/**, src/AutoTests/**, src/UiTests/**"
+description: "Playwright TypeScript E2E test conventions for AddressBook2025. Use when writing, modifying, or reviewing the API (src/ApiTests) and UI (src/UiTests) end-to-end tests."
+applyTo: "src/ApiTests/**, src/UiTests/**"
 ---
 # Playwright E2E Test Conventions
 
-> The sections up to **UI E2E tests** describe the **API** test suites (`src/ApiTests`,
-> `src/AutoTests`). The UI E2E suite (`src/UiTests`) has a different architecture — see the
-> dedicated section at the end.
+> The sections up to **UI E2E tests** describe the **API** test suite (`src/ApiTests`). The UI
+> E2E suite (`src/UiTests`) has a different architecture — see the dedicated section at the end.
 
 ## API Client Pattern
 
@@ -42,7 +41,7 @@ applyTo: "src/ApiTests/**, src/AutoTests/**, src/UiTests/**"
 - Russian-language comments are supported — maintain the language of existing comments nearby
 - Use comments to explain **why** two similar tests exist (e.g., demonstrating different testing approaches)
 
-→ Full specification: [`docs/specs/AutoTests.md`](../../docs/specs/AutoTests.md)
+→ Full specification: [`src/ApiTests/README.md`](../../src/ApiTests/README.md)
 
 # UI E2E tests (`src/UiTests`)
 

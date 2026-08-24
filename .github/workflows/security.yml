@@ -35,8 +35,12 @@ jobs:
           fi
 
   npm-vulnerability-scan:
-    name: npm Vulnerabilities (AutoTests)
+    name: npm Vulnerabilities (${{ matrix.suite }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [ApiTests, UiTests]
     steps:
       - uses: actions/checkout@v5
 
@@ -46,10 +50,10 @@ jobs:
           node-version: 'lts/*'
 
       - name: Install dependencies
-        working-directory: src/AutoTests
+        working-directory: src/${{ matrix.suite }}
         run: npm ci
 
       - name: Audit npm packages
-        working-directory: src/AutoTests
+        working-directory: src/${{ matrix.suite }}
         # --audit-level=high fails only on high/critical severity
         run: npm audit --audit-level=high
