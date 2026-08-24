@@ -35,7 +35,7 @@ Read the matching instruction file before working on these file types. **Copilot
 | API architecture (`src/AddressBook.Api/**`) | `.github/instructions/api-architecture.instructions.md` |
 | C# (`**/*.cs`) | `.github/instructions/csharp.instructions.md` |
 | Blazor project-specific (MudBlazor / WASM) | `.github/instructions/blazor.project-specific.instructions.md` |
-| Playwright E2E — API (`src/ApiTests/**`, `src/AutoTests/**`) and UI (`src/UiTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
+| Playwright E2E — API (`src/ApiTests/**`) and UI (`src/UiTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
 
 > The Playwright conventions file covers both the API suites and the UI E2E suite (`src/UiTests`, in its own section). Claude Code also auto-loads `src/UiTests/CLAUDE.md` when working in that subtree.
 
