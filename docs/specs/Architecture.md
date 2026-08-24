@@ -136,7 +136,9 @@ askrinnik/AddressBook2025/
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
 │       ├── build.yml                # CI: dotnet build on every push
-│       └── playwright.yml           # E2E tests on push/PR to main
+│       ├── api-tests.yml            # API E2E (src/ApiTests) on every push + dispatch
+│       ├── ui-tests.yml             # UI E2E (src/UiTests) on every push + dispatch
+│       └── security.yml             # NuGet/npm vulnerability scan
 ├── .ai/
 │   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
 │   └── prompts/                     # Shared, tool-neutral command bodies
@@ -213,7 +215,13 @@ API-level E2E tests running against the live Azure API. Covers GET (list, search
 
 **`build.yml`** — Triggers on every push; runs `dotnet restore` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x.[^6]
 
-**`playwright.yml`** — Triggers on push/PR to `main`; runs `npm ci` + `npx playwright install --with-deps` + `npx playwright test` in `src/AutoTests`; uploads HTML report as artifact for 30 days.[^7]
+**`api-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/ApiTests` API E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, then `npm ci` + `npm test` — Playwright's `webServer` block starts the API (port 5000) itself, pointed at the container via `Database__*` env overrides. No browser install (the tests use `APIRequestContext`). Publishes the HTML report as an artifact (30 days); traces on failure.
+
+**`ui-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/UiTests` UI E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, generates an HTTPS dev cert, then `npm ci` + `npx playwright install --with-deps` + `npm test` — Playwright's `webServer` block starts the API (port 5000) and Web (`https://localhost:7187`) itself, with the API pointed at the container via `Database__*` env overrides. Publishes the HTML report as an artifact (30 days); traces/videos on failure.
+
+**`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
+
+> The legacy `playwright.yml` (manual-dispatch runner for the reference-only `src/AutoTests` suite) was removed once CI moved to running the current API and UI suites entirely inside GitHub Actions.
 
 ---
 
@@ -421,7 +429,6 @@ These spec documents provide implementation-level detail complementing the archi
 
 [^6]: [.github/workflows/build.yml](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/build.yml) SHA: `b66d3ac7`
 
-[^7]: [.github/workflows/playwright.yml](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/playwright.yml) SHA: `465b75ee`
 
 [^8]: PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51), PR [#48](https://github.com/askrinnik/AddressBook2025/pull/48), PR [#42](https://github.com/askrinnik/AddressBook2025/pull/42), PR [#41](https://github.com/askrinnik/AddressBook2025/pull/41)
 

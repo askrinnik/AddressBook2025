@@ -136,6 +136,29 @@ npm run test:remote
   схемы ловят дрейф контракта (лишние/утёкшие поля).
 - Подробнее — в [`playwright-conventions.instructions.md`](../../.github/instructions/playwright-conventions.instructions.md).
 
+## CI
+
+Набор прогоняется в GitHub Actions воркфлоу
+[`.github/workflows/api-tests.yml`](../../.github/workflows/api-tests.yml) — на **любой push** и по
+ручному запуску (`workflow_dispatch`). На `ubuntu-latest` воркфлоу:
+
+- поднимает **SQL Server 2022** как services-контейнер;
+- ставит **.NET 10 SDK** и **Node LTS**;
+- `npm ci` → `npm test` в `src/ApiTests`. В CI (`process.env.CI`) `webServer` сам поднимает API
+  (порт 5000), направленный на контейнер через env-оверрайды `Database__Server` / `Database__User` /
+  `Database__Password`. Браузеры **не** ставятся — тесты работают через `APIRequestContext`;
+- публикует HTML-репорт как artifact `api-playwright-report` (30 дней); при падении — трейсы
+  (`api-test-results`).
+
+Требуется repository secret **`MSSQL_SA_PASSWORD`** (пароль SA для контейнера SQL Server):
+Settings → Secrets and variables → Actions → New repository secret.
+
+Запуск вручную:
+
+```bash
+gh workflow run api-tests.yml
+```
+
 ## План
 
 См. [docs/tasks/api-tests-framework-plan.md](../../docs/tasks/api-tests-framework-plan.md).

@@ -185,6 +185,30 @@ npm run test:remote
   «залечивает» редкий промах холодного старта Blazor WASM (см. [#138](https://github.com/askrinnik/AddressBook2025/issues/138)).
   При отладке гонок бывает полезно сузить параллелизм: `npx playwright test --workers=1`.
 
+## CI
+
+Набор прогоняется в GitHub Actions воркфлоу
+[`.github/workflows/ui-tests.yml`](../../.github/workflows/ui-tests.yml) — на **любой push** и по
+ручному запуску (`workflow_dispatch`). На `ubuntu-latest` воркфлоу:
+
+- поднимает **SQL Server 2022** как services-контейнер;
+- ставит **.NET 10 SDK** и **Node LTS**, генерирует HTTPS dev-cert (`dotnet dev-certs https`);
+- `npm ci` → `npx playwright install --with-deps` → `npm test` в `src/UiTests`. В CI
+  (`process.env.CI`) `webServer` сам поднимает API (порт 5000) и Web (`https://localhost:7187`);
+  API направлен на контейнер через env-оверрайды `Database__Server` / `Database__User` /
+  `Database__Password`;
+- публикует HTML-репорт как artifact `playwright-report` (30 дней); при падении — трейсы/видео
+  (`test-results`).
+
+Требуется repository secret **`MSSQL_SA_PASSWORD`** (пароль SA для контейнера SQL Server):
+Settings → Secrets and variables → Actions → New repository secret.
+
+Запуск вручную:
+
+```bash
+gh workflow run ui-tests.yml
+```
+
 ## Соглашения
 
 - **Изоляция и очистка.** Данные создаются через `contactsApi`; фикстура удаляет их в teardown —

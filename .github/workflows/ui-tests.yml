@@ -1,0 +1,95 @@
+name: UI E2E Tests
+
+# Runs the src/UiTests Playwright suite against a live API + Web, both started by
+# Playwright's own webServer block. Fires on any push (like build.yml) and on demand.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  ui-e2e:
+    name: UI E2E (src/UiTests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    # The API needs a real SQL Server; on Linux we point it at this service container
+    # via the Database__* env overrides below (Development defaults use SQLEXPRESS/Windows auth).
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          # Throwaway CI-only SA password, supplied via a repository secret (see README / repo settings).
+          MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+    env:
+      # Override the API connection string (env beats appsettings.Development.json). Non-empty
+      # Database:User/Password make StartupExtensions switch to SQL auth; DefaultConnection already
+      # carries Database=AddressBook + TrustServerCertificate=True. Migrations run on API startup.
+      Database__Server: "localhost,1433"
+      Database__User: "sa"
+      Database__Password: ${{ secrets.MSSQL_SA_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Trust an HTTPS dev certificate
+        # Kestrel serves the Web app on https://localhost:7187 (https launch profile); on Linux it
+        # needs a dev cert to bind the HTTPS endpoint. Tests use ignoreHTTPSErrors, so no trust step.
+        run: dotnet dev-certs https
+
+      - name: Wait for SQL Server
+        # The service boots concurrently with the steps above; make sure it accepts connections
+        # before Playwright starts the API (whose startup migration needs a live database).
+        run: |
+          for i in $(seq 1 30); do
+            if (echo > /dev/tcp/127.0.0.1/1433) >/dev/null 2>&1; then
+              echo "SQL Server is accepting connections."
+              exit 0
+            fi
+            echo "Waiting for SQL Server... ($i)"
+            sleep 2
+          done
+          echo "SQL Server did not become ready in time." >&2
+          exit 1
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/UiTests
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: src/UiTests
+
+      - name: Run UI E2E tests
+        # CI=true (set by GitHub) makes playwright.config start fresh API + Web via webServer.
+        run: npm test
+        working-directory: src/UiTests
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: src/UiTests/playwright-report/
+          retention-days: 30
+
+      - name: Upload test artifacts (traces/videos)
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: test-results
+          path: src/UiTests/test-results/
+          retention-days: 30
