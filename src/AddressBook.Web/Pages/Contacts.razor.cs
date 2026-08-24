@@ -12,6 +12,11 @@ public partial class Contacts
     private MudMessageBox _confirmDeleteMessageBox = null!;
     private MudTable<ContactModel> _contactTable = null!;
 
+    // Rows-per-page is driven by our own labeled MudSelect (the built-in pager select has no
+    // accessible name — see Contacts.razor). Options mirror MudTablePager's default PageSizeOptions.
+    private static readonly int[] PageSizeOptions = [10, 25, 50, 100];
+    private int _rowsPerPage = 10;
+
     [Inject]
     private IAddressBookApiService AddressBookApiService { get; set; } = null!;
 
@@ -65,6 +70,13 @@ public partial class Contacts
         await _contactTable.ReloadServerData();
     }
 
-    private void ShowCreateContactForm() => 
+    private void OnRowsPerPageChanged(int rows)
+    {
+        _rowsPerPage = rows;
+        // MudTableBase.SetRowsPerPage updates the page size and re-invokes ServerReload.
+        _contactTable.SetRowsPerPage(rows);
+    }
+
+    private void ShowCreateContactForm() =>
         Navigation.NavigateTo("/create-contact");
 }
