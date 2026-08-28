@@ -28,7 +28,7 @@ dotnet build src/AddressBook.Api/AddressBook.Api.csproj
 Or as part of the solution:
 
 ```bash
-dotnet build src/AddressBook.sln
+dotnet build src/AddressBook.slnx
 ```
 
 ### Run locally
@@ -97,8 +97,8 @@ dotnet ef database update
 GitHub Actions workflow `build.yml` runs on every push:
 
 ```bash
-dotnet restore src/AddressBook.sln
-dotnet build src/AddressBook.sln --configuration Release --no-restore
+dotnet restore src/AddressBook.slnx
+dotnet build src/AddressBook.slnx --configuration Release --no-restore
 ```
 
 ## API Endpoints

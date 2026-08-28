@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AddressBook.Api/AddressBook.Api.csproj" />
+  <Project Path="AddressBook.Contracts/AddressBook.Contracts.csproj" />
+  <Project Path="AddressBook.Web.Tests/AddressBook.Web.Tests.csproj" />
+  <Project Path="AddressBook.Web/AddressBook.Web.csproj" />
+</Solution>

@@ -18,7 +18,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 - **API E2E tests — run & conventions** → [src/ApiTests/README.md](src/ApiTests/README.md)
 - **UI E2E tests (planned)** → [docs/tasks/ui-tests-framework-plan.md](docs/tasks/ui-tests-framework-plan.md)
 
-Solution file: `src/AddressBook.sln`.
+Solution file: `src/AddressBook.slnx`.
 
 ## Working style
 
