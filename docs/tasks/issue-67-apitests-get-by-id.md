@@ -102,7 +102,7 @@ test.describe('GET /api/Contacts/{id}', () => {
 - `npm run lint` → 0 ошибок.
 - `npx tsc --noEmit` → 0 ошибок.
 - `npx playwright test tests/contacts/get-by-id.spec.ts` — все 4 теста зелёные.
-- `dotnet build src/AddressBook.sln` → без новых предупреждений.
+- `dotnet build src/AddressBook.slnx` → без новых предупреждений.
 
 ## 9. Out of scope / follow-ups
 

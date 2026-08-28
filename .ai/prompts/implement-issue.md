@@ -61,7 +61,7 @@ The steps below apply to both modes; where they differ, the mode is called out.
 
 ## 7. Build
 
-- Build the solution: `dotnet build src/AddressBook.sln`.
+- Build the solution: `dotnet build src/AddressBook.slnx`.
 - Fix build warnings introduced by this change; do not leave the tree noisier than you found it.
 
 ## 8. Verify against the acceptance criteria

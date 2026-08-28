@@ -32,7 +32,7 @@ dotnet test src/AddressBook.Web.Tests
 Или в составе решения:
 
 ```bash
-dotnet build src/AddressBook.sln
+dotnet build src/AddressBook.slnx
 ```
 
 ## Структура (по мере реализации)

@@ -186,7 +186,7 @@ export { expect };
 - `npx tsc --noEmit` в `src/ApiTests` → 0 ошибок.
 - `npx playwright test tests/fixtures/api.fixtures.spec.ts` — все кейсы зелёные,
   включая проверку «контакт удалён после teardown».
-- `dotnet build src/AddressBook.sln` (§7 промпта) → без новых предупреждений
+- `dotnet build src/AddressBook.slnx` (§7 промпта) → без новых предупреждений
   (C#-код не трогаем).
 
 ## 9. Out of scope / follow-ups

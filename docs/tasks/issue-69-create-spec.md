@@ -98,7 +98,7 @@ Happy path:
 
 ## 8. Верификация
 
-- `dotnet build src/AddressBook.sln`.
+- `dotnet build src/AddressBook.slnx`.
 - Поднять API (`run-api`) и прогнать спеку (`run-tests`): все кейсы зелёные и реально
   проверяют поведение.
 - По завершении отметить **T12** как `[x]` в `docs/tasks/api-tests-framework-plan.md`.

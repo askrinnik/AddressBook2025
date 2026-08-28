@@ -50,7 +50,7 @@ Also follow the `api-architecture`, `blazor.project-specific`, `aspnet-rest-apis
 ## 8. Verify the fix works
 
 - Stop the background servers started in step 3 before building — a running instance locks its binaries and the build's copy step will fail. Never go hunting for a stray `dotnet` process to kill; use the task handle you kept.
-- Build the solution: `dotnet build src/AddressBook.sln`.
+- Build the solution: `dotnet build src/AddressBook.slnx`.
 - **Guard against regressions — this is mandatory, not optional.** Add or extend the Playwright case(s) from the plan, then run the suite with the **`run-tests`** skill (API specs in `src/ApiTests`; UI specs in `src/UiTests` when present). The whole suite must be green: the new case passes and no spec that passed before regresses.
 - Restart the app the same way as step 3 and re-run the original repro steps against the fixed app; confirm the failure is gone and the console/network are clean. For a user-facing fix, use the **`verify-feature`** skill for the browser walk.
 - If the bug still reproduces or any existing test regresses, keep iterating on the fix (adjust the plan if the root-cause understanding changes) until it is resolved, then re-verify the repro and re-run the suite.

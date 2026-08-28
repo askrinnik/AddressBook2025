@@ -93,4 +93,4 @@ Conventions followed (`playwright-conventions`): web-first, auto-waiting asserti
    `webServer` block also starts both servers if not already running.
 2. `npm run lint` in `src/UiTests` — clean.
 3. `npm test -- tests/smoke/app-shell.spec.ts` — all cases green.
-4. `dotnet build src/AddressBook.sln` — unaffected (no C# change), confirmed green.
+4. `dotnet build src/AddressBook.slnx` — unaffected (no C# change), confirmed green.

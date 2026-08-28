@@ -80,7 +80,7 @@ This is a UI-only change with **no API change**, so no `src/ApiTests` additions 
 
 ## 6. Build
 
-`dotnet build src/AddressBook.sln` — must succeed with no new warnings.
+`dotnet build src/AddressBook.slnx` — must succeed with no new warnings.
 
 ## 7. Verification (feature mode — browser walk, adapted)
 

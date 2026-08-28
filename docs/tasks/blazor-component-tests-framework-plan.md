@@ -183,7 +183,7 @@ src/AddressBook.Web.Tests/
 - [ ] **B1** ([#145](https://github.com/askrinnik/AddressBook2025/issues/145)) Scaffold `src/AddressBook.Web.Tests`: `.csproj` (`net10.0`, `IsPackable=false`,
   `ProjectReference` на `AddressBook.Web`; пакеты `bunit` v2, `xunit.v3`, `Microsoft.NET.Test.Sdk`,
   `NSubstitute`, `Bogus`, `coverlet.collector`, `GitHubActionsTestLogger`), `xunit.runner.json`,
-  `GlobalUsings.cs`, `.gitignore`, README/CLAUDE-заглушки. **Добавить проект в `src/AddressBook.sln`.**
+  `GlobalUsings.cs`, `.gitignore`, README/CLAUDE-заглушки. **Добавить проект в `src/AddressBook.slnx`.**
   Создать этот файл плана в `docs/tasks/`.
 - [ ] **B2** ([#146](https://github.com/askrinnik/AddressBook2025/issues/146)) `Infrastructure/MudTestContext.cs` + `MudBlazorJsInterop.cs`: `AddMudServices()`,
   `JSInterop` loose, провайдеры, подмена `IAddressBookApiService`. Sanity-тест: тривиальный
@@ -243,7 +243,7 @@ src/AddressBook.Web.Tests/
 - [ ] **B20** ([#164](https://github.com/askrinnik/AddressBook2025/issues/164)) (опц., с подтверждением) CI-workflow `.github/workflows/web-tests.yml`: `setup-dotnet`
   10.0.x → `dotnet test src/AddressBook.Web.Tests` (+ артефакт покрытия). **Без** SQL Server,
   **без** браузеров — тесты полностью офлайн.
-- [ ] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.sln` + `dotnet test
+- [ ] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
   src/AddressBook.Web.Tests` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/UiTests` и `AddressBook.Web`
@@ -271,7 +271,7 @@ src/AddressBook.Web.Tests/
 | Overlay-виджеты (`MudDatePicker`, `MudMessageBox`, `MudSelect`) идут через JS | `JSInterop` loose + отрендеренные провайдеры; harness инкапсулирует открытие/выбор |
 | `MudTable ServerData` и `OnInitializedAsync` асинхронны | `cut.WaitForState` / `WaitForAssertion`, никаких `Task.Delay`/`Sleep` |
 | Навигация из компонентов | Встроенный bUnit `FakeNavigationManager` — проверка `nav.Uri` без реального роутинга |
-| Первый .NET-тест-проект в репо | Добавляем в `AddressBook.sln`; `build.yml` и `security.yml` подхватят его автоматически (сканируют всю sln) |
+| Первый .NET-тест-проект в репо | Добавляем в `AddressBook.slnx`; `build.yml` и `security.yml` подхватят его автоматически (сканируют всю sln) |
 | Версии MudBlazor должны совпадать с Web | Ссылка на проект `AddressBook.Web` даёт MudBlazor 9.8.0 транзитивно — отдельный `PackageReference` не дублируем |
 | bUnit v2 требуется для xUnit v3 (может быть pre-release) | Явно пинним версии `bunit`/`xunit.v3` в `.csproj`; sanity-тест B2 подтверждает связку |
 | FluentAssertions v8 платная для коммерции | Не используем — только bUnit-ассерты (`Find`/`MarkupMatches`) + xUnit `Assert` |
@@ -280,8 +280,8 @@ src/AddressBook.Web.Tests/
 
 ## 8. Верификация
 
-1. `dotnet restore src/AddressBook.sln`.
-2. `dotnet build src/AddressBook.sln -c Release` — тест-проект собирается в составе решения.
+1. `dotnet restore src/AddressBook.slnx`.
+2. `dotnet build src/AddressBook.slnx -c Release` — тест-проект собирается в составе решения.
 3. `dotnet test src/AddressBook.Web.Tests` — все тесты зелёные, **без** SQL Server / API / браузера.
 4. (опц.) `dotnet test src/AddressBook.Web.Tests --collect:"XPlat Code Coverage"` + отчёт
    ReportGenerator по покрытию страниц/компонентов/сервиса.

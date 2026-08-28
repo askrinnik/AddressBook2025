@@ -199,7 +199,7 @@ export class ProblemDetails implements ProblemDetailsShape {
 - `npx tsc --noEmit` в `src/ApiTests` → 0 ошибок.
 - `npx playwright test tests/contract/problem-details.spec.ts` при поднятом API → зелёная,
   каждый test-case реально утверждает поведение (не пустышка).
-- Общий `dotnet build src/AddressBook.sln` (§7 промпта) → без новых предупреждений
+- Общий `dotnet build src/AddressBook.slnx` (§7 промпта) → без новых предупреждений
   (мы вообще не трогаем C#-код, ожидаем ровно текущее состояние).
 
 ## 9. Out of scope / follow-ups

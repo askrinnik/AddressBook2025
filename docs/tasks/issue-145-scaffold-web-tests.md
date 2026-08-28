@@ -18,7 +18,7 @@
 - `src/AddressBook.Web.Tests/xunit.runner.json` — конфиг раннера (+ копирование в output).
 - `src/AddressBook.Web.Tests/.gitignore` — `bin/`, `obj/`, `TestResults/`, покрытие.
 - `src/AddressBook.Web.Tests/README.md`, `CLAUDE.md` — заглушки-пойнтеры на план и инструкции.
-- `src/AddressBook.sln` — регистрация нового проекта.
+- `src/AddressBook.slnx` — регистрация нового проекта.
 
 ## Пакеты (итоговый набор — MTP-native)
 
@@ -44,8 +44,8 @@
 2. Добавить `GlobalUsings.cs`, `xunit.runner.json` (+ `CopyToOutputDirectory`), `.gitignore`,
    README/CLAUDE-заглушки.
 3. Добавить `global.json` (секция `test.runner` = MTP) в корень репозитория.
-4. `dotnet sln src/AddressBook.sln add …`.
-5. `dotnet restore` + `dotnet build src/AddressBook.sln` — зелёно.
+4. `dotnet sln src/AddressBook.slnx add …`.
+5. `dotnet restore` + `dotnet build src/AddressBook.slnx` — зелёно.
 6. `dotnet test --project src/AddressBook.Web.Tests` — раннер MTP стартует (0 тестов на этом
    шаге; MTP возвращает exit code 8 «zero tests», это ожидаемо до B2).
 
@@ -54,8 +54,8 @@
 - [ ] Проект `src/AddressBook.Web.Tests` существует с корректным `.csproj` (net10.0, все пакеты,
   `ProjectReference` на `AddressBook.Web`, `IsPackable=false`).
 - [ ] Присутствуют `xunit.runner.json`, `GlobalUsings.cs`, `.gitignore`, `README.md`, `CLAUDE.md`.
-- [ ] Проект добавлен в `src/AddressBook.sln`.
-- [ ] `dotnet build src/AddressBook.sln` проходит без ошибок (без новых предупреждений от каркаса).
+- [ ] Проект добавлен в `src/AddressBook.slnx`.
+- [ ] `dotnet build src/AddressBook.slnx` проходит без ошибок (без новых предупреждений от каркаса).
 - [ ] `dotnet test --project src/AddressBook.Web.Tests` запускает MTP-раннер xUnit v3 (0 тестов на
   этапе B1 → exit code 8 «zero tests»; станет 0 после первого теста в B2).
 

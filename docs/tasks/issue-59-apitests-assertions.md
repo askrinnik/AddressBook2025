@@ -185,7 +185,7 @@ export function expectProblemDetails(
 - `npx tsc --noEmit` → 0 ошибок.
 - `npx playwright test tests/utils/assertions.spec.ts` — все кейсы зелёные, включая
   failure-ветки (проверка текста сообщений).
-- `dotnet build src/AddressBook.sln` → без новых предупреждений.
+- `dotnet build src/AddressBook.slnx` → без новых предупреждений.
 
 ## 9. Out of scope / follow-ups
 
