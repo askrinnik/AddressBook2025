@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Компонентные (bUnit) тесты для AddressBook.Web: рендеринг Blazor-компонентов в памяти,
+    без браузера/API/БД. Раннер — xUnit v3 (требует OutputType=Exe). MudBlazor приходит
+    транзитивно через ProjectReference на AddressBook.Web — отдельный PackageReference не дублируем.
+    Полный дизайн: docs/tasks/blazor-component-tests-framework-plan.md
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <!--
+    xUnit v3 работает нативно на Microsoft.Testing.Platform (MTP) и НЕ использует VSTest-пакеты
+    (Microsoft.NET.Test.Sdk / xunit.runner.visualstudio / coverlet.collector / *TestLogger) —
+    на .NET 10 SDK классический VSTest-путь удалён. MTP-режим `dotnet test` включён через
+    global.json (секция test.runner) в корне репозитория. MTP-расширения для покрытия и
+    CI-репорта добавит задача B20 (CI).
+  -->
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" Version="4.0.0" />
+    <PackageReference Include="bunit" Version="2.9.0" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="Bogus" Version="35.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AddressBook.Web\AddressBook.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
