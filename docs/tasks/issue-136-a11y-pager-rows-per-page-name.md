@@ -84,7 +84,7 @@ poking" convention; bare `HideRowsPerPage` removes the control (UX regression).
 1. Spike already confirmed (on a throwaway edit, since reverted) that `aria-label="Rows per page"`
    alone flips the strict Contacts scan from **1 failed** to **1 passed** — the labeled select clears
    `aria-input-field-name`.
-2. Stop dev servers, `dotnet build src/AddressBook.sln` (clean).
+2. Stop dev servers, `dotnet build src/AddressBook.slnx` (clean).
 3. Run the UI suite (`src/UiTests`) via its Playwright `webServer`: the whole suite green — the
    Contacts a11y scan now reports zero, and `sort-paginate` (incl. the rows-per-page test) passes.
 4. Re-walk `/contacts` in a real browser (`verify-feature`): the rows-per-page dropdown is present,

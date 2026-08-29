@@ -29,7 +29,7 @@ No code-behind, DI, or behaviour changes; the remaining app-bar controls keep wo
 
 ## Verification
 
-- Stop dev servers, then `dotnet build src/AddressBook.sln`.
+- Stop dev servers, then `dotnet build src/AddressBook.slnx`.
 - Run the full UI suite via the webServer — all green, including the new absence assertion; drawer/theme toggles and navigation unaffected.
 - Re-check `/`, `/contacts`, `/create-contact`: the three-dots button is gone; the rest of the app bar is unchanged.
 

@@ -130,7 +130,7 @@ workflow. Playwright specs begin at U10.
 | 8 | Parent plan present in `docs/tasks/` | Already present: `ui-tests-framework-plan.md` |
 | 9 | No out-of-scope files created (`playwright.config.ts`, `node_modules`, `src/`, `tests/`) | `ls src/UiTests` shows only the 7 scaffold files |
 
-`dotnet build src/AddressBook.sln` is unaffected (the UI test project is not part of the .NET
+`dotnet build src/AddressBook.slnx` is unaffected (the UI test project is not part of the .NET
 solution), so a solution build is not a meaningful gate for this task.
 
 ## 8. Out of scope / follow-ups

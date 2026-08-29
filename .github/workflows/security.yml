@@ -22,11 +22,11 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore src/AddressBook.sln
+        run: dotnet restore src/AddressBook.slnx
 
       - name: Check for vulnerable NuGet packages
         run: |
-          OUTPUT=$(dotnet list src/AddressBook.sln package --vulnerable --include-transitive)
+          OUTPUT=$(dotnet list src/AddressBook.slnx package --vulnerable --include-transitive)
           echo "$OUTPUT"
           # dotnet list --vulnerable exits 0 even when vulnerabilities are found; check output text
           if echo "$OUTPUT" | grep -q "has the following vulnerable packages"; then

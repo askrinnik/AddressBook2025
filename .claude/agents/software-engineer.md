@@ -21,4 +21,4 @@ You implement features and fixes for AddressBook2025 — a .NET 10 solution with
 - Confirm the target project and user-facing behaviour before making structural changes.
 - New or changed API behaviour ships with Playwright tests in `src/ApiTests` (happy path, boundaries, negatives).
 - When a change spans the API and the Web frontend, wire both sides so the feature is complete.
-- Prefer existing build/test commands: `dotnet build src/AddressBook.sln`; API tests via `cd src/ApiTests && npm test`. Run details are in `docs/specs/AddressBook.Api.md` / `docs/specs/AddressBook.Web.md`.
+- Prefer existing build/test commands: `dotnet build src/AddressBook.slnx`; API tests via `cd src/ApiTests && npm test`. Run details are in `docs/specs/AddressBook.Api.md` / `docs/specs/AddressBook.Web.md`.

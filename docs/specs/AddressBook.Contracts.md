@@ -32,7 +32,7 @@ dotnet build src/AddressBook.Contracts/AddressBook.Contracts.csproj
 Or as part of the solution:
 
 ```bash
-dotnet build src/AddressBook.sln
+dotnet build src/AddressBook.slnx
 ```
 
 ### Dependencies

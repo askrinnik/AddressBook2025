@@ -57,7 +57,7 @@ dotnet build src/AddressBook.Web/AddressBook.Web.csproj
 Or as part of the solution:
 
 ```bash
-dotnet build src/AddressBook.sln
+dotnet build src/AddressBook.slnx
 ```
 
 ### Run locally

@@ -103,7 +103,7 @@ Playwright actually boots the API + Web via the `webServer` array, confirm green
 throwaway spec. This requires a reachable SQL Server for the API. If you'd rather not, the
 `webServer` wiring is validated for real at U10 with the first genuine spec.
 
-`dotnet build` is not a gate — the TS project is not part of `AddressBook.sln`.
+`dotnet build` is not a gate — the TS project is not part of `AddressBook.slnx`.
 
 ## 8. Out of scope / follow-ups
 

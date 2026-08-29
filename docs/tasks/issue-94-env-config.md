@@ -87,7 +87,7 @@ no-test case per the workflow.
 | 7 | Valid override honoured | `BASE_URL=https://example.com/ npx playwright test --list` loads without error |
 | 8 | Lint clean | `npm run lint` exit 0 |
 
-`dotnet build` is not a gate — the TS project is not part of `AddressBook.sln`.
+`dotnet build` is not a gate — the TS project is not part of `AddressBook.slnx`.
 
 ## 9. Out of scope / follow-ups
 

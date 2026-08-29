@@ -66,7 +66,7 @@ The defect is a Web-layer, user-facing behaviour, so the guard is a **UI E2E** t
 
 ## 6. Verification
 
-1. Stop the dev servers, then `dotnet build src/AddressBook.sln` — clean.
+1. Stop the dev servers, then `dotnet build src/AddressBook.slnx` — clean.
 2. Add the regression spec (per the chosen option) and run the `src/UiTests` suite — the new spec passes; nothing regresses.
 3. Restart API + Web and re-walk the repro in the browser: `/edit-contact/99999999` now shows "Contact not found." + Back to Contacts (no error strip, clean console/network); a valid id still shows the pre-filled form.
 

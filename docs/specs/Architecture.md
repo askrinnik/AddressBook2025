@@ -161,7 +161,7 @@ askrinnik/AddressBook2025/
 │   │   └── Architecture.md
 │   └── tasks/                       # Implementation plans (e.g. ui-tests-framework-plan.md)
 ├── src/
-│   ├── AddressBook.sln              # VS 2022 solution file
+│   ├── AddressBook.slnx              # VS 2022 solution file
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)

@@ -31,7 +31,7 @@ Perform janitorial tasks on the AddressBook2025 C#/.NET codebase (`src/AddressBo
 Use the `microsoft-docs` skill (or `context7` MCP) to verify current .NET best practices, API guidance, and migration notes before applying non-trivial changes.
 
 ## Execution rules
-1. **Validate changes** — build (`dotnet build src/AddressBook.sln`) and run the tests (`cd src/ApiTests && npm test`) after each modification.
+1. **Validate changes** — build (`dotnet build src/AddressBook.slnx`) and run the tests (`cd src/ApiTests && npm test`) after each modification.
 2. **Incremental** — make small, focused, reviewable changes.
 3. **Preserve behaviour** — refactors must not change observable behaviour.
 4. **Follow conventions** — apply the standards in the relevant `.github/instructions/*` file (see `CLAUDE.md`).

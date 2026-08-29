@@ -1,0 +1,9 @@
+# Артефакты сборки и прогона тестов
+bin/
+obj/
+[Tt]est[Rr]esults/
+
+# Покрытие кода
+coverage/
+*.cobertura.xml
+coverage.json

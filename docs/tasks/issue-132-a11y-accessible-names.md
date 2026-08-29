@@ -47,7 +47,7 @@ After the fix, a future re-introduction of any `button-name` violation fails the
 
 ## Verification
 
-- Stop dev servers, then `dotnet build src/AddressBook.sln`.
+- Stop dev servers, then `dotnet build src/AddressBook.slnx`.
 - Run the a11y suite (`tests/a11y`) and the full UI suite via the webServer — all green; Home/Create now report zero, Contacts reports only the baselined pager rule.
 - Re-walk `/`, `/contacts`, `/create-contact` in the browser; app-bar and row controls behave exactly as before.
 
