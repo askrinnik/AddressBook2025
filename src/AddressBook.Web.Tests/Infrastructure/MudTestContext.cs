@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace AddressBook.Web.Tests.Infrastructure;
 
 /// <summary>
@@ -7,6 +9,9 @@ namespace AddressBook.Web.Tests.Infrastructure;
 public abstract class MudTestContext : BunitContext
 {
     protected IAddressBookApiService ApiService { get; }
+
+    /// <summary>Путь текущего URI <c>FakeNavigationManager</c> (например <c>/contacts</c>) — для проверки навигации.</summary>
+    protected string CurrentPath => new Uri(Services.GetRequiredService<NavigationManager>().Uri).AbsolutePath;
 
     protected MudTestContext()
     {
