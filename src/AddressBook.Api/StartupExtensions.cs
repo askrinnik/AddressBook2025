@@ -151,10 +151,8 @@ public static class StartupExtensions
   /// <summary>
   /// Configure Blazor middleware
   /// </summary>
-  private static void ConfigureClientAccess(this WebApplication app)
-  {
+  private static void ConfigureClientAccess(this WebApplication app) =>
     app.UseCors(BlazorCorsPolicy);
-  }
 
 
 }

@@ -10,10 +10,8 @@ public class AppShellHarnessTests : MudTestContext
         return new AppShellHarness(cut);
     }
     [Fact]
-    public void Title_IsContactBook()
-    {
+    public void Title_IsContactBook() =>
         Assert.Equal("Contact Book", RenderShell().Title);
-    }
     [Fact]
     public void ToggleDrawer_FlipsOpenState()
     {

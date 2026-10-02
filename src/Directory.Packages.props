@@ -1,0 +1,39 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!--
+    Every NuGet package version referenced anywhere under src/ is declared here, once. A
+    PackageReference in a project file carries no Version attribute; it only opts a project into a
+    package that already has a version here.
+
+    Pin contract: a package that must not move on a routine update — a license ceiling, a CVE-driven
+    exact version, or a compatibility constraint — carries Pinned="true" plus a comment stating why.
+  -->
+  <ItemGroup>
+    <!-- Bogus / NSubstitute / bunit are test-only (AddressBook.Web.Tests). -->
+    <PackageVersion Include="Bogus" Version="35.6.5" />
+    <PackageVersion Include="bunit" Version="2.9.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <!-- Pinned: MediatR 13+ moved to a commercial license (RPL-1.5 / paid key); 12.x is the last
+         Apache-2.0 line. MediatR.Contracts 2.0.x is the matching contracts package of that line. -->
+    <PackageVersion Include="MediatR" Version="12.4.1" Pinned="true" />
+    <PackageVersion Include="MediatR.Contracts" Version="2.0.1" Pinned="true" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
+    <PackageVersion Include="MudBlazor" Version="9.8.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    <!-- xUnit v3 runs natively on Microsoft.Testing.Platform (see global.json); no VSTest packages. -->
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>

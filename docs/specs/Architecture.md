@@ -162,6 +162,9 @@ askrinnik/AddressBook2025/
 │   └── tasks/                       # Implementation plans (e.g. ui-tests-framework-plan.md)
 ├── src/
 │   ├── AddressBook.slnx              # VS 2022 solution file
+│   ├── .editorconfig                # Shared C# style rules (enforced on build)
+│   ├── Directory.Build.props        # Shared MSBuild settings for every project
+│   ├── Directory.Packages.props     # Central NuGet versions (CPM)
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
@@ -218,7 +221,7 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 
 ### 5. CI/CD
 
-**`build.yml`** — Triggers on every push; runs `dotnet restore` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x.[^6]
+**`build.yml`** — Triggers on every push; runs `dotnet restore --locked-mode` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x.[^6]
 
 **`api-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/ApiTests` API E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, then `npm ci` + `npm test` — Playwright's `webServer` block starts the API (port 5000) itself, pointed at the container via `Database__*` env overrides. No browser install (the tests use `APIRequestContext`). Publishes the HTML report as an artifact (30 days); traces on failure.
 
@@ -363,6 +366,7 @@ graph LR
 | **Swagger generation detection** | `Program.cs` detects `dotnet swagger tofile` to skip DB migration during OpenAPI spec generation.[^11] |
 | **`DeleteContactByIdQuery` naming** | Named a "Query" but performs a delete mutation — acknowledged naming inconsistency in the codebase.[^12] |
 | **`CreateContactCommand` / `UpdateContactCommand` are classes** | Unlike all other contracts which are `record` types, these two mutable commands are `class` — unusual for commands but consistent with each other.[^1] |
+| **Shared build settings under `src/`** | `Directory.Packages.props` holds every NuGet version once (Central Package Management + transitive pinning; `PackageReference`s carry no `Version`; `Pinned="true"` + a comment marks a package that must not move — MediatR 12.x, the last Apache-2.0 line). `Directory.Build.props` turns on `EnforceCodeStyleInBuild`, `GenerateDocumentationFile` (CS1591 opted out per project except the API) and `RestorePackagesWithLockFile` — each project commits a `packages.lock.json`, and CI restores with `--locked-mode`. A single `src/.editorconfig` replaces the former per-project copies. |
 | **Client-side pagination** | `GetFilteredContactsResponse` includes `TotalRows`, but sorting/paging is done client-side in `Contacts.razor` (not server-side). `TotalRows` is wired to MudTable's `TotalItems`.[^5] |
 
 ---

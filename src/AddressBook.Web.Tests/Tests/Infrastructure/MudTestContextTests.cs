@@ -21,8 +21,6 @@ public class MudTestContextTests : MudTestContext
     }
 
     [Fact]
-    public void ApiService_IsRegisteredSubstitute()
-    {
+    public void ApiService_IsRegisteredSubstitute() =>
         Assert.Same(ApiService, Services.GetRequiredService<IAddressBookApiService>());
-    }
 }
