@@ -35,7 +35,7 @@
 | `Infrastructure/MudTestContext.cs` | **создать** — базовый `BunitContext` |
 | `Infrastructure/MudBlazorJsInterop.cs` | **создать** — extension-заглушки JS |
 | `Tests/Infrastructure/MudTestContextTests.cs` | **создать** — sanity-тест |
-| `GlobalUsings.cs` | **обновить** — добавить `AddressBook.Web`, `AddressBook.Web.Tests.Infrastructure`, `MudBlazor` |
+| `GlobalUsings.cs` | **обновить** — добавить `AddressBook.Web`, `AddressBook.Web.Tests.Infrastructure`, `MudBlazor`, `MudBlazor.Services`, `Microsoft.Extensions.DependencyInjection` |
 
 Production-проекты (`AddressBook.Web`, `AddressBook.Api`, `AddressBook.Contracts`) и другие
 тест-проекты (`src/ApiTests`, `src/UiTests`) **не трогаем**. Новые `data-testid` в Web не добавляем
@@ -91,7 +91,7 @@ public class MudTestContextTests : MudTestContext
     [Fact]
     public void MudComponent_Renders_WithoutJsInteropExceptions()
     {
-        var cut = RenderComponent<MudButton>(p => p.AddChildContent("Ping"));
+        var cut = Render<MudButton>(p => p.AddChildContent("Ping"));
         Assert.Contains("Ping", cut.Markup);
     }
 
@@ -125,8 +125,9 @@ Playwright API-тесты (`src/ApiTests`) не добавляются: изме
 1. `dotnet build src/AddressBook.slnx` — зелёная сборка решения (включая тест-проект).
 2. `dotnet test src/AddressBook.Web.Tests` — sanity-тест(ы) проходят, без SQL Server / API / браузера.
 
-> **⚠️ Ограничение окружения (важно для планирования):** в текущем cloud-контейнере **не установлен
-> .NET 10 SDK**, а сетевая политика окружения запрещает CDN Microsoft
-> (`builds.dotnet.microsoft.com`), поэтому SDK нельзя скачать/установить в этой сессии. Код и тесты
-> я написать могу, но выполнить `dotnet build` / `dotnet test` (шаг 7 и критерий A7/A6) в этой
-> сессии — **нет**, пока доступ не будет открыт. Варианты решения в сообщении к ревью.
+## 8. Решения по результатам ревью плана
+
+- **bUnit v2 API:** `RenderComponent<T>` в bUnit 2.9 — compile error (`CS0619`, `[Obsolete]`); везде используем `Render<T>`.
+- **Провайдеры (A3):** защищённый хелпер `RenderProviders()` (рендерит `MudPopoverProvider` + `MudDialogProvider`, возвращает их); проверено пробой, что отдельный рендер в том же контексте работает. Тест провайдеров ассертит, что оба компонента отрендерены (не только «не упало»).
+- **Заглушки JS (A5):** в loose-режиме они избыточны (проба прошла без них) и служат явным контрактом на случай strict-режима; имена вызовов сверяем с реальным JS-интеропом MudBlazor 9.8 (`mudPopover`, `mudKeyInterceptor`, `mudScrollManager`, `mudResizeListener` и т.д.).
+- **A7:** сборка тест-проекта проверяется без новых предупреждений.
