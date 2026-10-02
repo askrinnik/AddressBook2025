@@ -1,6 +1,7 @@
 // Общие using'и для всех тестов проекта. Доменные/инфраструктурные пространства имён
-// (Harnesses, Data) добавляются по мере появления кода.
+// (Harnesses) добавляются по мере появления кода.
 global using AddressBook.Web;
+global using AddressBook.Web.Tests.Data;
 global using AddressBook.Web.Tests.Infrastructure;
 global using Bunit;
 global using Microsoft.Extensions.DependencyInjection;
