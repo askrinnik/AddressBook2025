@@ -1,0 +1,16 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Run the .editorconfig IDE style analyzers during `dotnet build` and in CI, not only as IDE
+         squiggles, so a style violation can no longer pass a clean build. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Emit the XML doc file in every project: IDE0005 (unnecessary usings) reports on build only when it is
+         generated, and Swagger/OpenAPI in AddressBook.Api reads its XML doc file. Whether CS1591 (missing XML
+         comment) is enforced is decided in each project file. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Every project restores against a committed packages.lock.json, so a version change is visible
+         as a diff in that file rather than silently floating on the next restore. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+</Project>

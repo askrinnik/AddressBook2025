@@ -22,7 +22,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore src/AddressBook.slnx
+        run: dotnet restore src/AddressBook.slnx --locked-mode
 
       - name: Check for vulnerable NuGet packages
         run: |

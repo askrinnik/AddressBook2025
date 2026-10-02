@@ -1,0 +1,53 @@
+[*]
+end_of_line = crlf
+indent_size = 2
+indent_style = space
+
+[*.cs]
+tab_width = 2
+insert_final_newline = false
+
+csharp_style_conditional_delegate_call = true:warning
+csharp_style_expression_bodied_indexers = true:warning
+csharp_style_expression_bodied_methods = true:warning
+csharp_style_expression_bodied_operators = true:warning
+csharp_style_inlined_variable_declaration = true:warning
+csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_pattern_matching_over_is_with_cast_check = true:warning
+csharp_style_throw_expression = true:warning
+csharp_style_var_elsewhere = true:warning
+csharp_style_var_when_type_is_apparent = true:warning
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
+csharp_style_prefer_primary_constructors = true:warning
+dotnet_style_coalesce_expression = true:warning
+dotnet_style_collection_initializer = true:warning
+dotnet_style_null_propagation = true:warning
+dotnet_style_object_initializer = true:warning
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_property = false:warning
+
+dotnet_diagnostic.IDE0005.severity = warning
+dotnet_diagnostic.IDE0028.severity = warning
+dotnet_diagnostic.IDE0090.severity = warning
+dotnet_diagnostic.IDE0290.severity = warning
+dotnet_diagnostic.IDE0300.severity = warning
+
+# ReSharper/Rider inspection (IDE-only, not enforced by the Roslyn build): flag a local variable that
+# shadows a primary constructor parameter, which reads as if it referenced the parameter.
+resharper_local_variable_hides_primary_constructor_parameter_highlighting = warning
+
+# Blazor markup/static assets and the bUnit test project are written with 4-space indentation.
+[*.{razor,css,html}]
+indent_size = 4
+
+[AddressBook.Web.Tests/**.cs]
+indent_size = 4
+
+# EF Core migrations are tool-generated; do not enforce IDE style rules on them.
+[**/Migrations/*.cs]
+generated_code = true
+# generated_code alone does not suppress CS1591: that flag is only honored by analyzer-driven
+# diagnostics, not the compiler's own warnings, so scaffolded migrations would otherwise need
+# hand-added XML doc comments every time the tooling regenerates them.
+dotnet_diagnostic.CS1591.severity = none

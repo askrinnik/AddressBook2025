@@ -5,20 +5,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>9e1baa07-3cde-4ab4-9b34-9695700b2395</UserSecretsId>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.17.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
 
   <ItemGroup>

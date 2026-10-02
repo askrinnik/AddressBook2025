@@ -21,10 +21,8 @@ public partial class TestIdsTests : MudTestContext
     }
 
     [Fact]
-    public void Selector_WrapsTestIdInAttributeSelector()
-    {
+    public void Selector_WrapsTestIdInAttributeSelector() =>
         Assert.Equal("[data-testid=\"nav-home\"]", TestIds.Selector(TestIds.NavHome));
-    }
 
     [Fact]
     public void Constants_MatchDataTestIdLiteralsInWebMarkup()

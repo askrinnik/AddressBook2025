@@ -53,13 +53,16 @@ This is a class library — it has no standalone run configuration. It is consum
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    <PackageReference Include="MediatR.Contracts" />
   </ItemGroup>
 </Project>
 ```
+
+The version (`2.0.1`, pinned together with `MediatR` 12.x) lives in `src/Directory.Packages.props` (Central Package Management).
 
 ### 2.2 MediatR Contract Usage
 
