@@ -204,7 +204,7 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 2 — Тесты (компоненты и страницы)
 
-- [ ] **B7** ([#151](https://github.com/askrinnik/AddressBook2025/issues/151)) `Tests/Layout/MainLayoutTests.cs` + `NavMenuTests.cs` — провайдеры отрендерены,
+- [x] **B7** ([#151](https://github.com/askrinnik/AddressBook2025/issues/151)) `Tests/Layout/MainLayoutTests.cs` + `NavMenuTests.cs` — провайдеры отрендерены,
   drawer toggle, тумблер темы (dark/light), заголовок, ссылки Home/Contacts и их `href`.
 - [ ] **B8** ([#152](https://github.com/askrinnik/AddressBook2025/issues/152)) `Tests/Layout/ErrorTests.cs` — `ProcessError`/`ProcessProblem` показывают баннер с
   текстом, `Clear()` его скрывает; пустое состояние баннера не рендерит.
