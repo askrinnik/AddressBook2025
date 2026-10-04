@@ -49,6 +49,7 @@ It happens right after reading the issue — before studying the code or plannin
 
 - Draft a concise plan covering: the requirement, the acceptance list from step 1, the affected layers and files/methods, the approach (**domain → data → contracts → API → Web → tests**, in that order), any EF Core migration needed, and how each acceptance item will be verified.
 - The plan must include a **Tests** section listing the Playwright E2E cases to add or update for every new or changed API behaviour (happy path, boundaries, and negatives). If a change genuinely needs no new test (for example a pure UI tweak with no API change), state that explicitly and say why.
+- **Cross-check coverage against the code, not only the issue text.** For every component, page or endpoint the plan touches or tests, list its inputs/fields and code branches (required vs optional fields, success/error/empty/loading states, boundary values) and compare them with the issue's scenarios. Each gap must either be added to the plan (and the acceptance list) or be named explicitly under out of scope — never silently skipped. Small, obviously in-scope additions are made without asking.
 - Call out anything deliberately **out of scope** and any follow-up left for a separate issue.
 - For a large or multi-layer change you may use the `create-implementation-plan` skill or the `Architect` agent to shape it — but keep the final plan in the format below.
 
