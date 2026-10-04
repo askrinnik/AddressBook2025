@@ -58,6 +58,12 @@ public static class ApiServiceMock
         return service;
     }
 
+    public static IAddressBookApiService ThrowsOnCreate(this IAddressBookApiService service, Exception exception)
+    {
+        service.CreateContact(Arg.Any<CreateContactModel>()).Returns(_ => Task.FromException<int>(exception));
+        return service;
+    }
+
     public static IAddressBookApiService ThrowsOnDelete(this IAddressBookApiService service, Exception exception)
     {
         service.DeleteContact(Arg.Any<int>()).Returns(_ => Task.FromException(exception));
