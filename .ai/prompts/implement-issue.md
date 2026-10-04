@@ -24,6 +24,17 @@ The steps below apply to both modes; where they differ, the mode is called out.
 - Turn the requirement into an explicit, checkable acceptance list (one line per observable behaviour). Flag any material gaps to me before planning; do not invent them. Make routine UI/naming calls yourself.
 - Take ownership before doing anything else: if you have write access, assign the issue to yourself (`gh issue edit <issue> --add-assignee @me`).
 
+## 1a. Switch to the main branch and pull the latest changes
+
+**Precondition — skip this whole step ONLY if I explicitly and deliberately told you to stay on the current branch** (in the command arguments or in chat). In that case state in one line that you are staying on the current branch and continue to step 2. **Silence is not permission:** if I did not say so, this step is mandatory and you must run it.
+
+It happens right after reading the issue — before studying the code or planning, so both are based on up-to-date `main`.
+
+- Check the current branch (`git branch --show-current`).
+- If it is not `main`, switch to it (`git switch main`). If the working tree has uncommitted changes that block the switch, stop and ask me what to do — never discard or stash them on your own.
+- Pull the latest changes (`git pull --ff-only`). If the fast-forward fails, stop and tell me instead of merging or resetting.
+- Do not create the issue branch yet — it is created at the commit gate (step 12).
+
 ## 2. Understand the current code
 
 - Locate the code the change touches:
