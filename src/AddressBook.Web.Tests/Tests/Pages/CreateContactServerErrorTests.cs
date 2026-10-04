@@ -104,4 +104,31 @@ public class CreateContactServerErrorTests : MudTestContext
         Assert.Empty(form.ValidationMessages);
         Assert.Equal("/contacts", CurrentPath);
     }
+
+    [Fact]
+    public void Submit_ProblemDetailsWithoutErrors_ShowsDetailAsGeneralError_AndStaysOnPage()
+    {
+        var form = RenderFilledForm();
+        ApiService.ThrowsOnCreate(new ProblemDetailsException(
+            """{"title":"Internal Server Error","status":500,"detail":"Database is unavailable."}""".ToProblemDetails()));
+
+        form.Submit();
+
+        Assert.Contains("Database is unavailable.", form.ValidationMessages);
+        Assert.Equal(InitialPath, CurrentPath);
+        Assert.False(form.IsSubmitDisabled);
+    }
+
+    [Fact]
+    public void Submit_ProblemDetailsWithTitleOnly_ShowsTitleAsGeneralError()
+    {
+        var form = RenderFilledForm();
+        ApiService.ThrowsOnCreate(new ProblemDetailsException(
+            """{"title":"Bad Request","status":400}""".ToProblemDetails()));
+
+        form.Submit();
+
+        Assert.Contains("Bad Request", form.ValidationMessages);
+        Assert.Equal(InitialPath, CurrentPath);
+    }
 }

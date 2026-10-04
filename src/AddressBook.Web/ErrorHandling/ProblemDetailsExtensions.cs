@@ -15,10 +15,16 @@ public static  class ProblemDetailsExtensions
         PropertyNameCaseInsensitive = true
     };
 
+    /// <summary>
+    /// Returns the per-field validation errors from the <c>errors</c> extension,
+    /// or an empty dictionary when the problem details carry none.
+    /// </summary>
     public static Dictionary<string, string[]> GetErrors(this ClientProblemDetails problemDetails)
     {
-        var errors = problemDetails.Extensions["errors"];
-        return JsonSerializer.Deserialize<Dictionary<string, string[]>>(errors.ToString()!)!;
+        if (problemDetails.Extensions is null || !problemDetails.Extensions.TryGetValue("errors", out var errors))
+            return [];
+
+        return JsonSerializer.Deserialize<Dictionary<string, string[]>>(errors.ToString()!) ?? [];
     }
 
     public static ClientProblemDetails? ToProblemDetails(this string content) =>
