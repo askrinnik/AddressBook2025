@@ -8,6 +8,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 
 - **All comments in source code (`//`, `///` XML docs, `<!-- -->`, `#`) MUST be written in English** — never Russian or any other language. If you touch a file that still has non-English comments, translate them. (Docs under `docs/` and READMEs are not source code and are unaffected.)
 - When a Git commit is requested, use the `git-commit` skill and follow its message conventions; do not hand-write commit messages in another format.
+- **Never `git commit` or `git push` on your own initiative.** Do it only when the user's current message explicitly asks for it (for example "commit", "push", "open a PR"). Permission covers only the action named and does not carry over to later edits: after the user asks for further changes — even on an already-pushed branch or open PR — make the changes, verify them, then stop and ask before committing or pushing again. Never force-push or rewrite pushed history without an explicit request.
 
 ## Where things live (read the source — do not restate it here)
 
