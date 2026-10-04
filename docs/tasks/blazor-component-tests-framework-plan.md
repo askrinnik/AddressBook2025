@@ -212,7 +212,7 @@ src/AddressBook.Web.Tests/
 - [x] **B10** ([#154](https://github.com/askrinnik/AddressBook2025/issues/154)) `Tests/Pages/ContactsListTests.cs` — рендер строк из мока, поиск →
   `GetFilteredContactsAsync` c термином + reload, пустой результат («No matching records found»),
   сортировка по колонкам, смена rows-per-page.
-- [ ] **B11** ([#155](https://github.com/askrinnik/AddressBook2025/issues/155)) `Tests/Pages/ContactsDeleteTests.cs` — открытие `MudMessageBox`; «Cancel» → сервис
+- [x] **B11** ([#155](https://github.com/askrinnik/AddressBook2025/issues/155)) `Tests/Pages/ContactsDeleteTests.cs` — открытие `MudMessageBox`; «Cancel» → сервис
   `DeleteContact` **не** вызван; «Yes» → вызван и таблица перезагружена (`Received`).
 - [ ] **B12** ([#156](https://github.com/askrinnik/AddressBook2025/issues/156)) `Tests/Pages/ContactsErrorTests.cs` — мок бросает исключение → `Error`-баннер и
   `MudAlert` с сообщением.
