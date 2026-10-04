@@ -77,6 +77,11 @@
         if (errors == null)
             return;
 
+        if (errors.Count == 0)
+        {
+            AddGeneralError(problem?.Detail ?? problem?.Title ?? "The request failed.");
+            return;
+        }
 
         foreach (var error in errors)
             _messageStore?.Add(_editContext.Field(error.Key), error.Value);

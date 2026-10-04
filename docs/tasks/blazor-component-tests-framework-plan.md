@@ -219,7 +219,7 @@ src/AddressBook.Web.Tests/
 - [x] **B13** ([#157](https://github.com/askrinnik/AddressBook2025/issues/157)) `Tests/Pages/CreateContactTests.cs` — пустые First/Last name блокируют submit
   (`CreateContact` не вызван, видны required-сообщения); валидная форма → `CreateContact` вызван
   → навигация `/contacts`; Cancel → навигация без вызова; `_isLoading` дизейблит submit.
-- [ ] **B14** ([#158](https://github.com/askrinnik/AddressBook2025/issues/158)) `Tests/Pages/CreateContactServerErrorTests.cs` — мок бросает `ProblemDetailsException`
+- [x] **B14** ([#158](https://github.com/askrinnik/AddressBook2025/issues/158)) `Tests/Pages/CreateContactServerErrorTests.cs` — мок бросает `ProblemDetailsException`
   с `errors` → сообщения ложатся на соответствующие поля формы (`ValidationMessageStore`).
 - [ ] **B15** ([#159](https://github.com/askrinnik/AddressBook2025/issues/159)) `Tests/Pages/EditContactTests.cs` + `EditContactNotFoundTests.cs` — предзаполнение из
   `GetContactByIdAsync`, Save → `UpdateContact` + навигация, Cancel; `null` → `_notFound`: `MudAlert`

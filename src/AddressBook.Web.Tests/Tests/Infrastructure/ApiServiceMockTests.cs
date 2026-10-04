@@ -53,13 +53,15 @@ public class ApiServiceMockTests
     }
 
     [Fact]
-    public async Task ThrowsOnGetContacts_AndOnDelete_Throw()
+    public async Task ThrowsOnGetContacts_OnDelete_AndOnCreate_Throw()
     {
         _service.ThrowsOnGetContacts(new InvalidOperationException("boom"))
-            .ThrowsOnDelete(new HttpRequestException("nope"));
+            .ThrowsOnDelete(new HttpRequestException("nope"))
+            .ThrowsOnCreate(new TimeoutException("slow"));
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.GetFilteredContactsAsync("x", Ct));
         await Assert.ThrowsAsync<HttpRequestException>(() => _service.DeleteContact(1));
+        await Assert.ThrowsAsync<TimeoutException>(() => _service.CreateContact(new CreateContactModel()));
     }
 
     [Fact]
