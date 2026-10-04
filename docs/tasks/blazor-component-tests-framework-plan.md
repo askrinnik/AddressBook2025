@@ -214,7 +214,7 @@ src/AddressBook.Web.Tests/
   сортировка по колонкам, смена rows-per-page.
 - [x] **B11** ([#155](https://github.com/askrinnik/AddressBook2025/issues/155)) `Tests/Pages/ContactsDeleteTests.cs` — открытие `MudMessageBox`; «Cancel» → сервис
   `DeleteContact` **не** вызван; «Yes» → вызван и таблица перезагружена (`Received`).
-- [ ] **B12** ([#156](https://github.com/askrinnik/AddressBook2025/issues/156)) `Tests/Pages/ContactsErrorTests.cs` — мок бросает исключение → `Error`-баннер и
+- [x] **B12** ([#156](https://github.com/askrinnik/AddressBook2025/issues/156)) `Tests/Pages/ContactsErrorTests.cs` — мок бросает исключение → `Error`-баннер и
   `MudAlert` с сообщением.
 - [ ] **B13** ([#157](https://github.com/askrinnik/AddressBook2025/issues/157)) `Tests/Pages/CreateContactTests.cs` — пустые First/Last name блокируют submit
   (`CreateContact` не вызван, видны required-сообщения); валидная форма → `CreateContact` вызван
