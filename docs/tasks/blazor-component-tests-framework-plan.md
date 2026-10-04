@@ -209,7 +209,7 @@ src/AddressBook.Web.Tests/
 - [x] **B8** ([#152](https://github.com/askrinnik/AddressBook2025/issues/152)) `Tests/Layout/ErrorTests.cs` — `ProcessError`/`ProcessProblem` показывают баннер с
   текстом, `Clear()` его скрывает; пустое состояние баннера не рендерит.
 - [x] **B9** ([#153](https://github.com/askrinnik/AddressBook2025/issues/153)) `Tests/Pages/HomeTests.cs` — статический контент и `PageTitle`.
-- [ ] **B10** ([#154](https://github.com/askrinnik/AddressBook2025/issues/154)) `Tests/Pages/ContactsListTests.cs` — рендер строк из мока, поиск →
+- [x] **B10** ([#154](https://github.com/askrinnik/AddressBook2025/issues/154)) `Tests/Pages/ContactsListTests.cs` — рендер строк из мока, поиск →
   `GetFilteredContactsAsync` c термином + reload, пустой результат («No matching records found»),
   сортировка по колонкам, смена rows-per-page.
 - [ ] **B11** ([#155](https://github.com/askrinnik/AddressBook2025/issues/155)) `Tests/Pages/ContactsDeleteTests.cs` — открытие `MudMessageBox`; «Cancel» → сервис
