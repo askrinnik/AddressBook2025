@@ -5,7 +5,7 @@ namespace AddressBook.Web.Tests.Tests.Layout;
 
 public class MainLayoutTests : MudTestContext
 {
-    // Десктопный viewport: responsive MudDrawer открыт, как в браузере на широком экране.
+    // Desktop viewport: the responsive MudDrawer is open, as in a browser on a wide screen.
     public MainLayoutTests() => JSInterop.SetupBrowserWindowSize(1920, 1080);
 
     private IRenderedComponent<MainLayout> RenderLayout() =>

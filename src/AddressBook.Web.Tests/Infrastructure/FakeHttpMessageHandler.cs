@@ -7,12 +7,12 @@ using AddressBook.Web.ErrorHandling;
 
 namespace AddressBook.Web.Tests.Infrastructure;
 
-/// <summary>Запрос, перехваченный <see cref="FakeHttpMessageHandler"/>; тело прочитано сразу.</summary>
+/// <summary>A request intercepted by <see cref="FakeHttpMessageHandler"/>; the body is read immediately.</summary>
 public sealed record RecordedRequest(HttpMethod Method, Uri? Uri, string? Body);
 
 /// <summary>
-/// Управляемый <see cref="HttpMessageHandler"/> для тестов <see cref="AddressBookApiService"/>:
-/// отдаёт заранее заданные ответы (статус, Location, JSON, problem+json) и запоминает запросы.
+/// A controllable <see cref="HttpMessageHandler"/> for <see cref="AddressBookApiService"/> tests:
+/// returns predefined responses (status, Location, JSON, problem+json) and records requests.
 /// </summary>
 public sealed class FakeHttpMessageHandler : HttpMessageHandler
 {
@@ -26,7 +26,7 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
 
     public RecordedRequest LastRequest => _requests[^1];
 
-    /// <summary>Ответ по умолчанию для всех запросов; ответы из очереди (<c>Enqueue</c>) имеют приоритет.</summary>
+    /// <summary>Default response for all requests; queued responses (<c>Enqueue</c>) take priority.</summary>
     public FakeHttpMessageHandler Respond(Func<HttpRequestMessage, HttpResponseMessage> factory)
     {
         _default = factory;
@@ -46,7 +46,7 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
             return response;
         });
 
-    /// <summary>problem+json (RFC 7807); <paramref name="errors"/> кладётся в расширение <c>errors</c>.</summary>
+    /// <summary>problem+json (RFC 7807); <paramref name="errors"/> goes into the <c>errors</c> extension.</summary>
     public FakeHttpMessageHandler RespondProblem(
         HttpStatusCode status,
         string title,
@@ -54,7 +54,7 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
         IDictionary<string, string[]>? errors = null) =>
         Respond(_ => ProblemResponse(status, title, detail, errors));
 
-    /// <summary>Добавляет разовый ответ в очередь (для последовательных вызовов).</summary>
+    /// <summary>Adds a one-off response to the queue (for sequential calls).</summary>
     public FakeHttpMessageHandler Enqueue(Func<HttpRequestMessage, HttpResponseMessage> factory)
     {
         _queue.Enqueue(factory);
@@ -64,8 +64,8 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
     public FakeHttpMessageHandler Enqueue(HttpStatusCode status) => Enqueue(_ => new HttpResponseMessage(status));
 
     /// <summary>
-    /// Собирает <see cref="HttpClient"/>; по умолчанию с реальным <see cref="ProblemDetailsHandler"/>
-    /// в pipeline, как в <c>Program.cs</c> (non-success → <see cref="ProblemDetailsException"/>).
+    /// Builds an <see cref="HttpClient"/>; by default with the real <see cref="ProblemDetailsHandler"/>
+    /// in the pipeline, as in <c>Program.cs</c> (non-success -> <see cref="ProblemDetailsException"/>).
     /// </summary>
     public HttpClient CreateClient(string baseAddress = DefaultBaseAddress, bool withProblemDetails = true)
     {

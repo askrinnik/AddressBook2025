@@ -20,4 +20,4 @@ Non-negotiables when adding/changing specs here:
 - Web-first assertions only (`expect` / `expect.poll`); never `waitForTimeout`. Locator priority
   `getByRole`/`getByLabel` → `getByTestId` (`src/utils/testids.ts`) → CSS last.
 - Assert dates against the API's `yyyy-MM-dd` value, not the culture-formatted table cell.
-- Russian comments are fine — keep the language of nearby comments.
+- Comments in source code must be in English.

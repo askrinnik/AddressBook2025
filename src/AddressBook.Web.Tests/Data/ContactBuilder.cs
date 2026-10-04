@@ -5,15 +5,15 @@ using Bogus;
 namespace AddressBook.Web.Tests.Data;
 
 /// <summary>
-/// Фабрики тестовых данных на Bogus — порт <c>src/UiTests/src/data/contact.factory.ts</c>.
-/// <see cref="New"/> строит <see cref="CreateContactModel"/> (форма create/edit),
-/// <see cref="Existing"/> — <see cref="ContactModel"/> (строка списка / ответ API).
-/// Каждый вызов использует собственный <see cref="Faker"/> (он не потокобезопасен, а xUnit
-/// гоняет тесты параллельно).
+/// Test data factories on Bogus - a port of <c>src/UiTests/src/data/contact.factory.ts</c>.
+/// <see cref="New"/> builds a <see cref="CreateContactModel"/> (create/edit form),
+/// <see cref="Existing"/> builds a <see cref="ContactModel"/> (list row / API response).
+/// Each call uses its own <see cref="Faker"/> (it is not thread-safe, and xUnit
+/// runs tests in parallel).
 /// </summary>
 public static class ContactBuilder
 {
-    /// <summary>Лимит длины имени/фамилии — <c>MaximumLength(30)</c> в валидаторах API.</summary>
+    /// <summary>Max length of first/last name - <c>MaximumLength(30)</c> in the API validators.</summary>
     public const int MaxNameLength = 30;
 
     private static int _nextId;
@@ -29,7 +29,7 @@ public static class ContactBuilder
     private static string NameOfLength(int length) =>
         new Faker().Random.String2(length, "abcdefghijklmnopqrstuvwxyz");
 
-    /// <summary>Дата в прошлом, гарантированно раньше сегодняшнего дня.</summary>
+    /// <summary>A date in the past, guaranteed to be earlier than today.</summary>
     private static DateTime PastBirthday() =>
         new Faker().Date.Past(60, DateTime.Today.AddDays(-1)).Date;
 
@@ -50,7 +50,7 @@ public static class ContactBuilder
     private static ContactModel ToExisting(CreateContactModel m, int? id) =>
         new(id ?? NextId(), m.FirstName, m.LastName, m.Birthday is { } d ? DateOnly.FromDateTime(d) : null);
 
-    /// <summary>Модели формы создания/редактирования.</summary>
+    /// <summary>Create/edit form models.</summary>
     public static class New
     {
         public static CreateContactModel Valid() => Base();
@@ -69,7 +69,7 @@ public static class ContactBuilder
 
         public static CreateContactModel EmptyLastName() => Mutate(m => m.LastName = string.Empty);
 
-        /// <summary>Три пробела: не пустая строка, но по смыслу пустое имя.</summary>
+        /// <summary>Three spaces: not an empty string, but semantically an empty name.</summary>
         public static CreateContactModel WhitespaceFirstName() => Mutate(m => m.FirstName = "   ");
 
         public static CreateContactModel WhitespaceLastName() => Mutate(m => m.LastName = "   ");
@@ -79,7 +79,7 @@ public static class ContactBuilder
         public static CreateContactModel BirthdayToday() => Mutate(m => m.Birthday = DateTime.Today);
     }
 
-    /// <summary>Существующие контакты (<see cref="ContactModel"/>); <c>id</c> по умолчанию уникален.</summary>
+    /// <summary>Existing contacts (<see cref="ContactModel"/>); <c>id</c> is unique by default.</summary>
     public static class Existing
     {
         public static ContactModel Valid(int? id = null) => ToExisting(New.Valid(), id);
@@ -106,7 +106,7 @@ public static class ContactBuilder
 
         public static ContactModel BirthdayToday(int? id = null) => ToExisting(New.BirthdayToday(), id);
 
-        /// <summary>Список валидных контактов с уникальными id.</summary>
+        /// <summary>A list of valid contacts with unique ids.</summary>
         public static IReadOnlyList<ContactModel> List(int count) =>
             Enumerable.Range(0, count).Select(_ => Valid()).ToList();
     }

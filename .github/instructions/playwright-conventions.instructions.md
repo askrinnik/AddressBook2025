@@ -38,7 +38,7 @@ applyTo: "src/ApiTests/**, src/UiTests/**"
 
 ## Comments
 
-- Russian-language comments are supported — maintain the language of existing comments nearby
+- All code comments must be written in English (see the English-comments rule in `CLAUDE.md`)
 - Use comments to explain **why** two similar tests exist (e.g., demonstrating different testing approaches)
 
 → Full specification: [`src/ApiTests/README.md`](../../src/ApiTests/README.md)

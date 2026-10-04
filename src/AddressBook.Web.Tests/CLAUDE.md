@@ -19,4 +19,4 @@ Non-negotiables при добавлении/изменении тестов зд
 - Асинхронный рендер — через `cut.WaitForState`/`WaitForAssertion`, никаких `Task.Delay`/`Sleep`.
 - Локаторы: роль/`aria-label` → `data-testid` (константы в `Infrastructure/TestIds.cs`) → CSS в
   крайнем случае. Новые `data-testid` в Web-проект не добавляем.
-- Русскоязычные комментарии допустимы — держите язык соседних комментариев.
+- Comments in code (`//`, `///`, csproj/.gitignore) must be in English.

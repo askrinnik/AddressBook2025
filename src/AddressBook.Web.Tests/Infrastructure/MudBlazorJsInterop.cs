@@ -1,8 +1,8 @@
 namespace AddressBook.Web.Tests.Infrastructure;
 
 /// <summary>
-/// Явные заглушки JS-вызовов MudBlazor для bUnit. В loose-режиме они не обязательны
-/// (неописанные вызовы возвращают default), но фиксируют контракт и не ломаются при переходе на strict.
+/// Explicit stubs for MudBlazor JS calls for bUnit. In loose mode they are not required
+/// (unconfigured calls return default), but they pin down the contract and do not break when switching to strict.
 /// </summary>
 public static class MudBlazorJsInterop
 {
@@ -28,8 +28,8 @@ public static class MudBlazorJsInterop
     }
 
     /// <summary>
-    /// Размер окна браузера для <c>IBrowserViewportService</c>. Без этой заглушки loose-режим отдаёт 0×0
-    /// (брейкпоинт Xs) — и responsive-компоненты (например <c>MudDrawer</c>) ведут себя как на телефоне.
+    /// Browser window size for <c>IBrowserViewportService</c>. Without this stub, loose mode returns 0x0
+    /// (the Xs breakpoint), and responsive components (e.g. <c>MudDrawer</c>) behave as on a phone.
     /// </summary>
     public static BunitJSInterop SetupBrowserWindowSize(this BunitJSInterop jsInterop, int width, int height)
     {

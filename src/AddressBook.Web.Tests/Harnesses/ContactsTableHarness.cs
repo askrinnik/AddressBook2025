@@ -5,8 +5,8 @@ using AddressBook.Web.Pages;
 namespace AddressBook.Web.Tests.Harnesses;
 
 /// <summary>
-/// Обёртка страницы <c>Contacts</c> (MudTable): строки, поиск, сортировка, rows-per-page и
-/// действия строки. Данные таблицы грузятся асинхронно — после рендера вызывайте
+/// Wrapper for the <c>Contacts</c> page (MudTable): rows, search, sorting, rows-per-page and
+/// row actions. Table data loads asynchronously - after rendering, call
 /// <see cref="WaitForLoaded"/>.
 /// </summary>
 public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRenderedComponent<Error> errorHost)
@@ -14,9 +14,9 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
     private const string RowPrefix = "contact-row-";
 
     /// <summary>
-    /// Рендерит <c>Contacts</c> внутри реального <see cref="Error"/> (страница требует его как
-    /// cascading-параметр — при ошибке загрузки он вызывается) и возвращает harness. Провайдеры
-    /// (<c>RenderProviders()</c>) нужно отрендерить до вызова, если нужен диалог удаления.
+    /// Renders <c>Contacts</c> inside a real <see cref="Error"/> (the page requires it as a
+    /// cascading parameter - it is invoked on a load error) and returns the harness. Providers
+    /// (<c>RenderProviders()</c>) must be rendered before the call if the delete dialog is needed.
     /// </summary>
     public static ContactsTableHarness Render(BunitContext context)
     {
@@ -24,10 +24,10 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
         return new ContactsTableHarness(errorHost.FindComponent<Contacts>(), errorHost);
     }
 
-    /// <summary>Текст верхнего баннера <see cref="Error"/> (то, что показал <c>ProcessError</c>), либо <c>null</c>.</summary>
+    /// <summary>Text of the top <see cref="Error"/> banner (what <c>ProcessError</c> showed), or <c>null</c>.</summary>
     public string? ErrorBannerText => errorHost.FindAll(".alert-danger .error-container").FirstOrDefault()?.TextContent.Trim();
 
-    /// <summary>Id контактов в порядке отображения.</summary>
+    /// <summary>Contact ids in display order.</summary>
     public IReadOnlyList<int> RowIds =>
         cut.FindAll($"[data-testid^=\"{RowPrefix}\"]")
             .Select(e => int.Parse(e.GetAttribute("data-testid")![RowPrefix.Length..], CultureInfo.InvariantCulture))
@@ -39,14 +39,14 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
 
     public bool IsLoading => cut.Markup.Contains("Loading...", StringComparison.Ordinal);
 
-    /// <summary>Текст ячеек строки: First Name, Last Name, Birthday (как отображены в таблице).</summary>
+    /// <summary>Row cell text: First Name, Last Name, Birthday (as displayed in the table).</summary>
     public (string FirstName, string LastName, string Birthday) RowText(int id)
     {
         var cells = cut.FindByTestId(TestIds.ContactRow(id)).ParentElement!.Children;
         return (cells[0].TextContent.Trim(), cells[1].TextContent.Trim(), cells[2].TextContent.Trim());
     }
 
-    /// <summary>Текст алерта ошибки загрузки (виден в <c>NoRecordsContent</c>), либо <c>null</c>.</summary>
+    /// <summary>Text of the load error alert (visible in <c>NoRecordsContent</c>), or <c>null</c>.</summary>
     public string? ErrorAlertText =>
         cut.FindAll(".mud-alert")
             .Select(a => a.TextContent.Trim())
@@ -54,29 +54,29 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
 
     public string SearchText => cut.FindByTestId(TestIds.ContactsSearch).GetAttribute("value") ?? string.Empty;
 
-    /// <summary>Ввод в поле поиска (MudTextField коммитит значение по change) → перезагрузка таблицы.</summary>
+    /// <summary>Typing into the search field (MudTextField commits the value on change) -> table reload.</summary>
     public void Search(string text) => cut.FindByTestId(TestIds.ContactsSearch).Change(text);
 
     public void ClickCreate() => cut.FindByTestId(TestIds.ContactsCreate).Click();
 
     public void ClickEdit(int id) => cut.FindByTestId(TestIds.ContactEditButton(id)).Click();
 
-    /// <summary>Клик по Delete строки: открывает диалог подтверждения (см. <see cref="DeleteDialogHarness"/>).</summary>
+    /// <summary>Click on the row's Delete: opens the confirmation dialog (see <see cref="DeleteDialogHarness"/>).</summary>
     public void ClickDelete(int id) => cut.FindByTestId(TestIds.ContactDeleteButton(id)).Click();
 
-    /// <summary>Клик по заголовку сортируемой колонки («First Name» / «Last Name» / «Birthday»).</summary>
+    /// <summary>Click on a sortable column header ("First Name" / "Last Name" / "Birthday").</summary>
     public void SortBy(string columnLabel) =>
         cut.FindAll(".mud-table-sort-label")
             .Single(e => e.TextContent.Trim() == columnLabel)
             .Click();
 
-    /// <summary>Текущий размер страницы из кастомного селектора «Rows per page».</summary>
+    /// <summary>Current page size from the custom "Rows per page" selector.</summary>
     public int RowsPerPage =>
         int.Parse(cut.FindAll("[aria-label=\"Rows per page\"]").First().GetAttribute("value")!, CultureInfo.InvariantCulture);
 
     /// <summary>
-    /// Выбор размера страницы через <c>MudSelect&lt;int&gt;</c> (его выпадашка — popover, ненадёжный в bUnit,
-    /// поэтому значение задаётся через <c>ValueChanged</c> самого компонента).
+    /// Selects the page size via <c>MudSelect&lt;int&gt;</c> (its dropdown is a popover, unreliable in bUnit,
+    /// so the value is set via the component's own <c>ValueChanged</c>).
     /// </summary>
     public void SelectRowsPerPage(int size)
     {
@@ -84,10 +84,10 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
         cut.InvokeAsync(() => select.Instance.ValueChanged.InvokeAsync(size)).GetAwaiter().GetResult();
     }
 
-    /// <summary>Ждёт, пока завершится начальная/повторная загрузка данных таблицы.</summary>
+    /// <summary>Waits until the initial/repeated table data load completes.</summary>
     public ContactsTableHarness WaitForLoaded()
     {
-        cut.WaitForAssertion(() => Assert.False(IsLoading, "Таблица всё ещё в состоянии Loading..."));
+        cut.WaitForAssertion(() => Assert.False(IsLoading, "The table is still in the Loading state..."));
         return this;
     }
 }
