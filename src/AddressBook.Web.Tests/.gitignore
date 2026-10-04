@@ -1,9 +1,9 @@
-# Артефакты сборки и прогона тестов
+# Build and test run artifacts
 bin/
 obj/
 [Tt]est[Rr]esults/
 
-# Покрытие кода
+# Code coverage
 coverage/
 *.cobertura.xml
 coverage.json

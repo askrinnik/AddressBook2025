@@ -7,6 +7,7 @@ applyTo: '**/*.cs'
 
 ## C# Instructions
 - Always use the latest version C#, currently C# 14 features.
+- All comments in code (including XML doc comments) MUST be in English, never Russian or any other language.
 - Write clear and concise comments for each function.
 
 ## General Instructions

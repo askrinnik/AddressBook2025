@@ -4,14 +4,14 @@ using AddressBook.Web.Models;
 namespace AddressBook.Web.Tests.Infrastructure;
 
 /// <summary>
-/// Хелперы NSubstitute для <see cref="IAddressBookApiService"/>: частые расстановки <c>Returns</c>
-/// и проверки <c>Received</c>/<c>DidNotReceive</c>, чтобы тесты читались доменно.
+/// NSubstitute helpers for <see cref="IAddressBookApiService"/>: common <c>Returns</c> setups
+/// and <c>Received</c>/<c>DidNotReceive</c> checks, so tests read in domain terms.
 /// </summary>
 public static class ApiServiceMock
 {
-    // --- Настройка ответов ---
+    // --- Response setup ---
 
-    /// <summary>Любой запрос списка (любой термин) возвращает переданные контакты; TotalRows = их количество.</summary>
+    /// <summary>Any list request (any term) returns the given contacts; TotalRows = their count.</summary>
     public static IAddressBookApiService ReturnsContacts(this IAddressBookApiService service, params ContactModel[] contacts) =>
         service.ReturnsContacts(contacts, contacts.Length);
 
@@ -23,7 +23,7 @@ public static class ApiServiceMock
         return service;
     }
 
-    /// <summary>Ответ только на конкретный поисковый термин (перекрывает общий <c>ReturnsContacts</c>).</summary>
+    /// <summary>Responds only to a specific search term (overrides the generic <c>ReturnsContacts</c>).</summary>
     public static IAddressBookApiService ReturnsContactsFor(
         this IAddressBookApiService service, string searchTerm, params ContactModel[] contacts)
     {
@@ -38,7 +38,7 @@ public static class ApiServiceMock
         return service;
     }
 
-    /// <summary>Контакт не найден: сервис возвращает <c>null</c> (так же, как после 404).</summary>
+    /// <summary>Contact not found: the service returns <c>null</c> (same as after a 404).</summary>
     public static IAddressBookApiService ReturnsContactNotFound(this IAddressBookApiService service, int id)
     {
         service.GetContactByIdAsync(id, Arg.Any<CancellationToken>()).Returns((ContactModel?)null);
@@ -64,7 +64,7 @@ public static class ApiServiceMock
         return service;
     }
 
-    // --- Проверки вызовов ---
+    // --- Call verification ---
 
     public static void ReceivedSearch(this IAddressBookApiService service, string searchTerm, int times = 1) =>
         service.Received(times).GetFilteredContactsAsync(searchTerm, Arg.Any<CancellationToken>());

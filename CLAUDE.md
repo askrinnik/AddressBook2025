@@ -6,7 +6,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 
 ## Always
 
-- Source code may contain non-English (Russian) comments — that is expected; do not "fix" them to English.
+- **All comments in source code (`//`, `///` XML docs, `<!-- -->`, `#`) MUST be written in English** — never Russian or any other language. If you touch a file that still has non-English comments, translate them. (Docs under `docs/` and READMEs are not source code and are unaffected.)
 - When a Git commit is requested, use the `git-commit` skill and follow its message conventions; do not hand-write commit messages in another format.
 
 ## Where things live (read the source — do not restate it here)

@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Компонентные (bUnit) тесты для AddressBook.Web: рендеринг Blazor-компонентов в памяти,
-    без браузера/API/БД. Раннер — xUnit v3 (требует OutputType=Exe). MudBlazor приходит
-    транзитивно через ProjectReference на AddressBook.Web — отдельный PackageReference не дублируем.
-    Полный дизайн: docs/tasks/blazor-component-tests-framework-plan.md
+    Component (bUnit) tests for AddressBook.Web: in-memory rendering of Blazor components,
+    without a browser/API/DB. Runner is xUnit v3 (requires OutputType=Exe). MudBlazor comes
+    transitively via the ProjectReference to AddressBook.Web, so no separate PackageReference is duplicated.
+    Full design: docs/tasks/blazor-component-tests-framework-plan.md
   -->
 
   <PropertyGroup>
@@ -19,11 +19,11 @@
   </PropertyGroup>
 
   <!--
-    xUnit v3 работает нативно на Microsoft.Testing.Platform (MTP) и НЕ использует VSTest-пакеты
+    xUnit v3 runs natively on Microsoft.Testing.Platform (MTP) and does NOT use VSTest packages:
     (Microsoft.NET.Test.Sdk / xunit.runner.visualstudio / coverlet.collector / *TestLogger) —
-    на .NET 10 SDK классический VSTest-путь удалён. MTP-режим `dotnet test` включён через
-    global.json (секция test.runner) в корне репозитория. MTP-расширения для покрытия и
-    CI-репорта добавит задача B20 (CI).
+    the classic VSTest path was removed in the .NET 10 SDK. MTP mode for `dotnet test` is enabled via
+    global.json (test.runner section) at the repo root. MTP extensions for coverage and
+    the CI report will be added by task B20 (CI).
   -->
   <ItemGroup>
     <PackageReference Include="xunit.v3" />

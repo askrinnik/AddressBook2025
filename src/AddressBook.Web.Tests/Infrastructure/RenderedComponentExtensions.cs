@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components;
 namespace AddressBook.Web.Tests.Infrastructure;
 
 /// <summary>
-/// Доменные хелперы поиска над отрендеренным компонентом: по <c>data-testid</c> (через
-/// <see cref="TestIds"/>) и по <c>aria-label</c>. Приоритет локаторов: роль/aria-label → testid → CSS.
+/// Domain lookup helpers over a rendered component: by <c>data-testid</c> (via
+/// <see cref="TestIds"/>) and by <c>aria-label</c>. Locator priority: role/aria-label -> testid -> CSS.
 /// </summary>
 public static class RenderedComponentExtensions
 {
@@ -17,7 +17,7 @@ public static class RenderedComponentExtensions
         where T : IComponent =>
         cut.FindAll(TestIds.Selector(testId));
 
-    /// <summary>Элемент с testid или <c>null</c>, если его нет в текущей разметке.</summary>
+    /// <summary>The element with the testid, or <c>null</c> if it is not in the current markup.</summary>
     public static IElement? TryFindByTestId<T>(this IRenderedComponent<T> cut, string testId)
         where T : IComponent =>
         cut.FindAll(TestIds.Selector(testId)).FirstOrDefault();

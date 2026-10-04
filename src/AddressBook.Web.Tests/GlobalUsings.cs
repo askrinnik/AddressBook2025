@@ -1,5 +1,5 @@
-// Общие using'и для всех тестов проекта. Доменные/инфраструктурные пространства имён
-// добавляются по мере появления кода.
+// Shared usings for all tests in the project. Domain/infrastructure namespaces
+// are added as code appears.
 global using AddressBook.Web.Tests.Data;
 global using AddressBook.Web.Tests.Harnesses;
 global using AddressBook.Web.Tests.Infrastructure;

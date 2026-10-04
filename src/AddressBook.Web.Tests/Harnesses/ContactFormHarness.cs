@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components;
 namespace AddressBook.Web.Tests.Harnesses;
 
 /// <summary>
-/// Обёртка формы контакта, общей для <c>CreateContact</c> и <c>EditContact</c>: заполнить поля,
-/// сабмит/отмена, значения и ошибки валидации. Скрывает MudBlazor-разметку (testid лежит прямо на
-/// <c>input</c>; поле birthday — readonly, значение задаётся через <c>DateChanged</c> компонента <see cref="MudDatePicker"/>).
+/// Wrapper for the contact form shared by <c>CreateContact</c> and <c>EditContact</c>: fill in fields,
+/// submit/cancel, values and validation errors. Hides the MudBlazor markup (the testid sits directly on the
+/// <c>input</c>; the birthday field is readonly, its value is set via <c>DateChanged</c> of <see cref="MudDatePicker"/>).
 /// </summary>
 public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
 {
@@ -21,7 +21,7 @@ public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
     public string SubmitText => cut.FindByTestId(TestIds.ContactFormSubmit).TextContent.Trim();
 
     /// <summary>
-    /// Все видимые сообщения валидации: подсказки полей MudBlazor (<c>For=</c>) и <c>ValidationSummary</c>.
+    /// All visible validation messages: MudBlazor field hints (<c>For=</c>) and <c>ValidationSummary</c>.
     /// </summary>
     public IReadOnlyList<string> ValidationMessages =>
         cut.FindAll(".mud-input-helper-text.mud-input-error, .validation-errors li, .validation-message")
@@ -42,7 +42,7 @@ public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
         return this;
     }
 
-    /// <summary>Поле birthday readonly (ввод текстом невозможен) — задаём значение через <see cref="MudDatePicker"/>.</summary>
+    /// <summary>The birthday field is readonly (no text input) - set the value via <see cref="MudDatePicker"/>.</summary>
     public ContactFormHarness SetBirthday(DateTime? value)
     {
         var picker = cut.FindComponent<MudDatePicker>();
@@ -53,7 +53,7 @@ public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
     public ContactFormHarness Fill(CreateContactModel model) =>
         SetFirstName(model.FirstName).SetLastName(model.LastName).SetBirthday(model.Birthday);
 
-    /// <summary>Клик по submit-кнопке («Create»/«Save»); bUnit превращает его в submit формы.</summary>
+    /// <summary>Click on the submit button ("Create"/"Save"); bUnit turns it into a form submit.</summary>
     public void Submit() => cut.FindByTestId(TestIds.ContactFormSubmit).Click();
 
     public void Cancel() => cut.FindByTestId(TestIds.ContactFormCancel).Click();

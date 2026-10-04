@@ -5,7 +5,7 @@ namespace AddressBook.Web.Tests.Tests.Layout;
 
 public class ErrorTests : MudTestContext
 {
-    // У Error нет role/aria-label/data-testid (новые testid в Web не добавляем) — CSS в крайнем случае.
+    // Error has no role/aria-label/data-testid (we do not add new testids to Web) - CSS as a last resort.
     private const string BannerSelector = "div.alert.alert-danger";
     private const string MessageSelector = "pre.error-container";
 

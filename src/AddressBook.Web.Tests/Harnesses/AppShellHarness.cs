@@ -3,8 +3,8 @@ using AddressBook.Web.Layout;
 namespace AddressBook.Web.Tests.Harnesses;
 
 /// <summary>
-/// Обёртка оболочки приложения (<c>MainLayout</c> + <c>NavMenu</c>): заголовок AppBar, drawer,
-/// тумблер темы и навигационные ссылки.
+/// Wrapper for the app shell (<c>MainLayout</c> + <c>NavMenu</c>): AppBar title, drawer,
+/// theme toggle and navigation links.
 /// </summary>
 public sealed class AppShellHarness(IRenderedComponent<MainLayout> cut)
 {
@@ -14,7 +14,7 @@ public sealed class AppShellHarness(IRenderedComponent<MainLayout> cut)
 
     public void ToggleDrawer() => cut.FindByTestId(TestIds.DrawerToggle).Click();
 
-    /// <summary>Тема определяется по иконке тумблера (<c>MainLayout.DarkLightModeButtonIcon</c>): AutoMode ⇒ dark.</summary>
+    /// <summary>The theme is determined by the toggle icon (<c>MainLayout.DarkLightModeButtonIcon</c>): AutoMode => dark.</summary>
     public bool IsDarkMode => cut.Instance.DarkLightModeButtonIcon == Icons.Material.Rounded.AutoMode;
 
     public void ToggleTheme() => cut.FindByTestId(TestIds.ThemeToggle).Click();
