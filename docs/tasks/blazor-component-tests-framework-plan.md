@@ -216,7 +216,7 @@ src/AddressBook.Web.Tests/
   `DeleteContact` **не** вызван; «Yes» → вызван и таблица перезагружена (`Received`).
 - [x] **B12** ([#156](https://github.com/askrinnik/AddressBook2025/issues/156)) `Tests/Pages/ContactsErrorTests.cs` — мок бросает исключение → `Error`-баннер и
   `MudAlert` с сообщением.
-- [ ] **B13** ([#157](https://github.com/askrinnik/AddressBook2025/issues/157)) `Tests/Pages/CreateContactTests.cs` — пустые First/Last name блокируют submit
+- [x] **B13** ([#157](https://github.com/askrinnik/AddressBook2025/issues/157)) `Tests/Pages/CreateContactTests.cs` — пустые First/Last name блокируют submit
   (`CreateContact` не вызван, видны required-сообщения); валидная форма → `CreateContact` вызван
   → навигация `/contacts`; Cancel → навигация без вызова; `_isLoading` дизейблит submit.
 - [ ] **B14** ([#158](https://github.com/askrinnik/AddressBook2025/issues/158)) `Tests/Pages/CreateContactServerErrorTests.cs` — мок бросает `ProblemDetailsException`
