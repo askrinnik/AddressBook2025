@@ -1,0 +1,41 @@
+{
+  "run": "2026-10-05-11-19_new-harness-after-184",
+  "note": "new harness after 184",
+  "harness": "3",
+  "mcp": "none",
+  "started": "2026-10-05 11:19",
+  "commit": "63d85a8c",
+  "dirty": "no",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "sessions": [
+    {
+      "test": "bench-base",
+      "rep": 1,
+      "session": "f9b68cdf-24ab-4440-a899-6d3028a58f1d",
+      "hash": "5b64bc8a",
+      "judged": false
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 1,
+      "session": "2ceea710-3fe5-488e-8962-33aad2723619",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 2,
+      "session": "32063f80-90e1-4079-a157-890108871358",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 3,
+      "session": "5923a3a9-1125-4f38-bb24-955a78c172e6",
+      "hash": "71ec4a97",
+      "judged": true
+    }
+  ]
+}
