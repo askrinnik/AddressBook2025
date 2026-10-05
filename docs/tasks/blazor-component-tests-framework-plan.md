@@ -234,17 +234,17 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 3 — Обвязка и документация
 
-- [ ] **B18** ([#162](https://github.com/askrinnik/AddressBook2025/issues/162)) `README.md` (запуск `dotnet test`, архитектура, соглашения, отладка) + `CLAUDE.md`
+- [x] **B18** ([#162](https://github.com/askrinnik/AddressBook2025/issues/162)) `README.md` (запуск `dotnet test`, архитектура, соглашения, отладка) + `CLAUDE.md`
   для `src/AddressBook.Web.Tests` (пойнтер на инструкции и план).
-- [ ] **B19** ([#163](https://github.com/askrinnik/AddressBook2025/issues/163)) Инструкция `bunit-conventions.instructions.md` в `.github/instructions/` (front-matter
+- [x] **B19** ([#163](https://github.com/askrinnik/AddressBook2025/issues/163)) Инструкция `bunit-conventions.instructions.md` в `.github/instructions/` (front-matter
   `applyTo: src/AddressBook.Web.Tests/**`, зеркалим в `.claude` по `sync-ai-customizations`) +
   обновить хаб `CLAUDE.md`, `docs/specs/Architecture.md` (дерево, таблицы) и `.vscode/tasks.json`
   (задача `dotnet test`). Заодно освежить устаревшие версии в `docs/specs/AddressBook.Web.md`
   (MudBlazor 9.8.0, WASM 10.0.11).
-- [ ] **B20** ([#164](https://github.com/askrinnik/AddressBook2025/issues/164)) (опц., с подтверждением) CI-workflow `.github/workflows/web-tests.yml`: `setup-dotnet`
+- [x] **B20** ([#164](https://github.com/askrinnik/AddressBook2025/issues/164)) (опц., с подтверждением) CI-workflow `.github/workflows/web-tests.yml`: `setup-dotnet`
   10.0.x → `dotnet test src/AddressBook.Web.Tests` (+ артефакт покрытия). **Без** SQL Server,
   **без** браузеров — тесты полностью офлайн.
-- [ ] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
+- [x] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
   src/AddressBook.Web.Tests` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/UiTests` и `AddressBook.Web`
