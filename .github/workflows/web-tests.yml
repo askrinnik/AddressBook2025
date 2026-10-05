@@ -19,6 +19,9 @@ jobs:
     name: Web component tests (src/AddressBook.Web.Tests)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      checks: write
 
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -43,6 +46,16 @@ jobs:
           dotnet test --project src/AddressBook.Web.Tests -c Release --no-build
           --results-directory TestResults
           -- --report-xunit-trx --coverage --coverage-output-format cobertura
+
+      - name: Publish test report
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        if: ${{ !cancelled() }}
+        with:
+          name: Web component test results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          list-suites: failed
+          list-tests: failed
 
       - name: Upload test results and coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
