@@ -22,6 +22,7 @@ CLAUDE.md                              single instruction hub, read by Claude Co
   commands/implement-issue.md          Claude Code wrapper of the workflow
   agents/*.md                          Claude Code agents (curated subset + workflow agents)
   rules/*.md                           path-scoped rules: pointers that import .github/instructions
+  settings.json                        shared permissions, attribution off, MCP servers enabled
 docs/
   specs/                               specifications (API, Contracts, Web, Architecture)
   tasks/                               one plan per issue: issue-<n>-<slug>.md
@@ -106,7 +107,13 @@ Claude Code asks each user once to approve the project servers in `.mcp.json`.
 
 ## Permissions
 
-The repository has no shared `.claude/settings.json` yet; permissions come from each user's own settings, and `.claude/settings.local.json` is ignored by git. The outward actions of the workflow (commit, push, PR, issue comments) are gated by instruction — the workflow asks before each one.
+`.claude/settings.json` is shared through git:
+
+- **allow** — build, tests, running the API and the Web app, read-only `git` and `gh`, the `_local.*` scripts, and the documentation MCP servers;
+- **ask** — commit, push, pull requests, issue comments and edits, merging, GitHub API writes, `dotnet ef database`: the harness asks even when an instruction already did;
+- **deny** — force-push, `reset --hard`, `git clean`, `rm -rf`, and reading `.env` or local `appsettings.*.local.json` secrets.
+
+It also turns off the automatic commit and PR attribution (commit messages follow the `git-commit` skill) and enables the `.mcp.json` servers. Personal overrides go to `.claude/settings.local.json`, which git ignores.
 
 ## Harness benchmark
 

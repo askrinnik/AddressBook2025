@@ -75,7 +75,7 @@ One `/implement-issue` command drives every issue type. The issue's labels selec
 - [x] Benchmark `.ai/benchmarks/harness/` with fixtures `bench-base` and `quality-vertical-slice` (ground truth for an "add Email to contacts" request); `-DryRun` passes.
 - [x] `docs/ai-harness.md` describes the harness; `docs/specs/Architecture.md` updated.
 - [x] Issue forms `bug.yml` and `task.yml` (acceptance checklist, dependencies) replace `bug_report.md`; `pull_request_template.md` added.
-- [ ] Shared `.claude/settings.json` (permissions allow/ask/deny, empty attribution) — blocked in the session by the auto-mode classifier as self-modification of the harness's permissions; left to the user.
+- [x] Shared `.claude/settings.json` (permissions allow/ask/deny, empty attribution, MCP servers enabled) — created by the user (the auto-mode classifier blocks the assistant from writing its own permissions); commit, push, PR and issue writes are in `ask`.
 
 ### Decisions
 
