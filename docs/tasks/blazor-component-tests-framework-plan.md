@@ -181,25 +181,25 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 0 — Каркас
 
-- [ ] **B1** ([#145](https://github.com/askrinnik/AddressBook2025/issues/145)) Scaffold `src/AddressBook.Web.Tests`: `.csproj` (`net10.0`, `IsPackable=false`,
+- [x] **B1** ([#145](https://github.com/askrinnik/AddressBook2025/issues/145)) Scaffold `src/AddressBook.Web.Tests`: `.csproj` (`net10.0`, `IsPackable=false`,
   `ProjectReference` на `AddressBook.Web`; пакеты `bunit` v2, `xunit.v3`,
   `NSubstitute`, `Bogus`), `xunit.runner.json`,
   `GlobalUsings.cs`, `.gitignore`, README/CLAUDE-заглушки. **Добавить проект в `src/AddressBook.slnx`.**
   Создать этот файл плана в `docs/tasks/`.
-- [ ] **B2** ([#146](https://github.com/askrinnik/AddressBook2025/issues/146)) `Infrastructure/MudTestContext.cs` + `MudBlazorJsInterop.cs`: `AddMudServices()`,
+- [x] **B2** ([#146](https://github.com/askrinnik/AddressBook2025/issues/146)) `Infrastructure/MudTestContext.cs` + `MudBlazorJsInterop.cs`: `AddMudServices()`,
   `JSInterop` loose, провайдеры, подмена `IAddressBookApiService`. Sanity-тест: тривиальный
   MudBlazor-компонент рендерится без исключений на JSInterop.
 
 ### Фаза 1 — Инфраструктура
 
-- [ ] **B3** ([#147](https://github.com/askrinnik/AddressBook2025/issues/147)) `Infrastructure/TestIds.cs` — константы `data-testid` (порт
+- [x] **B3** ([#147](https://github.com/askrinnik/AddressBook2025/issues/147)) `Infrastructure/TestIds.cs` — константы `data-testid` (порт
   `src/UiTests/src/utils/testids.ts`), единый источник селекторов.
-- [ ] **B4** ([#148](https://github.com/askrinnik/AddressBook2025/issues/148)) `Infrastructure/ApiServiceMock.cs` + `FakeHttpMessageHandler.cs` — хелперы NSubstitute
+- [x] **B4** ([#148](https://github.com/askrinnik/AddressBook2025/issues/148)) `Infrastructure/ApiServiceMock.cs` + `FakeHttpMessageHandler.cs` — хелперы NSubstitute
   (частые расстановки `Returns`/`Received`) и управляемый `HttpMessageHandler` (статус, `Location`,
   problem+json) для тестов сервиса.
-- [ ] **B5** ([#149](https://github.com/askrinnik/AddressBook2025/issues/149)) `Data/ContactBuilder.cs` — Bogus-билдеры `ContactModel`/`CreateContactModel` +
+- [x] **B5** ([#149](https://github.com/askrinnik/AddressBook2025/issues/149)) `Data/ContactBuilder.cs` — Bogus-билдеры `ContactModel`/`CreateContactModel` +
   именованные граничные варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата).
-- [ ] **B6** ([#150](https://github.com/askrinnik/AddressBook2025/issues/150)) `Harnesses/*` + `RenderedComponentExtensions.cs` — обёртки `ContactFormHarness`,
+- [x] **B6** ([#150](https://github.com/askrinnik/AddressBook2025/issues/150)) `Harnesses/*` + `RenderedComponentExtensions.cs` — обёртки `ContactFormHarness`,
   `ContactsTableHarness`, `DeleteDialogHarness`, `AppShellHarness` (доменные операции над `cut`,
   инкапсуляция MudBlazor-разметки).
 
@@ -234,17 +234,17 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 3 — Обвязка и документация
 
-- [ ] **B18** ([#162](https://github.com/askrinnik/AddressBook2025/issues/162)) `README.md` (запуск `dotnet test`, архитектура, соглашения, отладка) + `CLAUDE.md`
+- [x] **B18** ([#162](https://github.com/askrinnik/AddressBook2025/issues/162)) `README.md` (запуск `dotnet test`, архитектура, соглашения, отладка) + `CLAUDE.md`
   для `src/AddressBook.Web.Tests` (пойнтер на инструкции и план).
-- [ ] **B19** ([#163](https://github.com/askrinnik/AddressBook2025/issues/163)) Инструкция `bunit-conventions.instructions.md` в `.github/instructions/` (front-matter
+- [x] **B19** ([#163](https://github.com/askrinnik/AddressBook2025/issues/163)) Инструкция `bunit-conventions.instructions.md` в `.github/instructions/` (front-matter
   `applyTo: src/AddressBook.Web.Tests/**`, зеркалим в `.claude` по `sync-ai-customizations`) +
   обновить хаб `CLAUDE.md`, `docs/specs/Architecture.md` (дерево, таблицы) и `.vscode/tasks.json`
   (задача `dotnet test`). Заодно освежить устаревшие версии в `docs/specs/AddressBook.Web.md`
   (MudBlazor 9.8.0, WASM 10.0.11).
-- [ ] **B20** ([#164](https://github.com/askrinnik/AddressBook2025/issues/164)) (опц., с подтверждением) CI-workflow `.github/workflows/web-tests.yml`: `setup-dotnet`
+- [x] **B20** ([#164](https://github.com/askrinnik/AddressBook2025/issues/164)) (опц., с подтверждением) CI-workflow `.github/workflows/web-tests.yml`: `setup-dotnet`
   10.0.x → `dotnet test src/AddressBook.Web.Tests` (+ артефакт покрытия). **Без** SQL Server,
   **без** браузеров — тесты полностью офлайн.
-- [ ] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
+- [x] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
   src/AddressBook.Web.Tests` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/UiTests` и `AddressBook.Web`
