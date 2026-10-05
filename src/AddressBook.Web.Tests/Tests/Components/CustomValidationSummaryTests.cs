@@ -117,24 +117,24 @@ public class CustomValidationSummaryTests : MudTestContext
     }
 
     [Fact]
-    public void ModelLevelMessageWithSameTextAsFieldMessage_IsHidden()
+    public void ModelLevelMessageWithSameTextAsFieldMessage_IsShown()
     {
         _messages.Add(_editContext.Field(nameof(FormModel.Name)), "Required.");
         _messages.Add(ModelLevel, "Required.");
 
         var cut = RenderSummary();
 
-        Assert.Empty(ShownMessages(cut));
+        Assert.Equal(["Required."], ShownMessages(cut));
     }
 
     [Fact]
-    public void NestedObjectFieldMessage_IsShown()
+    public void NestedObjectFieldMessage_IsNotShown()
     {
         _messages.Add(new FieldIdentifier(_model.Address, nameof(AddressModel.City)), "City is required.");
 
         var cut = RenderSummary();
 
-        Assert.Equal(["City is required."], ShownMessages(cut));
+        Assert.Empty(ShownMessages(cut));
     }
 
     /// <summary>

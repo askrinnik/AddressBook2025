@@ -40,16 +40,16 @@ Commit 1 — pin the current behaviour:
 
 Commit 2 — fix the filter:
 
-- [ ] A model-level message with the same text as a per-field message is shown.
-- [ ] A message on a nested object's field is not shown.
-- [ ] All other cases from commit 1 still pass unchanged.
-- [ ] The component's `@code` block moves to a code-behind `CustomValidationSummary.razor.cs`, as the Blazor conventions require.
-- [ ] `docs/specs/AddressBook.Web.md` §8.1 states how model-level messages are selected.
+- [x] A model-level message with the same text as a per-field message is shown.
+- [x] A message on a nested object's field is not shown.
+- [x] All other cases from commit 1 still pass unchanged.
+- [x] The component's `@code` block moves to a code-behind `CustomValidationSummary.razor.cs`, as the Blazor conventions require.
+- [x] `docs/specs/AddressBook.Web.md` §8.1 states how model-level messages are selected.
 
 Both commits:
 
-- [ ] Only `MudTestContext` + bUnit `Find`/`FindAll` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` clean; `dotnet test --project src/AddressBook.Web.Tests` green.
+- [x] Only `MudTestContext` + bUnit `Find`/`FindAll` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` clean; `dotnet test --project src/AddressBook.Web.Tests` green.
 
 ## 3. Affected files
 

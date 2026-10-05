@@ -324,9 +324,11 @@ Folder: `src/AddressBook.Web/Layout`
 
 Source: `src/AddressBook.Web/Components/CustomValidationSummary.razor`
 
-- Custom summary component implementing `IDisposable`.
-- Subscribes to `EditContext.OnValidationStateChanged`.
-- Displays only general model-level validation messages, filtering out per-field messages.
+- Custom summary component implementing `IDisposable`; logic in the code-behind `CustomValidationSummary.razor.cs`.
+- Subscribes to `EditContext.OnValidationStateChanged` and unsubscribes in `Dispose`.
+- Displays only the model-level validation messages — those stored for `FieldIdentifier(EditContext.Model, string.Empty)`.
+  Per-field messages, including fields of nested objects, are not shown, whatever their text.
+- Renders nothing without a cascading `EditContext`.
 
 Note: current create/edit pages use built-in `ValidationSummary`; this custom component exists as reusable infrastructure.
 
