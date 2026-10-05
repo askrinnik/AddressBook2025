@@ -15,7 +15,7 @@ Repository: **`askrinnik/AddressBook2025`**. All issue reads and writes go throu
 
 ## When to Use
 
-- A workflow is driven by an issue number (for example `/implement-issue 56` or a defect-fix flow).
+- A workflow is driven by an issue number (for example `/implement-issue 56`).
 - You need to record what was done back on the issue as a comment.
 
 ## Reading an issue
@@ -28,10 +28,15 @@ Given an issue number `<issue>`:
 4. If the issue links a parent/tracking issue or has sub-issues, fetch them too so the scope boundary is clear: work on **this** issue only, not the whole epic.
 5. If the issue is **closed**, stop and confirm with the user before doing anything.
 
-### Determining the issue type by label
+### Determining the lane by label
 
-- Feature-type work: labels such as `api`, `enhancement`, `feature`, `testing`, or an unlabelled task.
-- If the issue is labelled `bug`, it is a defect — follow the defect-fix flow, not the feature flow. If the current workflow is the wrong one for the label, stop and confirm with the user.
+The labels select the lane of the `implement-issue` workflow:
+
+- **Bug lane** — labelled `bug`: a defect to reproduce and fix at its root cause.
+- **Test-authoring lane** — the issue asks only for tests of behaviour that already exists, typically labelled `testing`.
+- **Feature lane** — everything else (`api`, `ui`, `enhancement`, or an unlabelled task).
+
+If the labels and the issue text disagree, stop and confirm the lane with the user.
 
 ### Establishing the acceptance criteria
 
@@ -41,11 +46,19 @@ Given an issue number `<issue>`:
 
 ## Posting the result comment
 
-When the work is confirmed, add an English comment to issue `<issue>` via the GitHub MCP server. Keep it factual and technical, based only on what was actually done, with these headings:
+When the work is confirmed, add an English comment to issue `<issue>` via the GitHub MCP server. Keep it factual and technical, based only on what was actually done. The headings depend on the lane.
 
-- `## Implementation` (or `## Fix` for a defect) — a short intro sentence, then a **Changes** bullet list naming each modified/added file in backticks with a one-line description of what changed there. Add a short **Key note** paragraph for any non-obvious decision or gotcha worth recording.
-- `## Acceptance Criteria` — a table of each acceptance item and how it was satisfied. For a defect, state the root cause and the regression test that now covers it.
-- `## Verification` — Playwright API scenarios run, UI scenarios walked, and the build result.
+**Feature lane and Test-authoring lane:**
+
+- `## Implementation` — a short intro sentence, then a **Changes** bullet list naming each modified/added file in backticks with a one-line description of what changed there. Add a short **Key note** paragraph for any non-obvious decision or gotcha worth recording.
+- `## Acceptance Criteria` — a table of each acceptance item and how it was satisfied.
+- `## Verification` — Playwright API scenarios run, UI scenarios walked, other tests run, and the build result.
+
+**Bug lane:**
+
+- `## Root Cause` — what was actually wrong, in which layer, and why it produced the reported symptom.
+- `## Resolution` — a short intro sentence, then a **Changes** bullet list naming each modified/added file in backticks with a one-line description, including the regression test that now covers the bug.
+- `## Verification` — the repro before and after the fix, the tests run (the regression case and the full suite), and the build result.
 
 Rules:
 
