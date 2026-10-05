@@ -26,6 +26,7 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+coverage-report/
 .vs/
 #Nuget packages folder
 packages/

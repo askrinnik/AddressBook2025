@@ -57,6 +57,25 @@ jobs:
           list-suites: failed
           list-tests: failed
 
+      - name: Build coverage report
+        # ReportGenerator turns the Cobertura file into an HTML report and a markdown summary
+        # limited to the AddressBook.Web assembly under test.
+        run: |
+          dotnet tool install dotnet-reportgenerator-globaltool --version 5.5.11 --tool-path "$RUNNER_TEMP/tools"
+          "$RUNNER_TEMP/tools/reportgenerator" \
+            "-reports:TestResults/**/*.cobertura.xml" \
+            "-targetdir:coverage-report" \
+            "-reporttypes:HtmlInline_AzurePipelines;MarkdownSummaryGithub" \
+            "-assemblyfilters:+AddressBook.Web"
+          cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: web-tests-coverage-report
+          path: coverage-report/
+          retention-days: 30
+
       - name: Upload test results and coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ !cancelled() }}

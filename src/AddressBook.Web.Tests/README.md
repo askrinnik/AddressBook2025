@@ -124,6 +124,15 @@ dotnet test --project src/AddressBook.Web.Tests -c Release --no-build --results-
 Артефакт `web-tests-results` (хранится 30 дней, загружается и при падении тестов) содержит `.trx`-отчёт и
 Cobertura-файл покрытия (`*.cobertura.xml`) из `TestResults/`. Тот же каталог создаётся локально и игнорируется git.
 
+Покрытие workflow превращает в отчёт через [ReportGenerator](https://github.com/danielpalme/ReportGenerator) (только сборка
+`AddressBook.Web`): markdown-сводка попадает в Job Summary прогона, а HTML-отчёт — в артефакт
+`web-tests-coverage-report` (открыть `index.html`). Локально то же самое:
+
+```bash
+dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.5.11
+reportgenerator "-reports:TestResults/**/*.cobertura.xml" "-targetdir:coverage-report" "-reporttypes:HtmlInline_AzurePipelines" "-assemblyfilters:+AddressBook.Web"
+```
+
 ## План
 
 Полный дизайн, архитектурные решения и список задач —
