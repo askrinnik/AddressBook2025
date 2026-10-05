@@ -1,0 +1,41 @@
+{
+  "run": "2026-10-05-11-35_rules-without-imports-fewer-skills",
+  "note": "rules without imports, fewer skills",
+  "harness": "3",
+  "mcp": "none",
+  "started": "2026-10-05 11:35",
+  "commit": "a1212beb",
+  "dirty": "no",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "sessions": [
+    {
+      "test": "bench-base",
+      "rep": 1,
+      "session": "f4c2f540-b77a-4ca2-af87-48841b3d096a",
+      "hash": "5b64bc8a",
+      "judged": false
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 1,
+      "session": "4c3962ef-deaf-4874-a865-f25db6b3f284",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 2,
+      "session": "21a1b996-3ca5-4c9c-a28b-a29340309712",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 3,
+      "session": "542c5c12-2f99-4529-983f-5bb98cbf2260",
+      "hash": "71ec4a97",
+      "judged": true
+    }
+  ]
+}

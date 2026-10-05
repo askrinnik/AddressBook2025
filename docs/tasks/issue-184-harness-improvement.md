@@ -109,4 +109,15 @@ First comparison (`2026-10-05-11-15_old-harness-on-main` → `2026-10-05-11-19_n
 - [x] Rules point to the instruction files instead of importing them.
 - [x] `disable-model-invocation: true` on rarely needed skills: `coverage-analysis`, `directory-build-organization`, `test-anti-patterns`, `create-specification`, `dotnet-timezone`.
 - [x] `CLAUDE.md`: a feature request lists the open decisions and asks before implementing (the weak judge item).
-- [ ] Re-run the benchmark on the new harness and compare.
+- [x] Re-run the benchmark on the new harness and compare.
+
+### Result (`2026-10-05-11-35_rules-without-imports-fewer-skills`)
+
+| Measure | Old harness (`main`) | After #184, first | After the follow-up |
+|---|---|---|---|
+| Start context, `bench-base` | 28 684 | 36 194 | 30 696 |
+| Start context, `quality-vertical-slice` | 8 212 | 13 212 | 8 824 |
+| Judge score, `quality-vertical-slice` | 3.67 / 4 | 3.33 / 4 | 4 / 4 (every repeat) |
+| False positives | 0 | 0 | 0 |
+
+The new harness costs about 2k tokens more at start than the old one (+0.5k `CLAUDE.md`, +0.6k skill list, +0.6k agent list) and scores the maximum on the feature-request fixture.
