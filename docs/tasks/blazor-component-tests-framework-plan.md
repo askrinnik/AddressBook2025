@@ -221,7 +221,7 @@ src/AddressBook.Web.Tests/
   → навигация `/contacts`; Cancel → навигация без вызова; `_isLoading` дизейблит submit.
 - [x] **B14** ([#158](https://github.com/askrinnik/AddressBook2025/issues/158)) `Tests/Pages/CreateContactServerErrorTests.cs` — мок бросает `ProblemDetailsException`
   с `errors` → сообщения ложатся на соответствующие поля формы (`ValidationMessageStore`).
-- [ ] **B15** ([#159](https://github.com/askrinnik/AddressBook2025/issues/159)) `Tests/Pages/EditContactTests.cs` + `EditContactNotFoundTests.cs` — предзаполнение из
+- [x] **B15** ([#159](https://github.com/askrinnik/AddressBook2025/issues/159)) `Tests/Pages/EditContactTests.cs` + `EditContactNotFoundTests.cs` — предзаполнение из
   `GetContactByIdAsync`, Save → `UpdateContact` + навигация, Cancel; `null` → `_notFound`: `MudAlert`
   «Contact not found.» + кнопка «Back to Contacts».
 - [ ] **B16** ([#160](https://github.com/askrinnik/AddressBook2025/issues/160)) `Tests/Components/CustomValidationSummaryTests.cs` — показываются только model-level
