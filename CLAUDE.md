@@ -7,6 +7,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 ## Always
 
 - **All comments in source code (`//`, `///` XML docs, `<!-- -->`, `#`) MUST be written in English** — never Russian or any other language. If you touch a file that still has non-English comments, translate them. (Docs under `docs/` and READMEs are not source code and are unaffected.)
+- **A comment states what the code does and why, in the present tense, and makes sense without the issue tracker or the file's history.** Never write change narration ("added", "now", "previously", "fixed"), issue or task references (`#123`, `B15`), line numbers, or a restatement of what the code plainly says.
 - When a Git commit is requested, use the `git-commit` skill and follow its message conventions; do not hand-write commit messages in another format.
 - **Never `git commit` or `git push` on your own initiative.** Do it only when the user's current message explicitly asks for it (for example "commit", "push", "open a PR"). Permission covers only the action named and does not carry over to later edits: after the user asks for further changes — even on an already-pushed branch or open PR — make the changes, verify them, then stop and ask before committing or pushing again. Never force-push or rewrite pushed history without an explicit request.
 
@@ -25,11 +26,13 @@ Solution file: `src/AddressBook.slnx`.
 
 - Make focused, reviewable changes; reuse existing abstractions before adding new ones.
 - When a change spans the API and the Web frontend, wire both sides so the feature is complete.
+- For a feature request, list the decisions neither the request nor the code settles (lengths and formats, required vs optional, uniqueness, where it shows and whether it is searchable, existing data) and ask the user to confirm them before implementing — do not pick them silently. Routine naming and layout calls are yours.
 - New or changed API behaviour ships with Playwright tests in `src/ApiTests` (happy path, boundaries, negatives).
+- Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai-harness.md](docs/ai-harness.md).
 
 ## File-type coding standards
 
-Read the matching instruction file before working on these file types. **Copilot** applies them automatically via the `applyTo` globs in each file's front matter; **Claude Code does not** understand `applyTo`, so for Claude Code this table is the pointer and reading the file is a manual step. The `.github/instructions/*.instructions.md` files are the single source of truth for these standards — the globs shown here are just a hint; the authoritative `applyTo` lives in each file's front matter.
+The `.github/instructions/*.instructions.md` files are the single source of truth for these standards. **Copilot** applies them via the `applyTo` globs in each file's front matter. **Claude Code** does not understand `applyTo`; it loads them through thin path-scoped rules in `.claude/rules/` — each rule has a `paths:` list mirroring the instruction's `applyTo` and tells you to read the instruction file before editing (no `@`-import, which would load it into every session). When you change an `applyTo`, change the matching rule's `paths:` too. If a standard did not load, read the file from this table before editing.
 
 | Topic / file type | Instruction file |
 |---|---|
@@ -42,7 +45,9 @@ Read the matching instruction file before working on these file types. **Copilot
 
 The four generic, always-on instruction files that used to load on every file (security/OWASP, web performance, generic code review, docs-sync) are now **on-demand skills** instead — `security-owasp`, `web-performance`, `code-review-checklist`, `update-docs` — so they no longer sit in context permanently; invoke them (or the built-in `/code-review` and `/security-review`) when that pass is actually needed.
 
-For conventions important enough to auto-load in Claude Code, add a directory-scoped `CLAUDE.md` next to the code (Claude Code loads those when working in that subtree). Keep it short and non-duplicating; the `.github/instructions/*` file stays the single source of truth.
+`.claude/rules/update-docs-on-code-change.md` (Claude Code only) says which document each kind of code change updates, in the same change.
+
+For conventions scoped to one project, a directory-scoped `CLAUDE.md` next to the code also works (Claude Code loads it when working in that subtree). Keep it short and non-duplicating; the `.github/instructions/*` file stays the single source of truth.
 
 ## Custom agents
 
@@ -57,6 +62,14 @@ The subset currently exposed to Claude Code:
 - **playwright-tester** — writes/stabilises the Playwright API/UI E2E tests.
 - **project-documenter** — generates project documentation (read-only on source).
 - **orchestrator** — decomposes a multi-step request and delegates to the specialists.
+
+Workflow agents of `/implement-issue` (each pinned to the model that fits its stage; see the *Delegation* table in [.ai/prompts/implement-issue.md](.ai/prompts/implement-issue.md)):
+
+- **issue-planner** (Opus) — read-only research; returns the plan text with an S/M/L complexity.
+- **issue-developer** (Sonnet; the workflow passes Opus for `L`) — implements the approved plan with tests; never commits or posts.
+- **issue-verifier** (Sonnet) — reproduces a bug or walks the acceptance items in a real browser; returns an evidence table.
+- **security-reviewer** (Opus) — read-only security review of a change, run when API, configuration or packages change.
+- **skill-runner** (Haiku) — composes commit messages, issue comments and PR text from a named skill; never acts.
 
 Not translated to `.claude/agents` because a **Claude Code** built-in already covers the role (this is a Claude-Code judgement only — it says nothing about whether Copilot needs the corresponding `.github/agents` file): planning → the `Plan` agent; research → `Explore` / general-purpose; review → the `/code-review` skill; plus debugging/QA/design/regression roles handled inline or by general-purpose.
 

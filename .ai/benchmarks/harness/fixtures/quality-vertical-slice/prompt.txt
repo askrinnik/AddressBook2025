@@ -1,0 +1,2 @@
+Add an optional Email field to contacts, so that a user can enter it when creating or editing a contact and an API
+client can read and write it. Tell me how you would implement it and what you would change. Do not edit any files.

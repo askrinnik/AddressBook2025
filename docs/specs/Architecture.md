@@ -249,10 +249,10 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 **Cross-tool AI customizations.** The repository shares its AI configuration across **GitHub Copilot** (`.github/`) and **Claude Code** (`.claude/`), governed by `.ai/customizations.policy.json`:[^9]
 
 - **Root instructions** — `CLAUDE.md` is the single hub, read by both tools; it replaced the former one-line `.github/copilot-instructions.md`. It still carries the *"source code supports non-English comments"* rule (Russian-language comments are allowed) and points to the specs and instruction files rather than duplicating them.
-- **File-type standards** — `.github/instructions/*.instructions.md`; Copilot auto-applies them via `applyTo` globs, while Claude Code reads them through the pointer table in `CLAUDE.md`.
+- **File-type standards** — `.github/instructions/*.instructions.md`; Copilot auto-applies them via `applyTo` globs, while Claude Code loads them through path-scoped pointer rules in `.claude/rules/` that say to read them before editing a matching file.
 - **Skills** — `.github/skills/` is the source of truth, mirrored byte-for-byte to `.claude/skills/`; repo-local workflow skills use the `_local.` prefix. A `sync-ai-customizations` skill audits parity (`check.ps1`).
-- **Commands** — one shared body per command in `.ai/prompts/`, with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude): `implement-issue`, `fix-bug-issue`.
-- **Agents** — `.github/agents/` holds the full Copilot set; a curated subset is translated into `.claude/agents/` for Claude Code (the rest of the roles are covered by Claude Code built-ins).
+- **Commands** — one shared body per command in `.ai/prompts/`, with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude): `implement-issue` (one lane-based workflow for bug, feature and test-authoring issues).
+- **Agents** — `.github/agents/` holds the full Copilot set; a curated subset is translated into `.claude/agents/` for Claude Code (the rest of the roles are covered by Claude Code built-ins). The `implement-issue` workflow delegates its stages to dedicated agents on both sides, each pinned to a model: `issue-planner` (Opus), `issue-developer` (Sonnet, Opus for complex plans), `issue-verifier` (Sonnet), `security-reviewer` (Opus) and `skill-runner` (Haiku).
 
 ---
 

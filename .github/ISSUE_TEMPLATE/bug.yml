@@ -1,0 +1,50 @@
+name: Bug
+description: Something in the API or the Web app behaves wrongly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `/implement-issue <n>` takes a `bug` issue through the Bug lane: reproduce, fix the root cause, add a regression test.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong, in a sentence or two.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Page or endpoint, input data, actions — precise enough to reproduce in a browser or with one request.
+      value: |
+        1.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happens instead — error message, status code and problem details, console errors.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Local (API + Web from `dotnet run`) or Azure; browser if the UI is involved.
+      placeholder: Local, Chrome 140
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: 'Blocking issues (`- #n`) or "—". Set the same as GitHub "blocked by" relations.'
+      value: |
+        —

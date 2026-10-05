@@ -1,0 +1,32 @@
+name: Task
+description: New or changed behaviour, infrastructure, or tests for existing behaviour.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `/implement-issue <n>` picks the lane from the labels: tests-only work (label `testing`) goes through the Test-authoring lane, everything else through the Feature lane.
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What has to be done and why. Link the plan in `docs/tasks/` or the spec section in `docs/specs/` if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checkable conditions, one observable behaviour per line. The workflow ticks the verified ones.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: 'Blocking issues (`- #n`) or "—". Set the same as GitHub "blocked by" relations — `next-issue` relies on them.'
+      value: |
+        —
+    validations:
+      required: true

@@ -1,0 +1,6 @@
+{
+  "repetitions": 3,
+  "tools": "Read,Grep,Glob",
+  "allowedTools": "Read,Grep,Glob",
+  "startContext": false
+}
