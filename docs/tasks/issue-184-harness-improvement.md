@@ -83,3 +83,19 @@ One `/implement-issue` command drives every issue type. The issue's labels selec
 - Rules import the instruction files (`@../../.github/instructions/…`) instead of copying them, so `.github/instructions` stays the single source of truth; each rule also says to read the file if the import did not load.
 - `next-issue` orders ready issues by number (no F-codes here); dependencies count only as GitHub "blocked by" relations, a body-only dependency is reported as a mismatch.
 - The benchmark scripts are ported unchanged except the script path and the list of instruction paths the report diffs (adds `.github/instructions`, `.ai/prompts`).
+
+## 8. Phase 4 — remaining useful parts
+
+### Acceptance
+
+- [x] MCP servers `context7`, `microsoft-learn`, `nuget`: new `.mcp.json` (Claude Code) and added to `.vscode/mcp.json` (Copilot); `issue-planner` and `issue-developer` get the documentation tools on both sides.
+- [x] `_local.nuget-package-update` (+ `Prepare-PackageUpdate.ps1`) adapted to `src/Directory.Packages.props`: current pins (MediatR), families of this stack, lock files, bUnit and Playwright gates; the preflight removes only `bin`/`obj` next to a `.csproj`, never `node_modules`.
+- [x] `.claude/rules/github-actions.md` describing this repository's four workflows and the rules for workflows added or changed.
+- [x] `.claude/rules/docs.md`: language, where documents go, issue-plan format, style.
+- [x] Generic skills `test-anti-patterns`, `coverage-analysis`, `directory-build-organization`, and `run-tests` renamed to `dotnet-run-tests` (name clash with `_local.run-tests`).
+- [x] `docs/ai-harness.md` updated (MCP servers, rules, skills); `check.ps1` passes.
+
+### Decisions
+
+- The existing workflows keep their tag-pinned actions; the rule asks for SHA pins only on lines a change adds or touches, and the migration is its own change.
+- `.mcp.json` does not include a GitHub server: it needs a token, and Claude Code here uses `gh`.

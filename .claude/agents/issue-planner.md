@@ -1,7 +1,7 @@
 ---
 name: issue-planner
 description: Planning agent for the implement-issue workflow — researches the AddressBook2025 codebase read-only and returns a concise, review-ready implementation plan for one GitHub issue (Bug, Feature or Test-authoring lane), including a complexity estimate (S/M/L). Never edits code, runs commands or writes files; the caller saves the plan and runs the review gate.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, mcp__context7__resolve-library-id, mcp__context7__query-docs, mcp__microsoft-learn__microsoft_docs_search, mcp__microsoft-learn__microsoft_docs_fetch
 model: opus
 ---
 
@@ -26,6 +26,7 @@ The issue number and exact title, the lane, the acceptance list (Feature / Test-
 - **Bug lane:** trace the observed failure to its root cause across the layers (Web → Contracts → API handler/validator/controller/repository). Name the cause, not the symptom.
 - **Feature and Test-authoring lanes:** cross-check coverage against the code, not only the issue text — for every component, page or endpoint the plan touches or tests, list its inputs/fields and branches (required vs optional, success/error/empty/loading states, boundary values) and compare them with the issue's scenarios. Each gap goes into the plan or under *Out of scope*.
 - Read narrowly: grep first, then read around the match. Read a whole file only when it is short or central to the change.
+- Use the Microsoft Learn and Context7 MCP tools for .NET, ASP.NET Core, EF Core, FluentValidation, MudBlazor, bUnit and Playwright APIs you are not sure of, instead of guessing.
 
 ## Output — the plan, in English
 

@@ -6,7 +6,8 @@ How the AI-assistant environment of this repository is built: what it consists o
 
 ```
 CLAUDE.md                              single instruction hub, read by Claude Code and Copilot
-.mcp.json                              MCP servers of the project
+.mcp.json                              MCP servers for Claude Code (context7, microsoft-learn, nuget)
+.vscode/mcp.json                       MCP servers for Copilot in VS Code (github + the same three)
 .ai/
   customizations.policy.json           layout and mirroring rules (audited by check.ps1)
   prompts/implement-issue.md           the workflow body, shared by both tools
@@ -70,7 +71,7 @@ The main session keeps every gate: plan review, build, test runs, both confirmat
 
 ## Rules (`.claude/rules/`)
 
-Claude Code loads a rule when it works with a file matching the rule's `paths:`. Four rules are thin pointers that import a `.github/instructions/*` file, so the standard stays in one place: `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. `update-docs-on-code-change.md` says which document each kind of change updates. Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
+Claude Code loads a rule when it works with a file matching the rule's `paths:`. Four rules are thin pointers that import a `.github/instructions/*` file, so the standard stays in one place: `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. Three rules carry their own content: `update-docs-on-code-change.md` (which document each kind of change updates), `docs.md` (where documents go, plan format, style) and `github-actions.md` (workflow security and CI conventions). Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
 
 ## Skills
 
@@ -86,10 +87,22 @@ Repository-local skills (`_local.*`, invoked as `/<name>`):
 | `write-tests` | Pick the test layer (Playwright API / bUnit / Playwright UI) and write the tests |
 | `debug-issue` | Reproduce and find the root cause of a defect |
 | `refactor-code` | Behaviour-preserving refactoring |
+| `nuget-package-update` | Pin-aware NuGet updates through `src/Directory.Packages.props`, family by family, with a build and test gate after each step |
 | `harness-quality-check` | Benchmark the harness (manual only) |
 | `sync-ai-customizations` | Audit the cross-tool layout |
 
-Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code-review-checklist`, …) are loaded on demand instead of sitting in every context.
+Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code-review-checklist`, `dotnet-run-tests`, `test-anti-patterns`, `coverage-analysis`, `directory-build-organization`, …) are loaded on demand instead of sitting in every context. `dotnet-run-tests` is the upstream `run-tests` skill, renamed because `_local.run-tests` owns that name.
+
+## MCP servers
+
+| Server | Used for |
+|---|---|
+| `microsoft-learn` | Official .NET, ASP.NET Core, EF Core and Azure documentation and code samples (`microsoft-docs` skill, `issue-planner`, `issue-developer`) |
+| `context7` | Documentation of third-party libraries: MudBlazor, FluentValidation, MediatR, bUnit, Playwright |
+| `nuget` | Package versions, vulnerabilities and release information (`nuget-package-update`); runs through `dnx`, which needs the .NET 10 SDK |
+| `github` | Issues and pull requests — in the Copilot config only; Claude Code uses `gh` or the user's own GitHub MCP server |
+
+Claude Code asks each user once to approve the project servers in `.mcp.json`.
 
 ## Permissions
 
