@@ -226,7 +226,7 @@ src/AddressBook.Web.Tests/
   «Contact not found.» + кнопка «Back to Contacts».
 - [x] **B16** ([#160](https://github.com/askrinnik/AddressBook2025/issues/160)) `Tests/Components/CustomValidationSummaryTests.cs` — показываются только model-level
   сообщения (per-field отфильтрованы); обновление при `OnValidationStateChanged`; отписка в `Dispose`.
-- [ ] **B17** ([#161](https://github.com/askrinnik/AddressBook2025/issues/161)) `Tests/Services/AddressBookApiServiceTests.cs` — через `FakeHttpMessageHandler`:
+- [x] **B17** ([#161](https://github.com/askrinnik/AddressBook2025/issues/161)) `Tests/Services/AddressBookApiServiceTests.cs` — через `FakeHttpMessageHandler`:
   построение URL (`?search=` только для непустого термина), парсинг id из `Location` (и `0` при
   неудаче), `404 → null` (через `ProblemDetailsException`), `DateTime→DateOnly`, исключения на
   non-success у `Delete`/`Update`.

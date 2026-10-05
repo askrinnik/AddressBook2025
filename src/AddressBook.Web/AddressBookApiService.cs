@@ -14,7 +14,7 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
     {
         var requestUri = "contacts";
         if (!string.IsNullOrWhiteSpace(searchTerm))
-            requestUri += $"?search={searchTerm}";
+            requestUri += $"?search={Uri.EscapeDataString(searchTerm)}";
 
         var response = await httpClient.GetFromJsonAsync<GetFilteredContactsResponse>(requestUri, cancellationToken);
         return response;

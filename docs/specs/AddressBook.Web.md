@@ -147,7 +147,7 @@ Source: `src/AddressBook.Web/AddressBookApiService.cs`
 
 | Method | HTTP call | Behavior |
 |---|---|---|
-| GetFilteredContactsAsync | GET `contacts` or `contacts?search={term}` | Uses GetFromJsonAsync; returns deserialized `GetFilteredContactsResponse?` |
+| GetFilteredContactsAsync | GET `contacts` or `contacts?search={term}` | Uses GetFromJsonAsync; adds `?search=` only for a non-blank term, percent-encoded with `Uri.EscapeDataString`; returns deserialized `GetFilteredContactsResponse?` |
 | DeleteContact | DELETE `contacts/{id}` | Throws HttpRequestException when status is non-success |
 | CreateContact | POST `contacts` | Sends CreateContactCommand; on success parses new ID from `Location` header segments; returns 0 on failure |
 | GetContactByIdAsync | GET `contacts/{id}` | Returns null on 404; otherwise EnsureSuccessStatusCode + ReadFromJsonAsync<ContactModel> |
