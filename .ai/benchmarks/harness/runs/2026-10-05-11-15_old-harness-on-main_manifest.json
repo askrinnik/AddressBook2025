@@ -1,0 +1,41 @@
+{
+  "run": "2026-10-05-11-15_old-harness-on-main",
+  "note": "old harness on main",
+  "harness": "3",
+  "mcp": "none",
+  "started": "2026-10-05 11:15",
+  "commit": "58259490",
+  "dirty": "yes",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "sessions": [
+    {
+      "test": "bench-base",
+      "rep": 1,
+      "session": "71cbafc9-0073-46c7-a034-68fd2cc3b0ba",
+      "hash": "5b64bc8a",
+      "judged": false
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 1,
+      "session": "79d27b00-a723-4d30-9cc7-5847aa193684",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 2,
+      "session": "d912bc0f-8341-4e58-947c-c74428c731cc",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 3,
+      "session": "b983db55-6e3a-49b5-ac09-c0beb1f54562",
+      "hash": "71ec4a97",
+      "judged": true
+    }
+  ]
+}
