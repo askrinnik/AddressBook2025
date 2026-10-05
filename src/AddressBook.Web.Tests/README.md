@@ -118,8 +118,8 @@ dotnet build src/AddressBook.Web.Tests -c Release --no-restore
 dotnet test --project src/AddressBook.Web.Tests -c Release --no-build --results-directory TestResults -- --report-xunit-trx --coverage --coverage-output-format cobertura
 ```
 
-Шаг `dorny/test-reporter` читает `.trx` и публикует на странице прогона и в PR проверку
-«Web component test results» с деревом тестов и ошибками упавших.
+Шаг `dorny/test-reporter` читает `.trx` и добавляет в Summary прогона отчёт «Web component test results»
+с числом пройденных, упавших и пропущенных тестов и списком упавших.
 
 Артефакт `web-tests-results` (хранится 30 дней, загружается и при падении тестов) содержит `.trx`-отчёт и
 Cobertura-файл покрытия (`*.cobertura.xml`) из `TestResults/`. Тот же каталог создаётся локально и игнорируется git.

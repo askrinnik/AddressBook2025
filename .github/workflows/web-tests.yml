@@ -19,9 +19,6 @@ jobs:
     name: Web component tests (src/AddressBook.Web.Tests)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: read
-      checks: write
 
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
