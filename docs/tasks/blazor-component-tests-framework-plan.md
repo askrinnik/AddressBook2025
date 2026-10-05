@@ -1,6 +1,6 @@
 # План: Современный фреймворк компонентных (bUnit) автотестов `src/AddressBook.Web.Tests`
 
-> **Статус:** черновик / готов к реализации
+> **Статус:** фазы 0–3 (B1–B21) выполнены; фазы 4–6 (B22–B33) — доработки по итогам код-ревью
 > **Целевая папка:** `src/AddressBook.Web.Tests` (новая; `src/ApiTests` и `src/UiTests` не трогаем)
 > **Тестируемое приложение:** `src/AddressBook.Web` — Blazor WebAssembly + MudBlazor 9.8.0 (.NET 10)
 > **Тип тестов:** компонентные/страничные (**bUnit**) — рендеринг в памяти, **без браузера**; API, HTTP и БД замоканы
@@ -246,6 +246,46 @@ src/AddressBook.Web.Tests/
   **без** браузеров — тесты полностью офлайн.
 - [x] **B21** ([#165](https://github.com/askrinnik/AddressBook2025/issues/165)) Верификация: `dotnet build src/AddressBook.slnx` + `dotnet test
   src/AddressBook.Web.Tests` — всё зелёное.
+
+### Фаза 4 — Дефекты и решения в `AddressBook.Web` (по итогам код-ревью)
+
+Ревью готового набора (180 тестов; покрытие `AddressBook.Web` 88.1 % строк и 72.9 % ветвей, у
+`EditContact` 57.7 % / 41.6 %) нашло дефекты, которые тесты не ловят. Каждый исправляется вместе с
+регрессионным bUnit-тестом. Задачи с пометкой «решение» требуют продуктового решения до реализации.
+
+- [ ] **B22** ([#190](https://github.com/askrinnik/AddressBook2025/issues/190)) `Contacts`: ошибка
+  `DeleteContact` не перехватывается → необработанное исключение в WASM. Решение: где показывать ошибку и как вести себя при 404.
+- [ ] **B23** ([#191](https://github.com/askrinnik/AddressBook2025/issues/191)) `EditContact`: ошибка
+  загрузки (кроме 404) не перехватывается; во время загрузки страница пустая. Решение: как показывать ошибку, вид индикатора.
+- [ ] **B24** ([#192](https://github.com/askrinnik/AddressBook2025/issues/192)) `ProblemDetailsHandler`:
+  пустое/не-JSON тело → `JsonException` вместо `ProblemDetailsException`; 404 без тела не распознаётся.
+- [ ] **B25** ([#193](https://github.com/askrinnik/AddressBook2025/issues/193)) `AddressBookApiService.CreateContact`
+  на неуспешный статус возвращает `0` вместо исключения.
+- [ ] **B26** ([#194](https://github.com/askrinnik/AddressBook2025/issues/194)) `Contacts`: баннер `Error`
+  остаётся после успешной перезагрузки (решение: очищать / закрывать вручную / оставить).
+- [ ] **B27** ([#195](https://github.com/askrinnik/AddressBook2025/issues/195)) Тексты UI: кавычки в
+  «No matching records found»; имена свойств (`FirstName`) в сообщениях валидации (решение: отображаемые имена).
+- [ ] **B28** ([#196](https://github.com/askrinnik/AddressBook2025/issues/196)) Клиентская валидация по
+  правилам API: длина ≤ 30, пробелы, дата рождения в будущем (решение: дублировать ли на клиенте).
+
+### Фаза 5 — Тестовый код и покрытие
+
+- [ ] **B29** ([#197](https://github.com/askrinnik/AddressBook2025/issues/197)) Качество тестового кода:
+  `await cut.InvokeAsync`, async-методы harness вместо `.GetAwaiter().GetResult()`, ожидание навигации в
+  harness, фиксированная культура, убрать `Tests.Tests` из namespace.
+- [ ] **B30** ([#198](https://github.com/askrinnik/AddressBook2025/issues/198)) `EditContactServerErrorTests` —
+  сопоставление серверных ошибок при сохранении. Зависит от B29.
+- [ ] **B31** ([#199](https://github.com/askrinnik/AddressBook2025/issues/199)) `ContactsListTests` —
+  навигация по страницам через `MudTablePager`. Зависит от B29.
+- [ ] **B32** ([#200](https://github.com/askrinnik/AddressBook2025/issues/200)) Сократить мета-тесты обвязки
+  (оставить `TestIdsTests`, `MudTestContextTests`, `FakeHttpMessageHandlerTests`) и удалить неиспользуемые
+  хелперы/варианты `ContactBuilder`. Зависит от B28, B29.
+
+### Фаза 6 — CI
+
+- [ ] **B33** ([#201](https://github.com/askrinnik/AddressBook2025/issues/201)) `web-tests.yml`: `checks: write`
+  (check run test-reporter сейчас не создаётся), `pull_request` + `paths`, `cancel-in-progress` не для `main`,
+  порог покрытия, ReportGenerator в `.config/dotnet-tools.json`; попутно SHA-пины и `permissions` в `build.yml`.
 
 ## 6. Что переиспользуем из `src/UiTests` и `AddressBook.Web`
 
