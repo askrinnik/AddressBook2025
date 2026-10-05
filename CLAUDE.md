@@ -18,6 +18,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 - **Web — build/run, launch profiles & ports, Blazor WASM + MudBlazor conventions, API service, pages** → [docs/specs/AddressBook.Web.md](docs/specs/AddressBook.Web.md)
 - **Contracts — commands, queries, models** → [docs/specs/AddressBook.Contracts.md](docs/specs/AddressBook.Contracts.md)
 - **API E2E tests — run & conventions** → [src/ApiTests/README.md](src/ApiTests/README.md)
+- **Web component tests (bUnit) — run & conventions** → [src/AddressBook.Web.Tests/README.md](src/AddressBook.Web.Tests/README.md), [.github/instructions/bunit-conventions.instructions.md](.github/instructions/bunit-conventions.instructions.md)
 - **UI E2E tests (planned)** → [docs/tasks/ui-tests-framework-plan.md](docs/tasks/ui-tests-framework-plan.md)
 
 Solution file: `src/AddressBook.slnx`.
@@ -40,8 +41,9 @@ The `.github/instructions/*.instructions.md` files are the single source of trut
 | C# (`**/*.cs`) | `.github/instructions/csharp.instructions.md` |
 | Blazor project-specific (MudBlazor / WASM) | `.github/instructions/blazor.project-specific.instructions.md` |
 | Playwright E2E — API (`src/ApiTests/**`) and UI (`src/UiTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
+| bUnit component tests (`src/AddressBook.Web.Tests/**`) | `.github/instructions/bunit-conventions.instructions.md` |
 
-> The Playwright conventions file covers both the API suites and the UI E2E suite (`src/UiTests`, in its own section). Claude Code also auto-loads `src/UiTests/CLAUDE.md` when working in that subtree.
+> The Playwright conventions file covers both the API suites and the UI E2E suite (`src/UiTests`, in its own section). Claude Code also auto-loads `src/UiTests/CLAUDE.md` and `src/AddressBook.Web.Tests/CLAUDE.md` when working in those subtrees.
 
 The four generic, always-on instruction files that used to load on every file (security/OWASP, web performance, generic code review, docs-sync) are now **on-demand skills** instead — `security-owasp`, `web-performance`, `code-review-checklist`, `update-docs` — so they no longer sit in context permanently; invoke them (or the built-in `/code-review` and `/security-review`) when that pass is actually needed.
 

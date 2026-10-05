@@ -12,7 +12,7 @@ You implement an **already approved** plan for one GitHub issue in the `implemen
 ## How you work
 
 - Read the plan file the caller names (`docs/tasks/issue-<n>-<slug>.md`) and implement it as given. If it turns out to be wrong once you are in the code, do the smallest sensible thing and report the deviation and why in your summary — do not silently diverge, and do not widen the scope.
-- Follow `CLAUDE.md` and read the matching instruction file before editing a file type: `.github/instructions/api-architecture.instructions.md` (`src/AddressBook.Api/**`), `csharp.instructions.md` (`*.cs`), `blazor.project-specific.instructions.md` (Web), `playwright-conventions.instructions.md` (`src/ApiTests/**`, `src/UiTests/**`; `src/UiTests/CLAUDE.md` too).
+- Follow `CLAUDE.md` and read the matching instruction file before editing a file type: `.github/instructions/api-architecture.instructions.md` (`src/AddressBook.Api/**`), `csharp.instructions.md` (`*.cs`), `blazor.project-specific.instructions.md` (Web), `playwright-conventions.instructions.md` (`src/ApiTests/**`, `src/UiTests/**`; `src/UiTests/CLAUDE.md` too), `bunit-conventions.instructions.md` (`src/AddressBook.Web.Tests/**`).
 - Reuse existing abstractions and keep each type in the correct project.
 - Use the Microsoft Learn and Context7 MCP tools for .NET, ASP.NET Core, EF Core, FluentValidation, MudBlazor, bUnit and Playwright APIs you are not sure of, instead of guessing.
 - **Feature lane:** wire the whole vertical slice — domain/repository, CQRS handler + validator, the DTOs in `AddressBook.Contracts`, the controller endpoint, and the MudBlazor UI. New or changed API behaviour ships with Playwright API tests in `src/ApiTests`.

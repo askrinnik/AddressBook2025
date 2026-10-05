@@ -7,7 +7,7 @@ AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook2
 | Item | Value |
 |---|---|
 | Framework | .NET 10 Blazor WebAssembly (standalone, not hosted) |
-| UI library | [MudBlazor](https://mudblazor.com/) 9.3.0 (Material Design components) |
+| UI library | [MudBlazor](https://mudblazor.com/) 9.8.0 (Material Design components) |
 | API access | Typed HttpClient via DI |
 | HTTP error pipeline | ProblemDetailsHandler delegating handler |
 | API base URL config | `API_Prefix` (fallback: `http://localhost:5000/api/`) |
@@ -19,7 +19,7 @@ The project references AddressBook.Contracts for request/response and model type
 
 - Documentation: https://mudblazor.com/docs/overview
 - Source code: https://github.com/MudBlazor/MudBlazor/
-- NuGet: [MudBlazor 9.3.0](https://www.nuget.org/packages/MudBlazor/9.3.0)
+- NuGet: [MudBlazor 9.8.0](https://www.nuget.org/packages/MudBlazor/9.8.0)
 
 MudBlazor components used in this project:
 
@@ -94,10 +94,10 @@ For local development with the API running on `http://localhost:5000`, override 
 
 | Package | Version |
 |---|---|
-| Microsoft.AspNetCore.Components.WebAssembly | 10.0.5 |
-| Microsoft.AspNetCore.Components.WebAssembly.DevServer | 10.0.5 |
-| Microsoft.Extensions.Http | 10.0.5 |
-| MudBlazor | 9.3.0 |
+| Microsoft.AspNetCore.Components.WebAssembly | 10.0.11 |
+| Microsoft.AspNetCore.Components.WebAssembly.DevServer | 10.0.11 |
+| Microsoft.Extensions.Http | 10.0.11 |
+| MudBlazor | 9.8.0 |
 
 ### Azure deployment
 

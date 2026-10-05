@@ -89,12 +89,9 @@ src/AddressBook.Web.Tests/
 
 ## Конвенции
 
-- Локаторы по приоритету: role/`aria-label` → `data-testid` (константы из `TestIds`) → CSS в крайнем случае.
-  Новые `data-testid` в проект Web не добавляются.
-- Асинхронный рендер — через `cut.WaitForState` / `cut.WaitForAssertion`; никаких `Task.Delay`/`Sleep`.
-- Тестовые данные — только через `ContactBuilder`.
-- Асинхронные вызовы получают `Xunit.TestContext.Current.CancellationToken`.
-- Комментарии в коде — на английском.
+Конвенции (контекст, именование, данные, моки, харнессы, локаторы, ассерты, асинхронность) описаны в
+[`bunit-conventions.instructions.md`](../../.github/instructions/bunit-conventions.instructions.md) —
+единственном источнике правил для этого набора тестов.
 
 Общие правила C# — [`csharp.instructions.md`](../../.github/instructions/csharp.instructions.md);
 правила для агентов — [`CLAUDE.md`](CLAUDE.md).

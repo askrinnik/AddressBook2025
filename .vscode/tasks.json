@@ -12,6 +12,13 @@
       "type": "shell",
       "command": "dotnet run --project src/AddressBook.Api",
       "inAgents": true
+    },
+    {
+      "label": "Run Web component tests (bUnit)",
+      "type": "shell",
+      "command": "dotnet test --project src/AddressBook.Web.Tests",
+      "group": "test",
+      "inAgents": true
     }
   ]
 }

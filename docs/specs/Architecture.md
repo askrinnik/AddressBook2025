@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-`AddressBook2025` is a full-stack, cloud-hosted pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, and a **Playwright/TypeScript** end-to-end test suite. The application is deployed on **Microsoft Azure** (App Service for the API, Azure Static Web Apps for the Blazor UI, Azure SQL for data). Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
+`AddressBook2025` is a full-stack, cloud-hosted pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application is deployed on **Microsoft Azure** (App Service for the API, Azure Static Web Apps for the Blazor UI, Azure SQL for data). Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
 
 ---
 
@@ -83,7 +83,7 @@ graph TB
         Pages["Pages\n(Contacts.razor, CreateContact.razor,\nEditContact.razor)"]
         ApiSvc["AddressBookApiService\n(IAddressBookApiService)"]
         ErrHandling["ProblemDetailsHandler\n(DelegatingHandler)"]
-        MudBlazor["MudBlazor 9.3.0\nMaterial UI Components"]
+        MudBlazor["MudBlazor 9.8.0\nMaterial UI Components"]
     end
 
     subgraph "src/AddressBook.Api"
@@ -100,6 +100,10 @@ graph TB
         Commands["Commands\n(CreateContactCommand,\nUpdateContactCommand)"]
         Queries["Queries\n(GetFilteredContacts,\nGetById, DeleteById)"]
         Models["Models\n(ContactModel, Responses)"]
+    end
+
+    subgraph "src/AddressBook.Web.Tests"
+        WebTests["bUnit + xUnit v3\nComponent Tests"]
     end
 
     subgraph "src/ApiTests"
@@ -123,6 +127,7 @@ graph TB
     Controller -.->|"uses contracts"| Queries
     Handlers -.->|"uses contracts"| Models
     ApiSvc -.->|"uses contracts"| Models
+    WebTests -->|"renders in memory"| Pages
     ApiE2E -->|"tests live API"| API
     UiE2E -->|"drives UI"| UI
     UiE2E -.->|"seeds/cleans via API"| API
@@ -151,8 +156,10 @@ askrinnik/AddressBook2025/
 ├── .claude/
 │   ├── agents/                      # Claude Code agents (curated subset of .github/agents)
 │   ├── commands/                    # Claude command wrappers (/<name>)
+│   ├── rules/                       # Path-scoped rules (pointers to .github/instructions, plus docs rules)
 │   └── skills/                      # Byte-for-byte mirror of .github/skills
 ├── CLAUDE.md                        # Single instruction hub (read by Claude Code + Copilot)
+├── global.json                      # Enables the Microsoft.Testing.Platform runner for `dotnet test`
 ├── docs/
 │   ├── specs/                       # Per-project technical specifications
 │   │   ├── AddressBook.Api.md
@@ -168,6 +175,7 @@ askrinnik/AddressBook2025/
 │   ├── AddressBook.Api/             # ASP.NET Core Web API
 │   ├── AddressBook.Contracts/       # Shared MediatR contracts (DTOs)
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
+│   ├── AddressBook.Web.Tests/       # bUnit + xUnit v3 component tests for AddressBook.Web
 │   ├── ApiTests/                    # Playwright TypeScript API E2E tests
 │   └── UiTests/                     # Playwright TypeScript UI E2E tests
 └── README.md                        # Minimal: "pet project for address book development"
@@ -205,13 +213,21 @@ CQRS + MediatR backend with FluentValidation, EF Core 10 / SQL Server, strongly-
 
 ### 3. `AddressBook.Web` — Blazor WebAssembly Frontend
 
-MudBlazor 9.3.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home). Deployed as Azure Static Web App.
+MudBlazor 9.8.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home). Deployed as Azure Static Web App.
 
 → Full specification: [`AddressBook.Web.md`](./AddressBook.Web.md)
 
 ---
 
-### 4. `ApiTests` & `UiTests` — Playwright/TypeScript E2E Tests
+### 4. `AddressBook.Web.Tests` — bUnit Component Tests
+
+Component and page tests for `AddressBook.Web` on bUnit + xUnit v3. They render the real Blazor components in memory, without a browser; `IAddressBookApiService`, `NavigationManager` and JSInterop are substituted, so the suite needs no SQL Server and no running API. They run with `dotnet test --project src/AddressBook.Web.Tests` (Microsoft.Testing.Platform, enabled in `global.json`). `build.yml` builds the project; no workflow runs these tests.
+
+→ Full specification: [`src/AddressBook.Web.Tests/README.md`](../../src/AddressBook.Web.Tests/README.md); conventions: [`bunit-conventions.instructions.md`](../../.github/instructions/bunit-conventions.instructions.md)
+
+---
+
+### 5. `ApiTests` & `UiTests` — Playwright/TypeScript E2E Tests
 
 Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST API (the five `Contacts` endpoints, negatives, boundaries, and contract schemas). `src/UiTests` is a hybrid UI E2E suite for the Blazor WASM frontend — it drives the real browser and seeds/cleans data fast over the API. Both start the app themselves via Playwright's `webServer` and run in CI (see below).
 
@@ -219,7 +235,7 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 
 ---
 
-### 5. CI/CD
+### 6. CI/CD
 
 **`build.yml`** — Triggers on every push; runs `dotnet restore --locked-mode` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x.[^6]
 
@@ -233,7 +249,7 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 
 ---
 
-### 6. AI Tooling Integration (Copilot + Claude Code)
+### 7. AI Tooling Integration (Copilot + Claude Code)
 
 The project demonstrates heavy Copilot coding agent use:[^8]
 
@@ -248,7 +264,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 **Cross-tool AI customizations.** The repository shares its AI configuration across **GitHub Copilot** (`.github/`) and **Claude Code** (`.claude/`), governed by `.ai/customizations.policy.json`:[^9]
 
-- **Root instructions** — `CLAUDE.md` is the single hub, read by both tools; it replaced the former one-line `.github/copilot-instructions.md`. It still carries the *"source code supports non-English comments"* rule (Russian-language comments are allowed) and points to the specs and instruction files rather than duplicating them.
+- **Root instructions** — `CLAUDE.md` is the single hub, read by both tools; it replaced the former one-line `.github/copilot-instructions.md`. It carries the rule that all source-code comments are written in English, and points to the specs and instruction files rather than duplicating them.
 - **File-type standards** — `.github/instructions/*.instructions.md`; Copilot auto-applies them via `applyTo` globs, while Claude Code loads them through path-scoped pointer rules in `.claude/rules/` that say to read them before editing a matching file.
 - **Skills** — `.github/skills/` is the source of truth, mirrored byte-for-byte to `.claude/skills/`; repo-local workflow skills use the `_local.` prefix. A `sync-ai-customizations` skill audits parity (`check.ps1`).
 - **Commands** — one shared body per command in `.ai/prompts/`, with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude): `implement-issue` (one lane-based workflow for bug, feature and test-authoring issues).
@@ -256,7 +272,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 ---
 
-### 7. Documentation (`docs/`)
+### 8. Documentation (`docs/`)
 
 #### `docs/Old/` — Legacy documents
 
@@ -279,7 +295,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 ---
 
-### 8. Database Schema
+### 9. Database Schema
 
 3 tables (`Contacts`, `Phones`, `PhoneOperators`) with seed data. See the [Api specification](./AddressBook.Api.md#database-schema) for the full schema.
 

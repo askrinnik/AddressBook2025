@@ -18,7 +18,7 @@ The lowest layer that can observe the behaviour wins.
 | Behaviour | Layer | Conventions |
 |---|---|---|
 | API contract: status codes, response shape, validation (RFC 7807 errors), filtering, sorting, paging | Playwright API — `src/ApiTests` | `.github/instructions/playwright-conventions.instructions.md` (API sections), `src/ApiTests/README.md` |
-| Blazor component or page logic: rendering, form validation, calls to `IAddressBookApiService`, navigation, error display | bUnit — `src/AddressBook.Web.Tests` | `src/AddressBook.Web.Tests/CLAUDE.md`, its README |
+| Blazor component or page logic: rendering, form validation, calls to `IAddressBookApiService`, navigation, error display | bUnit — `src/AddressBook.Web.Tests` | `.github/instructions/bunit-conventions.instructions.md`, `src/AddressBook.Web.Tests/README.md` |
 | A user flow across the real UI and API in a browser | Playwright UI E2E — `src/UiTests` | `.github/instructions/playwright-conventions.instructions.md` (UI section), `src/UiTests/CLAUDE.md` |
 
 A decision a component makes gets a bUnit test, not a browser test; a validation rule of the API gets an API test, not a UI test. A UI E2E test proves the slice is wired, not every branch.
