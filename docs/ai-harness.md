@@ -21,7 +21,7 @@ CLAUDE.md                              single instruction hub, read by Claude Co
   skills/                              byte-for-byte mirror of .github/skills
   commands/implement-issue.md          Claude Code wrapper of the workflow
   agents/*.md                          Claude Code agents (curated subset + workflow agents)
-  rules/*.md                           path-scoped rules: pointers that import .github/instructions
+  rules/*.md                           path-scoped rules: pointers to .github/instructions
   settings.json                        shared permissions, attribution off, MCP servers enabled
 docs/
   specs/                               specifications (API, Contracts, Web, Architecture)
@@ -72,7 +72,7 @@ The main session keeps every gate: plan review, build, test runs, both confirmat
 
 ## Rules (`.claude/rules/`)
 
-Claude Code loads a rule when it works with a file matching the rule's `paths:`. Four rules are thin pointers that import a `.github/instructions/*` file, so the standard stays in one place: `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. Three rules carry their own content: `update-docs-on-code-change.md` (which document each kind of change updates), `docs.md` (where documents go, plan format, style) and `github-actions.md` (workflow security and CI conventions). Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
+Claude Code loads a rule when it works with a file matching the rule's `paths:`. Four rules are thin pointers that tell the assistant to read a `.github/instructions/*` file before editing, so the standard stays in one place and loads only when needed (an `@`-import would be expanded at session start — the first benchmark showed ~3k tokens in every session): `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. Three rules carry their own content: `update-docs-on-code-change.md` (which document each kind of change updates), `docs.md` (where documents go, plan format, style) and `github-actions.md` (workflow security and CI conventions). Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
 
 ## Skills
 
@@ -92,7 +92,7 @@ Repository-local skills (`_local.*`, invoked as `/<name>`):
 | `harness-quality-check` | Benchmark the harness (manual only) |
 | `sync-ai-customizations` | Audit the cross-tool layout |
 
-Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code-review-checklist`, `dotnet-run-tests`, `test-anti-patterns`, `coverage-analysis`, `directory-build-organization`, …) are loaded on demand instead of sitting in every context. `dotnet-run-tests` is the upstream `run-tests` skill, renamed because `_local.run-tests` owns that name.
+Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code-review-checklist`, `dotnet-run-tests`, `test-anti-patterns`, `coverage-analysis`, `directory-build-organization`, …) are loaded on demand instead of sitting in every context. Rarely needed ones — `coverage-analysis`, `directory-build-organization`, `test-anti-patterns`, `create-specification`, `dotnet-timezone`, `harness-quality-check` — set `disable-model-invocation: true`: their descriptions stay out of the start context, and they run only when invoked as `/<name>`. `dotnet-run-tests` is the upstream `run-tests` skill, renamed because `_local.run-tests` owns that name.
 
 ## MCP servers
 

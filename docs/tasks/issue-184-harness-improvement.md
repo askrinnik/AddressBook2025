@@ -99,3 +99,14 @@ One `/implement-issue` command drives every issue type. The issue's labels selec
 
 - The existing workflows keep their tag-pinned actions; the rule asks for SHA pins only on lines a change adds or touches, and the migration is its own change.
 - `.mcp.json` does not include a GitHub server: it needs a token, and Claude Code here uses `gh`.
+
+## 9. Benchmark: old vs new harness
+
+First comparison (`2026-10-05-11-15_old-harness-on-main` → `2026-10-05-11-19_new-harness-after-184`): quality unchanged within noise (3.67 → 3.33 of 4, no false positives); start context +7.5k tokens — about 3k from the `@`-imports in `.claude/rules` (expanded at session start, not on a matching file), +1.4k skill list, +0.6k agent list, +0.4k `CLAUDE.md`.
+
+### Follow-up
+
+- [x] Rules point to the instruction files instead of importing them.
+- [x] `disable-model-invocation: true` on rarely needed skills: `coverage-analysis`, `directory-build-organization`, `test-anti-patterns`, `create-specification`, `dotnet-timezone`.
+- [x] `CLAUDE.md`: a feature request lists the open decisions and asks before implementing (the weak judge item).
+- [ ] Re-run the benchmark on the new harness and compare.

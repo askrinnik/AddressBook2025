@@ -1,5 +1,6 @@
 ---
 name: test-anti-patterns
+disable-model-invocation: true
 description: >
   Audit a test file or suite; produce a severity-ranked diagnostic report.
   ALWAYS USE for tests that verify nothing, missing/tautological

@@ -1,5 +1,6 @@
 ---
 name: create-specification
+disable-model-invocation: true
 description: 'Create a new specification file for the solution, optimized for Generative AI consumption.'
 ---
 

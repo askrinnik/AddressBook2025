@@ -26,12 +26,13 @@ Solution file: `src/AddressBook.slnx`.
 
 - Make focused, reviewable changes; reuse existing abstractions before adding new ones.
 - When a change spans the API and the Web frontend, wire both sides so the feature is complete.
+- For a feature request, list the decisions neither the request nor the code settles (lengths and formats, required vs optional, uniqueness, where it shows and whether it is searchable, existing data) and ask the user to confirm them before implementing — do not pick them silently. Routine naming and layout calls are yours.
 - New or changed API behaviour ships with Playwright tests in `src/ApiTests` (happy path, boundaries, negatives).
 - Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai-harness.md](docs/ai-harness.md).
 
 ## File-type coding standards
 
-The `.github/instructions/*.instructions.md` files are the single source of truth for these standards. **Copilot** applies them via the `applyTo` globs in each file's front matter. **Claude Code** does not understand `applyTo`; it loads them through thin path-scoped rules in `.claude/rules/` — each rule has a `paths:` list mirroring the instruction's `applyTo` and imports the instruction file. When you change an `applyTo`, change the matching rule's `paths:` too. If a standard did not load, read the file from this table before editing.
+The `.github/instructions/*.instructions.md` files are the single source of truth for these standards. **Copilot** applies them via the `applyTo` globs in each file's front matter. **Claude Code** does not understand `applyTo`; it loads them through thin path-scoped rules in `.claude/rules/` — each rule has a `paths:` list mirroring the instruction's `applyTo` and tells you to read the instruction file before editing (no `@`-import, which would load it into every session). When you change an `applyTo`, change the matching rule's `paths:` too. If a standard did not load, read the file from this table before editing.
 
 | Topic / file type | Instruction file |
 |---|---|

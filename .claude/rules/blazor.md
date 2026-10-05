@@ -5,8 +5,6 @@ paths:
   - "**/*.razor.css"
 ---
 
-<!-- Path-scoped pointer for Claude Code. The single source of truth is .github/instructions/blazor.project-specific.instructions.md; keep these paths in step with its applyTo. -->
+<!-- Path-scoped pointer for Claude Code. The single source of truth is .github/instructions/blazor.project-specific.instructions.md; keep these paths in step with its applyTo. No @-import: an import is expanded at session start and would defeat the path scoping. -->
 
-@../../.github/instructions/blazor.project-specific.instructions.md
-
-If the standard above did not load, read `.github/instructions/blazor.project-specific.instructions.md` before editing a matching file.
+Before editing a Razor component, read `.github/instructions/blazor.project-specific.instructions.md` (once per session) and follow it.

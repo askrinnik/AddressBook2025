@@ -1,5 +1,6 @@
 ---
 name: coverage-analysis
+disable-model-invocation: true
 description: >
   Activation requires either supplied .NET coverage reports/percentages/line,
   branch, or condition metrics, or an explicit request to collect .NET coverage
