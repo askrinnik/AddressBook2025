@@ -224,7 +224,7 @@ src/AddressBook.Web.Tests/
 - [x] **B15** ([#159](https://github.com/askrinnik/AddressBook2025/issues/159)) `Tests/Pages/EditContactTests.cs` + `EditContactNotFoundTests.cs` — предзаполнение из
   `GetContactByIdAsync`, Save → `UpdateContact` + навигация, Cancel; `null` → `_notFound`: `MudAlert`
   «Contact not found.» + кнопка «Back to Contacts».
-- [ ] **B16** ([#160](https://github.com/askrinnik/AddressBook2025/issues/160)) `Tests/Components/CustomValidationSummaryTests.cs` — показываются только model-level
+- [x] **B16** ([#160](https://github.com/askrinnik/AddressBook2025/issues/160)) `Tests/Components/CustomValidationSummaryTests.cs` — показываются только model-level
   сообщения (per-field отфильтрованы); обновление при `OnValidationStateChanged`; отписка в `Dispose`.
 - [ ] **B17** ([#161](https://github.com/askrinnik/AddressBook2025/issues/161)) `Tests/Services/AddressBookApiServiceTests.cs` — через `FakeHttpMessageHandler`:
   построение URL (`?search=` только для непустого термина), парсинг id из `Location` (и `0` при
