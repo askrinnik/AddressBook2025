@@ -252,7 +252,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 - **File-type standards** — `.github/instructions/*.instructions.md`; Copilot auto-applies them via `applyTo` globs, while Claude Code reads them through the pointer table in `CLAUDE.md`.
 - **Skills** — `.github/skills/` is the source of truth, mirrored byte-for-byte to `.claude/skills/`; repo-local workflow skills use the `_local.` prefix. A `sync-ai-customizations` skill audits parity (`check.ps1`).
 - **Commands** — one shared body per command in `.ai/prompts/`, with thin wrappers in `.github/prompts/` (Copilot) and `.claude/commands/` (Claude): `implement-issue` (one lane-based workflow for bug, feature and test-authoring issues).
-- **Agents** — `.github/agents/` holds the full Copilot set; a curated subset is translated into `.claude/agents/` for Claude Code (the rest of the roles are covered by Claude Code built-ins).
+- **Agents** — `.github/agents/` holds the full Copilot set; a curated subset is translated into `.claude/agents/` for Claude Code (the rest of the roles are covered by Claude Code built-ins). The `implement-issue` workflow delegates its stages to dedicated agents on both sides, each pinned to a model: `issue-planner` (Opus), `issue-developer` (Sonnet, Opus for complex plans), `issue-verifier` (Sonnet), `security-reviewer` (Opus) and `skill-runner` (Haiku).
 
 ---
 

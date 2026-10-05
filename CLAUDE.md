@@ -58,6 +58,14 @@ The subset currently exposed to Claude Code:
 - **project-documenter** — generates project documentation (read-only on source).
 - **orchestrator** — decomposes a multi-step request and delegates to the specialists.
 
+Workflow agents of `/implement-issue` (each pinned to the model that fits its stage; see the *Delegation* table in [.ai/prompts/implement-issue.md](.ai/prompts/implement-issue.md)):
+
+- **issue-planner** (Opus) — read-only research; returns the plan text with an S/M/L complexity.
+- **issue-developer** (Sonnet; the workflow passes Opus for `L`) — implements the approved plan with tests; never commits or posts.
+- **issue-verifier** (Sonnet) — reproduces a bug or walks the acceptance items in a real browser; returns an evidence table.
+- **security-reviewer** (Opus) — read-only security review of a change, run when API, configuration or packages change.
+- **skill-runner** (Haiku) — composes commit messages, issue comments and PR text from a named skill; never acts.
+
 Not translated to `.claude/agents` because a **Claude Code** built-in already covers the role (this is a Claude-Code judgement only — it says nothing about whether Copilot needs the corresponding `.github/agents` file): planning → the `Plan` agent; research → `Explore` / general-purpose; review → the `/code-review` skill; plus debugging/QA/design/regression roles handled inline or by general-purpose.
 
 > Agent parity is **manual** — the `sync-ai-customizations` audit covers skills and prompts, **not** agents. `.claude/agents` is a deliberate subset of `.github/agents`, so it is not expected to match one-to-one. After editing a shared agent on one side, mirror the change (body aligned, front matter translated) on the other.

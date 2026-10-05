@@ -1,7 +1,7 @@
 # Plan: Issue #184 — Harness Improvement
 
 > **Issue:** [#184](https://github.com/askrinnik/AddressBook2025/issues/184)
-> **Scope of this plan:** Phase 1 — merge `fix-bug-issue` into a single lane-based `implement-issue` command. Phase 2 (subagents and models) is a separate change.
+> **Scope of this plan:** Phase 1 — merge `fix-bug-issue` into a single lane-based `implement-issue` command. Phase 2 — delegate the workflow stages to subagents with per-stage models.
 > **Mode:** harness/docs only; no production code changes.
 
 ## 1. Requirement
@@ -34,4 +34,32 @@ One `/implement-issue` command drives every issue type. The issue's labels selec
 
 ## 5. Out of scope
 
-- Subagents, per-stage models, the Context budget section — Phase 2 of #184.
+- A real dry run of the workflow on a bug and a feature issue — done after merge, tracked on #184.
+
+## 6. Phase 2 — subagents and models
+
+### Acceptance
+
+- [x] New Claude agents in `.claude/agents/`: `issue-planner` (Opus, read-only, plan + S/M/L), `issue-developer` (Sonnet, Opus per call for `L`; never commits or posts), `issue-verifier` (Sonnet, browser reproduce/verify, evidence table), `security-reviewer` (Opus, read-only), `skill-runner` (Haiku, text only).
+- [x] Copilot mirrors in `.github/agents/<name>.agent.md` with the same body and Copilot front matter (model, tools); skill paths point to `.github/skills/`.
+- [x] `implement-issue.md` has a *Delegation* table (role → Claude agent → Copilot agent → model → steps), the model-by-complexity rule, an inline fallback, and a *Context budget* section with three `/compact` milestones.
+- [x] Delegation is wired into the steps: reproduce (3), plan (4), implement (7), security review (8), browser verify (9), comment/commit/PR text (11–12); every gate stays in the main session.
+- [x] `_local.open-pr` accepts a pre-composed commit message and PR text and states the PR title and `Closes #<issue>` convention (source + mirror).
+- [x] `CLAUDE.md` and `docs/specs/Architecture.md` list the workflow agents.
+- [x] `check.ps1` audit passes.
+
+### Decisions
+
+- Main-session gates are unchanged: the build and the test suites are always re-run by the main session; `issue-verifier` only does the browser walk.
+- The Playwright suites start and stop the API/Web through their `webServer` config, so `issue-developer` runs specs without managing servers.
+- `issue-verifier` has no `tools` restriction (it needs the Playwright MCP tools); its read-only role is a hard rule in the body.
+- Copilot cannot override a subagent's model per call: an `L` plan is implemented in the main session there.
+- Copilot model names follow the ones already used in `.github/agents/`; `Claude Haiku 4.5 (copilot)` for `skill-runner` is new and should be checked in the Copilot model picker.
+
+### Affected files
+
+- `.claude/agents/{issue-planner,issue-developer,issue-verifier,security-reviewer,skill-runner}.md` — new.
+- `.github/agents/{issue-planner,issue-developer,issue-verifier,security-reviewer,skill-runner}.agent.md` — new.
+- `.ai/prompts/implement-issue.md` — Delegation, Context budget, per-step delegation.
+- `.github/skills/_local.open-pr/SKILL.md` + mirror — pre-composed text, title and `Closes` convention.
+- `CLAUDE.md`, `docs/specs/Architecture.md` — agent lists.
