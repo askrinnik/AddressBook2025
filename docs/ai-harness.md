@@ -1,0 +1,104 @@
+# AI harness of AddressBook2025
+
+How the AI-assistant environment of this repository is built: what it consists of, how the issue workflow runs, why each stage uses the model it does, and how to keep it healthy. The harness serves two tools — **Claude Code** and **GitHub Copilot** — from one set of shared files. Its workflow, agents, rules, skills and benchmark were adapted from the GitHubBackup repository's harness (issue #184).
+
+## Layout
+
+```
+CLAUDE.md                              single instruction hub, read by Claude Code and Copilot
+.mcp.json                              MCP servers of the project
+.ai/
+  customizations.policy.json           layout and mirroring rules (audited by check.ps1)
+  prompts/implement-issue.md           the workflow body, shared by both tools
+  benchmarks/harness/                  harness benchmark: fixtures, history, reports
+.github/
+  instructions/*.instructions.md       file-type standards (source of truth; Copilot applies them via applyTo)
+  skills/                              skills (source of truth)
+  prompts/implement-issue.prompt.md    Copilot wrapper of the workflow
+  agents/*.agent.md                    Copilot agents (full set)
+.claude/
+  skills/                              byte-for-byte mirror of .github/skills
+  commands/implement-issue.md          Claude Code wrapper of the workflow
+  agents/*.md                          Claude Code agents (curated subset + workflow agents)
+  rules/*.md                           path-scoped rules: pointers that import .github/instructions
+docs/
+  specs/                               specifications (API, Contracts, Web, Architecture)
+  tasks/                               one plan per issue: issue-<n>-<slug>.md
+  ai-harness.md                        this document
+```
+
+The layout is checked with `pwsh -File .github/skills/_local.sync-ai-customizations/scripts/check.ps1`.
+
+## The issue workflow: `/implement-issue <n>`
+
+One command takes any issue end to end. The issue's labels select the **lane**: `bug` → Bug lane; tests-only work (typically `testing`) → Test-authoring lane; everything else → Feature lane.
+
+| Step | What happens |
+|---|---|
+| 0 | Switch to `main` and `git pull --ff-only`. Uncommitted changes stop the workflow. Staying on the current branch needs an explicit request |
+| 1 | Read the issue and its comments; without a number, `next-issue` recommends one. Check dependencies: an open blocker stops the workflow. Assign the issue |
+| 2 | Pick the lane |
+| 3 | Bug: reproduce in a browser (`issue-verifier`, `reproduce` mode) or with a failing test, `debug-issue` skill. Feature / Test-authoring: the acceptance list. All lanes: locate the code |
+| 4–6 | Plan from `issue-planner` (with an S/M/L complexity), saved as `docs/tasks/issue-<n>-<slug>.md`, reviewed with the user |
+| 7 | Implementation by `issue-developer` (Opus for `L`) or `playwright-tester` (tests-only); tests via `write-tests`; docs updated in the same change |
+| 8 | Build, review of added comments, `security-reviewer` when API, configuration or packages change |
+| 9 | Test suites run by the main session; browser walk of every acceptance item (or the repro) by `issue-verifier` |
+| 10 | Result confirmed by the user |
+| 11 | Issue comment for the lane (`skill-runner` composes, the main session posts); verified acceptance boxes ticked in the issue body |
+| 12 | Base re-synced, branch `<n>-<slug>` created, commit / push / PR — each after the user's go-ahead; one CI check |
+| 13 | Next issue recommended: merge the PR → new session → `/implement-issue <next>` |
+
+Context economy is built in: three `/compact` milestones with ready focus texts, a runaway guard, one issue per session, narrow reads, small tool output, and noisy work delegated to agents.
+
+## Issue order: `next-issue`
+
+`.github/skills/_local.next-issue/scripts/Get-NextIssue.ps1` reads all open issues with one GraphQL query and lists the ready ones: no open pull request and every "blocked by" issue closed, ordered by issue number (issues of one plan are created in plan order). `-AssumeClosed <n>` treats an issue as closed, so the workflow can recommend the next issue before the current PR merges. Dependencies must be recorded as GitHub "blocked by" relations for the order to hold.
+
+## Agents and models
+
+| Agent | Model | Why this model |
+|---|---|---|
+| `issue-planner` | Opus | A planning mistake is the most expensive one: it is multiplied by implementation, review and rework |
+| `issue-developer` | Sonnet; Opus for complexity `L` | Implementing an approved plan is well-specified work; `L` (migration, contract ripple, validation/security logic, > ~8 files) gets the stronger model |
+| `issue-verifier` | Sonnet | Browser walks are mechanical but produce huge snapshots; isolating them keeps the main context small |
+| `security-reviewer` | Opus | Rare, and finding a real issue needs the strongest reasoning |
+| `skill-runner` | Haiku | Commit messages, issue comments and PR text follow a fixed format from compact facts |
+| `architect` | Opus | Design questions on cross-layer changes |
+| `playwright-tester` | Sonnet | Test-authoring lane: explores the UI with Playwright MCP and writes specs |
+
+The main session keeps every gate: plan review, build, test runs, both confirmations, and every `git` / GitHub action. A subagent's "passed" is input, not proof. Copilot cannot override a subagent's model per call, so there an `L` plan is implemented in the main session. Agent parity between `.claude/agents` and `.github/agents` is manual.
+
+## Rules (`.claude/rules/`)
+
+Claude Code loads a rule when it works with a file matching the rule's `paths:`. Four rules are thin pointers that import a `.github/instructions/*` file, so the standard stays in one place: `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. `update-docs-on-code-change.md` says which document each kind of change updates. Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
+
+## Skills
+
+Repository-local skills (`_local.*`, invoked as `/<name>`):
+
+| Skill | Purpose |
+|---|---|
+| `github-issue` | Read an issue; post the result comment for the lane |
+| `run-api`, `run-tests` | Start the API; run the Playwright API suite |
+| `verify-feature` | Start API + Web and walk acceptance items in a browser |
+| `open-pr`, `git-commit` | Commit and pull-request conventions |
+| `next-issue` | Recommend the next issue |
+| `write-tests` | Pick the test layer (Playwright API / bUnit / Playwright UI) and write the tests |
+| `debug-issue` | Reproduce and find the root cause of a defect |
+| `refactor-code` | Behaviour-preserving refactoring |
+| `harness-quality-check` | Benchmark the harness (manual only) |
+| `sync-ai-customizations` | Audit the cross-tool layout |
+
+Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code-review-checklist`, …) are loaded on demand instead of sitting in every context.
+
+## Permissions
+
+The repository has no shared `.claude/settings.json` yet; permissions come from each user's own settings, and `.claude/settings.local.json` is ignored by git. The outward actions of the workflow (commit, push, PR, issue comments) are gated by instruction — the workflow asks before each one.
+
+## Harness benchmark
+
+The `harness-quality-check` skill starts fixed `claude -p` sessions and records the start context, the tokens a file read adds, the rules loaded, and a judge's score against a ground truth. History: `.ai/benchmarks/harness/run-history.csv`; reports: `.ai/benchmarks/harness/reports/`. Fixtures: `bench-base` (start context by area) and `quality-vertical-slice` (a feature request answered with the full slice, validation, tests and open decisions). Run it after changing `CLAUDE.md`, rules, skills, agents, MCP servers or settings; it uses part of the usage limit.
+
+## Maintenance
+
+When `CLAUDE.md`, `.claude/**`, `.github/{agents,skills,prompts,instructions}/**`, `.ai/**` or `.mcp.json` change, update this document in the same change, run the layout audit, and preferably the benchmark.

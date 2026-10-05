@@ -63,3 +63,23 @@ One `/implement-issue` command drives every issue type. The issue's labels selec
 - `.ai/prompts/implement-issue.md` — Delegation, Context budget, per-step delegation.
 - `.github/skills/_local.open-pr/SKILL.md` + mirror — pre-composed text, title and `Closes` convention.
 - `CLAUDE.md`, `docs/specs/Architecture.md` — agent lists.
+
+## 7. Phase 3 — the rest of the GitHubBackup harness
+
+### Acceptance
+
+- [x] `implement-issue`: dependency check (blocked-by relations and body), docs updated in the same change, comment-hygiene review, ticking verified acceptance boxes, one CI check after the PR, step 13 *Recommend the next issue*; `next-issue` when no number is given (body and both wrappers).
+- [x] `CLAUDE.md`: comment-hygiene rule, entry points, `.claude/rules` loading of the file-type standards.
+- [x] `.claude/rules/`: `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md` — `paths:` mirroring `applyTo` and importing the `.github/instructions` file; `update-docs-on-code-change.md` with this repository's docs table.
+- [x] New skills (source + mirror): `_local.next-issue` (+ `Get-NextIssue.ps1`, order by issue number), `_local.write-tests` (Playwright API / bUnit / Playwright UI layers), `_local.debug-issue`, `_local.refactor-code`, `_local.harness-quality-check` (+ scripts).
+- [x] Benchmark `.ai/benchmarks/harness/` with fixtures `bench-base` and `quality-vertical-slice` (ground truth for an "add Email to contacts" request); `-DryRun` passes.
+- [x] `docs/ai-harness.md` describes the harness; `docs/specs/Architecture.md` updated.
+- [x] Issue forms `bug.yml` and `task.yml` (acceptance checklist, dependencies) replace `bug_report.md`; `pull_request_template.md` added.
+- [ ] Shared `.claude/settings.json` (permissions allow/ask/deny, empty attribution) — blocked in the session by the auto-mode classifier as self-modification of the harness's permissions; left to the user.
+
+### Decisions
+
+- `dotnet format --verify-no-changes` is not added as a gate: the repository has no `.editorconfig` yet (#173).
+- Rules import the instruction files (`@../../.github/instructions/…`) instead of copying them, so `.github/instructions` stays the single source of truth; each rule also says to read the file if the import did not load.
+- `next-issue` orders ready issues by number (no F-codes here); dependencies count only as GitHub "blocked by" relations, a body-only dependency is reported as a mismatch.
+- The benchmark scripts are ported unchanged except the script path and the list of instruction paths the report diffs (adds `.github/instructions`, `.ai/prompts`).
