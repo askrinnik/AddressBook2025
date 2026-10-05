@@ -15,6 +15,7 @@ All run on `ubuntu-latest`; `docs/specs/Architecture.md` describes CI and deploy
 - **`build.yml`** — locked-mode restore and Release build of the solution on every push.
 - **`api-tests.yml`** — the Playwright API suite against the API with a SQL Server service container; on push and `workflow_dispatch`.
 - **`ui-tests.yml`** — the Playwright UI suite against the API and the Web app with a SQL Server service container; on push and `workflow_dispatch`.
+- **`web-tests.yml`** — the bUnit suite `src/AddressBook.Web.Tests` (.NET only, no SQL Server) with a TRX test report in the run summary, TRX and Cobertura artifacts, and a ReportGenerator coverage summary and HTML report; on push and `workflow_dispatch`.
 - **`security.yml`** — vulnerability scan of the NuGet and npm dependencies; on push and pull request to `main`, and weekly.
 - The SQL Server password comes from the repository secret `MSSQL_SA_PASSWORD`.
 

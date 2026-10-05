@@ -22,7 +22,7 @@ Documentation is updated **in the same change** as the code it describes. The me
 | Commands, queries or models in `AddressBook.Contracts` | `docs/specs/AddressBook.Contracts.md` |
 | Web pages, components, the API service, launch profiles or ports | `docs/specs/AddressBook.Web.md` |
 | Project structure, CI, deployment | `docs/specs/Architecture.md` |
-| How to run or write a test suite | the suite's `README.md` / `CLAUDE.md` and `.github/instructions/playwright-conventions.instructions.md` |
+| How to run or write a test suite | the suite's `README.md` / `CLAUDE.md` and `.github/instructions/playwright-conventions.instructions.md` or `.github/instructions/bunit-conventions.instructions.md` |
 | AI harness: `CLAUDE.md`, `.claude/**`, `.github/{agents,skills,prompts,instructions}/**`, `.ai/**`, `.mcp.json` | `docs/ai-harness.md` |
 | Work deferred to later | a new GitHub issue (with a "blocked by" relation when it depends on this one) — not a TODO in a document or in code |
 

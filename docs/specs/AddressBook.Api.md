@@ -86,9 +86,9 @@ dotnet ef database update
 |---|---|
 | FluentValidation.DependencyInjectionExtensions | 12.1.1 |
 | MediatR | 12.4.1 |
-| Microsoft.EntityFrameworkCore | 10.0.5 |
-| Microsoft.EntityFrameworkCore.SqlServer | 10.0.5 |
-| Microsoft.EntityFrameworkCore.Tools | 10.0.5 |
+| Microsoft.EntityFrameworkCore | 10.0.11 |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.11 |
+| Microsoft.EntityFrameworkCore.Tools | 10.0.11 |
 | Scalar.AspNetCore | 2.13.20 |
 | Swashbuckle.AspNetCore | 10.1.7 |
 
