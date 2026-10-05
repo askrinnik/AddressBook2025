@@ -70,9 +70,10 @@ JSInterop подменяются. Тесты становятся быстрым
   assertion-библиотек (FluentAssertions v8 платная для коммерческого использования — не берём).
 - **Асинхронность без задержек.** `MudTable ServerData` и `OnInitializedAsync` — через
   `cut.WaitForState(...)` / `cut.WaitForAssertion(...)`, никаких `Task.Delay`/`Thread.Sleep`.
-- **Покрытие кода.** `coverlet.collector` → Cobertura; логи в CI через `GitHubActionsTestLogger`.
-- **Стек:** `bunit` (v2) · `xunit.v3` · `Microsoft.NET.Test.Sdk` · `NSubstitute` · `Bogus` ·
-  `MudBlazor` 9.8.0 (транзитивно из Web) · `coverlet.collector` · `GitHubActionsTestLogger`.
+- **Покрытие кода.** `Microsoft.Testing.Extensions.CodeCoverage` → Cobertura (`--coverage`); TRX — встроенный
+  `--report-xunit-trx` xUnit v3 (VSTest-пакеты `coverlet.collector` и `GitHubActionsTestLogger` под MTP не работают).
+- **Стек:** `bunit` (v2) · `xunit.v3` · `NSubstitute` · `Bogus` ·
+  `MudBlazor` 9.8.0 (транзитивно из Web) · `Microsoft.Testing.Extensions.CodeCoverage`.
 
 ## 3. Факты о компонентах и страницах (основа для дизайна тестов)
 
@@ -181,8 +182,8 @@ src/AddressBook.Web.Tests/
 ### Фаза 0 — Каркас
 
 - [ ] **B1** ([#145](https://github.com/askrinnik/AddressBook2025/issues/145)) Scaffold `src/AddressBook.Web.Tests`: `.csproj` (`net10.0`, `IsPackable=false`,
-  `ProjectReference` на `AddressBook.Web`; пакеты `bunit` v2, `xunit.v3`, `Microsoft.NET.Test.Sdk`,
-  `NSubstitute`, `Bogus`, `coverlet.collector`, `GitHubActionsTestLogger`), `xunit.runner.json`,
+  `ProjectReference` на `AddressBook.Web`; пакеты `bunit` v2, `xunit.v3`,
+  `NSubstitute`, `Bogus`), `xunit.runner.json`,
   `GlobalUsings.cs`, `.gitignore`, README/CLAUDE-заглушки. **Добавить проект в `src/AddressBook.slnx`.**
   Создать этот файл плана в `docs/tasks/`.
 - [ ] **B2** ([#146](https://github.com/askrinnik/AddressBook2025/issues/146)) `Infrastructure/MudTestContext.cs` + `MudBlazorJsInterop.cs`: `AddMudServices()`,
@@ -283,7 +284,7 @@ src/AddressBook.Web.Tests/
 1. `dotnet restore src/AddressBook.slnx`.
 2. `dotnet build src/AddressBook.slnx -c Release` — тест-проект собирается в составе решения.
 3. `dotnet test src/AddressBook.Web.Tests` — все тесты зелёные, **без** SQL Server / API / браузера.
-4. (опц.) `dotnet test src/AddressBook.Web.Tests --collect:"XPlat Code Coverage"` + отчёт
-   ReportGenerator по покрытию страниц/компонентов/сервиса.
+4. (опц.) `dotnet test --project src/AddressBook.Web.Tests -- --coverage --coverage-output-format cobertura` +
+   отчёт ReportGenerator по покрытию страниц/компонентов/сервиса.
 5. Прогон детерминированный и офлайн: отсутствие внешних зависимостей проверяется запуском без
    поднятого API и без сети.

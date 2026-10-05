@@ -1,0 +1,53 @@
+name: Web Component Tests
+
+# Runs the src/AddressBook.Web.Tests bUnit/xUnit v3 suite. The tests render components in memory,
+# so the job needs only the .NET SDK: no database, no Node, no browser. Fires on any push
+# (like build.yml) and on demand.
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-tests:
+    name: Web component tests (src/AddressBook.Web.Tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: src/**/packages.lock.json
+
+      - name: Restore
+        run: dotnet restore src/AddressBook.Web.Tests --locked-mode
+
+      - name: Build
+        run: dotnet build src/AddressBook.Web.Tests -c Release --no-restore
+
+      - name: Test
+        # --report-xunit-trx is the xUnit v3 TRX reporter; --coverage comes from
+        # Microsoft.Testing.Extensions.CodeCoverage. Both write to TestResults/.
+        run: >
+          dotnet test --project src/AddressBook.Web.Tests -c Release --no-build
+          --results-directory TestResults
+          -- --report-xunit-trx --coverage --coverage-output-format cobertura
+
+      - name: Upload test results and coverage
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: web-tests-results
+          path: TestResults/
+          retention-days: 30

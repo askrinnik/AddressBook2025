@@ -19,7 +19,9 @@ MudBlazor 9.8.0 приходит транзитивно через `ProjectRefer
 xUnit v3 работает нативно на **Microsoft.Testing.Platform (MTP)**: на .NET 10 SDK классический
 VSTest-путь удалён, поэтому VSTest-пакеты (`Microsoft.NET.Test.Sdk`, `xunit.runner.visualstudio`,
 `coverlet.collector`, `*TestLogger`) не используются. MTP-режим `dotnet test` включён через
-[`global.json`](../../global.json) (секция `test.runner`). Пакетов для покрытия кода в проекте нет.
+[`global.json`](../../global.json) (секция `test.runner`). Покрытие кода даёт расширение MTP
+`Microsoft.Testing.Extensions.CodeCoverage` (опции `--coverage`, `--coverage-output-format`);
+TRX-отчёт встроен в xUnit v3 (`--report-xunit-trx`).
 
 ## Требования
 
@@ -107,7 +109,17 @@ src/AddressBook.Web.Tests/
 
 ## CI
 
-`build.yml` собирает решение, включая этот проект. Ни один workflow не запускает эти тесты.
+Workflow [`web-tests.yml`](../../.github/workflows/web-tests.yml) («Web Component Tests») запускается на каждый push и вручную
+(`workflow_dispatch`). Ему нужен только .NET 10 SDK. Он выполняет те же шаги, что и локально:
+
+```bash
+dotnet restore src/AddressBook.Web.Tests --locked-mode
+dotnet build src/AddressBook.Web.Tests -c Release --no-restore
+dotnet test --project src/AddressBook.Web.Tests -c Release --no-build --results-directory TestResults -- --report-xunit-trx --coverage --coverage-output-format cobertura
+```
+
+Артефакт `web-tests-results` (хранится 30 дней, загружается и при падении тестов) содержит `.trx`-отчёт и
+Cobertura-файл покрытия (`*.cobertura.xml`) из `TestResults/`. Тот же каталог создаётся локально и игнорируется git.
 
 ## План
 

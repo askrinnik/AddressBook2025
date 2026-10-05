@@ -149,6 +149,7 @@ askrinnik/AddressBook2025/
 │       ├── build.yml                # CI: dotnet build on every push
 │       ├── api-tests.yml            # API E2E (src/ApiTests) on every push + dispatch
 │       ├── ui-tests.yml             # UI E2E (src/UiTests) on every push + dispatch
+│       ├── web-tests.yml            # bUnit tests (src/AddressBook.Web.Tests) on every push + dispatch
 │       └── security.yml             # NuGet/npm vulnerability scan
 ├── .ai/
 │   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
@@ -221,7 +222,7 @@ MudBlazor 9.8.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandl
 
 ### 4. `AddressBook.Web.Tests` — bUnit Component Tests
 
-Component and page tests for `AddressBook.Web` on bUnit + xUnit v3. They render the real Blazor components in memory, without a browser; `IAddressBookApiService`, `NavigationManager` and JSInterop are substituted, so the suite needs no SQL Server and no running API. They run with `dotnet test --project src/AddressBook.Web.Tests` (Microsoft.Testing.Platform, enabled in `global.json`). `build.yml` builds the project; no workflow runs these tests.
+Component and page tests for `AddressBook.Web` on bUnit + xUnit v3. They render the real Blazor components in memory, without a browser; `IAddressBookApiService`, `NavigationManager` and JSInterop are substituted, so the suite needs no SQL Server and no running API. They run with `dotnet test --project src/AddressBook.Web.Tests` (Microsoft.Testing.Platform, enabled in `global.json`). The `web-tests.yml` workflow runs them in CI and publishes TRX and Cobertura coverage artifacts.
 
 → Full specification: [`src/AddressBook.Web.Tests/README.md`](../../src/AddressBook.Web.Tests/README.md); conventions: [`bunit-conventions.instructions.md`](../../.github/instructions/bunit-conventions.instructions.md)
 
@@ -242,6 +243,8 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 **`api-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/ApiTests` API E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, then `npm ci` + `npm test` — Playwright's `webServer` block starts the API (port 5000) itself, pointed at the container via `Database__*` env overrides. No browser install (the tests use `APIRequestContext`). Publishes the HTML report as an artifact (30 days); traces on failure.
 
 **`ui-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/UiTests` UI E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, generates an HTTPS dev cert, then `npm ci` + `npx playwright install --with-deps` + `npm test` — Playwright's `webServer` block starts the API (port 5000) and Web (`https://localhost:7187`) itself, with the API pointed at the container via `Database__*` env overrides. Publishes the HTML report as an artifact (30 days); traces/videos on failure.
+
+**`web-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/AddressBook.Web.Tests` bUnit suite on `ubuntu-latest`. Needs only .NET 10.0.x: no SQL Server, Node or browser. Runs `dotnet restore --locked-mode`, `dotnet build -c Release`, then `dotnet test --project … --no-build` with the xUnit v3 TRX reporter and the Microsoft CodeCoverage extension (Cobertura). Uploads `TestResults/` as the `web-tests-results` artifact (30 days, also when tests fail). Actions are pinned to commit SHAs.
 
 **`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
 
