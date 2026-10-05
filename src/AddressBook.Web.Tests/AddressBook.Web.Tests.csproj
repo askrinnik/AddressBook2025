@@ -22,8 +22,8 @@
     xUnit v3 runs natively on Microsoft.Testing.Platform (MTP) and does NOT use VSTest packages:
     (Microsoft.NET.Test.Sdk / xunit.runner.visualstudio / coverlet.collector / *TestLogger) —
     the classic VSTest path was removed in the .NET 10 SDK. MTP mode for `dotnet test` is enabled via
-    global.json (test.runner section) at the repo root. MTP extensions for coverage and
-    the CI report will be added by task B20 (CI).
+    global.json (test.runner section) at the repo root. The project references no coverage or
+    report extensions.
   -->
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
