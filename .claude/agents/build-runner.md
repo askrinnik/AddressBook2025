@@ -37,7 +37,7 @@ First, in a call of its own and without a redirect, make sure the scratch direct
 
 Read only what the report needs: grep the output files for errors, the summary lines and failed tests. Do not read whole logs into the report.
 
-**Clean up when green.** Once the report is written and the build and every suite of the scope passed, delete the scratch directory together with its files in one call: `Remove-Item -Recurse -Force <dir>` in PowerShell, or `rm -r <dir>` in Bash (`rm -rf` is denied). On any failure keep them: the caller may need more than the report holds, and the next run into the same directory overwrites them.
+**Clean up when green.** Once the report is written and the build and every suite of the scope passed, delete the scratch directory together with its files in one call: `Remove-Item -Recurse -Force <dir>` in PowerShell, or `rm -r <dir>` in Bash (`rm -rf` is denied). If the directory holds files you did not write, delete only your own output files and leave the directory. On any failure keep them: the caller may need more than the report holds, and the next run into the same directory overwrites them.
 
 ## Report
 

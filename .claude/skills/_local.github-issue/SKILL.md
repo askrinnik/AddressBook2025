@@ -65,6 +65,8 @@ Rules:
 - Write in English, Markdown, imperative and concise.
 - Do **not** include screenshots or local file paths.
 - Do not restate the full issue; report only the outcome.
+- Take every number, name and list from the facts you work from, verbatim: do not recount, merge, reattribute or extend them. If something looks inconsistent, keep it as given and point it out instead of correcting it.
+- The *Acceptance Criteria* table has one row per acceptance item of the issue — exactly those items, in their order; never add rows.
 
 Post it in Claude Code by writing the body to a scratch file outside the repository (the session's scratch directory, or the system temp folder) and running:
 

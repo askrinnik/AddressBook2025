@@ -37,6 +37,7 @@ Use only these facts and what you can read from the repository. Run one read-onl
 - Do not create, edit or delete files inside the repository; `Write` is only for the scratch file outside it.
 - The working directory is already the repository root. Run **one command per tool call** — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains. Compound commands do not match the permission rules and interrupt the user.
 - Write the text in **English**.
+- The facts are final. Copy numbers, names and lists from them verbatim — never recount, merge, reattribute or extend them, and never add acceptance rows the caller did not give. If a fact looks inconsistent, keep it as given and mention it in the report.
 - Do not ask questions. If a fact for the text is missing, make the most reasonable assumption and add one line at the end of the report: `Assumptions: …`.
 
 Report in at most five lines, with no preamble.
