@@ -1,4 +1,6 @@
-﻿using AddressBook.Contracts.Models;
+﻿using System.Net;
+using AddressBook.Contracts.Models;
+using AddressBook.Web.ErrorHandling;
 using AddressBook.Web.Layout;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -66,9 +68,29 @@ public partial class Contacts
         var result = await _confirmDeleteMessageBox.ShowAsync();
         if (! (result ?? false))
             return;
-        await AddressBookApiService.DeleteContact(contactId);
+        try
+        {
+            await AddressBookApiService.DeleteContact(contactId);
+        }
+        catch (ProblemDetailsException ex) when (ex.ProblemDetails?.Status == (int)HttpStatusCode.NotFound)
+        {
+            // The contact is already gone, which is the state the user asked for; the reload below shows it.
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(DescribeDeleteFailure(ex));
+        }
+
         await _contactTable.ReloadServerData();
     }
+
+    private static string DescribeDeleteFailure(Exception ex) =>
+        ex is ProblemDetailsException { ProblemDetails: { } problem }
+            ? FirstNonEmpty(problem.Detail, problem.Title) ?? ex.Message
+            : ex.Message;
+
+    private static string? FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
 
     private void OnRowsPerPageChanged(int rows)
     {

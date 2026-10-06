@@ -190,7 +190,7 @@ Sources:
 ### Row actions
 
 - Edit button (primary blue, pencil icon): navigates to `/edit-contact/{id}`.
-- Delete button (error red): opens `MudMessageBox` confirmation dialog and, on confirm, calls API delete then reloads table.
+- Delete button (error red): opens `MudMessageBox` confirmation dialog and, on confirm, calls API delete then reloads table. A failed delete is shown in the top `Error` banner (the problem detail or title, else the exception message) and the table is still reloaded; a 404 (contact already deleted) is not an error and only reloads the table.
 
 ### Error handling in page
 
