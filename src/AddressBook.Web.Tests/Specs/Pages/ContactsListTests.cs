@@ -103,11 +103,11 @@ public class ContactsListTests : MudTestContext
         ApiService.ReturnsContacts(zed, mia, adam);
         var table = RenderTable();
 
-        table.SortBy("First Name");
+        table.SortBy("First name");
         table.WaitForLoaded();
         Assert.Equal([adam.Id, mia.Id, zed.Id], table.RowIds);
 
-        table.SortBy("First Name");
+        table.SortBy("First name");
         table.WaitForLoaded();
         Assert.Equal([zed.Id, mia.Id, adam.Id], table.RowIds);
     }
@@ -121,11 +121,11 @@ public class ContactsListTests : MudTestContext
         ApiService.ReturnsContacts(clark, adams, brown);
         var table = RenderTable();
 
-        table.SortBy("Last Name");
+        table.SortBy("Last name");
         table.WaitForLoaded();
         Assert.Equal([adams.Id, brown.Id, clark.Id], table.RowIds);
 
-        table.SortBy("Last Name");
+        table.SortBy("Last name");
         table.WaitForLoaded();
         Assert.Equal([clark.Id, brown.Id, adams.Id], table.RowIds);
     }
@@ -213,7 +213,7 @@ public class ContactsListTests : MudTestContext
         table.NextPage();
         table.WaitForLoaded();
 
-        table.SortBy("First Name");
+        table.SortBy("First name");
 
         table.WaitForLoaded();
         var sorted = contacts.OrderBy(c => c.FirstName).ToArray();

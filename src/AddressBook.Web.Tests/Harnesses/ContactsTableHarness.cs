@@ -45,7 +45,7 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
         cut.FindAll(".mud-typography")
             .Any(e => e.TextContent.Trim() == "Loading...");
 
-    /// <summary>Row cell text: First Name, Last Name, Birthday (as displayed in the table).</summary>
+    /// <summary>Row cell text: First name, Last name, Birthday (as displayed in the table).</summary>
     public (string FirstName, string LastName, string Birthday) RowText(int id)
     {
         var cells = cut.FindByTestId(TestIds.ContactRow(id)).ParentElement!.Children;
@@ -71,7 +71,7 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
     /// <summary>Click on the row's Delete: opens the confirmation dialog (see <see cref="DeleteDialogHarness"/>).</summary>
     public void ClickDelete(int id) => cut.FindByTestId(TestIds.ContactDeleteButton(id)).Click();
 
-    /// <summary>Click on a sortable column header ("First Name" / "Last Name" / "Birthday").</summary>
+    /// <summary>Click on a sortable column header ("First name" / "Last name" / "Birthday").</summary>
     public void SortBy(string columnLabel) =>
         cut.FindAll(".mud-table-sort-label")
             .Single(e => e.TextContent.Trim() == columnLabel)

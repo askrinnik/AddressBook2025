@@ -86,12 +86,12 @@ export class ContactsTable {
   }
 
   async sortByFirstName(): Promise<void> {
-    await this.sortLabel('First Name').click();
+    await this.sortLabel('First name').click();
     await this.waitForLoaded();
   }
 
   async sortByLastName(): Promise<void> {
-    await this.sortLabel('Last Name').click();
+    await this.sortLabel('Last name').click();
     await this.waitForLoaded();
   }
 
