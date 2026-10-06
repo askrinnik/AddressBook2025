@@ -161,6 +161,83 @@ public class ContactsListTests : MudTestContext
     }
 
     [Fact]
+    public void PagerInfo_OnFirstPage_ShowsRangeAndTotal()
+    {
+        ApiService.ReturnsContacts(ContactBuilder.Existing.List(12).ToArray());
+
+        var table = RenderTable();
+
+        Assert.Equal("1-10 of 12", table.PagerInfo);
+    }
+
+    [Fact]
+    public void NextPage_ShowsLastTwoRows_InSourceOrder()
+    {
+        var contacts = ContactBuilder.Existing.List(12);
+        ApiService.ReturnsContacts(contacts.ToArray());
+        var table = RenderTable();
+
+        table.NextPage();
+
+        table.WaitForLoaded();
+        Assert.Equal(contacts.Skip(10).Select(c => c.Id), table.RowIds);
+        Assert.Equal("11-12 of 12", table.PagerInfo);
+    }
+
+    [Fact]
+    public void PreviousPage_ReturnsFirstTenRows()
+    {
+        var contacts = ContactBuilder.Existing.List(12);
+        ApiService.ReturnsContacts(contacts.ToArray());
+        var table = RenderTable();
+        table.NextPage();
+        table.WaitForLoaded();
+
+        table.PreviousPage();
+
+        table.WaitForLoaded();
+        Assert.Equal(contacts.Take(10).Select(c => c.Id), table.RowIds);
+        Assert.Equal("1-10 of 12", table.PagerInfo);
+    }
+
+    [Fact]
+    public void SortBy_OnSecondPage_SortsWholeSet_NotOnlyCurrentPage()
+    {
+        // Source order is descending by first name, so the current second page holds the two
+        // smallest names; a page-local sort would show them, a whole-set sort shows the two largest.
+        var contacts = Enumerable.Range(1, 12).Reverse()
+            .Select(i => ContactBuilder.Existing.Valid() with { FirstName = $"Name{i:D2}" })
+            .ToArray();
+        ApiService.ReturnsContacts(contacts);
+        var table = RenderTable();
+        table.NextPage();
+        table.WaitForLoaded();
+
+        table.SortBy("First Name");
+
+        table.WaitForLoaded();
+        var sorted = contacts.OrderBy(c => c.FirstName).ToArray();
+        Assert.Equal(sorted.Skip(10).Select(c => c.Id), table.RowIds);
+        Assert.Equal("11-12 of 12", table.PagerInfo);
+    }
+
+    [Fact]
+    public async Task RowsPerPage_ChangeOnSecondPage_ReturnsToFirstPageWithAllRows()
+    {
+        var contacts = ContactBuilder.Existing.List(12);
+        ApiService.ReturnsContacts(contacts.ToArray());
+        var table = RenderTable();
+        table.NextPage();
+        table.WaitForLoaded();
+
+        await table.SelectRowsPerPageAsync(25);
+
+        table.WaitForLoaded();
+        Assert.Equal(contacts.Select(c => c.Id), table.RowIds);
+        Assert.Equal("1-12 of 12", table.PagerInfo);
+    }
+
+    [Fact]
     public async Task RowsPerPage_ChangeToTwentyFive_ShowsAllRows()
     {
         var contacts = ContactBuilder.Existing.List(12);

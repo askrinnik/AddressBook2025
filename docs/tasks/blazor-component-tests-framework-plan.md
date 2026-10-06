@@ -275,7 +275,7 @@ src/AddressBook.Web.Tests/
   harness, фиксированная культура, убрать `Tests.Tests` из namespace.
 - [x] **B30** ([#198](https://github.com/askrinnik/AddressBook2025/issues/198)) `EditContactServerErrorTests` —
   сопоставление серверных ошибок при сохранении. Зависит от B29.
-- [ ] **B31** ([#199](https://github.com/askrinnik/AddressBook2025/issues/199)) `ContactsListTests` —
+- [x] **B31** ([#199](https://github.com/askrinnik/AddressBook2025/issues/199)) `ContactsListTests` —
   навигация по страницам через `MudTablePager`. Зависит от B29.
 - [ ] **B32** ([#200](https://github.com/askrinnik/AddressBook2025/issues/200)) Сократить мета-тесты обвязки
   (оставить `TestIdsTests`, `MudTestContextTests`, `FakeHttpMessageHandlerTests`) и удалить неиспользуемые
