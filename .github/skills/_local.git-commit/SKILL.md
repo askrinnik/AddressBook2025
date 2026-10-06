@@ -73,8 +73,7 @@ Example:
 5. **Compose the message** following Case 1 or Case 2 above and write it to a scratch file outside the repository (the session's scratch directory, or the system temp folder). Do NOT use multiple `-m` flags: git inserts a blank line between each `-m`, which breaks the list formatting.
 6. **Commit.** Run `git commit -F <file>` (or a single `-m` with real newlines). A successful exit is the confirmation. Do not push unless the user explicitly asks.
 7. **Check the message.** Compare `git log -1 --format=%B` with the format above. On a deviation fix the commit just made with `git commit --amend -F <file>`; never amend an earlier or a pushed commit.
-8. **Clean up.** Once the commit and the check succeeded, delete the scratch file (`rm <file>`). If either failed, keep it and say where it is.
-9. **Confirm.** Report the short SHA and the first line back to the user.
+8. **Confirm.** Report the short SHA and the first line back to the user.
 
 ## Inline or delegated
 

@@ -74,7 +74,7 @@ Post it in Claude Code by writing the body to a scratch file outside the reposit
 gh issue comment <issue> --body-file <file>
 ```
 
-In Copilot, add the comment with the GitHub MCP server. Either way the result is the comment URL — report it; that is the confirmation. Do not re-read the issue to verify. Once the comment is posted, delete the scratch file (`rm <file>`); if posting failed, keep it and say where it is.
+In Copilot, add the comment with the GitHub MCP server. Either way the result is the comment URL — report it; that is the confirmation. Do not re-read the issue to verify.
 
 ## Acceptance boxes
 

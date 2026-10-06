@@ -35,9 +35,7 @@ First, in a call of its own and without a redirect, make sure the scratch direct
 1. `dotnet build src/AddressBook.slnx -clp:ErrorsOnly` → `build.txt`. If the build fails, skip step 2: tests on a broken build mean nothing.
 2. Each suite of the scope, in the order of the table, one file per suite (`web-tests.txt`, `api-tests.txt`, `ui-tests.txt`). Run every suite of the scope even when an earlier one failed; they are independent.
 
-Read only what the report needs: grep the output files for errors, the summary lines and failed tests. Do not read whole logs into the report.
-
-**Clean up when green.** Once the report is written and the build and every suite of the scope passed, delete the scratch directory together with its files in one call: `Remove-Item -Recurse -Force <dir>` in PowerShell, or `rm -r <dir>` in Bash (`rm -rf` is denied). If the directory holds files you did not write, delete only your own output files and leave the directory. On any failure keep them: the caller may need more than the report holds, and the next run into the same directory overwrites them.
+Read only what the report needs: grep the output files for errors, the summary lines and failed tests. Do not read whole logs into the report. Leave the output files in place; the next run into the same directory overwrites them.
 
 ## Report
 
@@ -52,7 +50,7 @@ Build: OK | FAILED (exit <code>)
 <on failure: each failed test's full name and its first 3 error lines, at most 10 tests>
 … one block per suite of the scope …
 
-Output files: <scratch directory> | deleted (all green)
+Output files: <scratch directory>
 ```
 
 ## Hard limits
