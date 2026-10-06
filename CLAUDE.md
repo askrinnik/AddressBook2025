@@ -10,6 +10,7 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 - **A comment states what the code does and why, in the present tense, and makes sense without the issue tracker or the file's history.** Never write change narration ("added", "now", "previously", "fixed"), issue or task references (`#123`, `B15`), line numbers, or a restatement of what the code plainly says.
 - When a Git commit is requested, use the `git-commit` skill and follow its message conventions; do not hand-write commit messages in another format.
 - **Never `git commit` or `git push` on your own initiative.** Do it only when the user's current message explicitly asks for it (for example "commit", "push", "open a PR"). Permission covers only the action named and does not carry over to later edits: after the user asks for further changes — even on an already-pushed branch or open PR — make the changes, verify them, then stop and ask before committing or pushing again. Never force-push or rewrite pushed history without an explicit request.
+- **Never create, switch, rename or delete a branch, and never stash, on your own initiative** — not to prepare work, not to tidy up after a mistake. Do it only when the user's current message asks for it. The one built-in exception is a task branch created together with a commit the user has asked for; the workflow in `.ai/prompts/implement-issue.md` (step 0) and `.ai/prompts/implement-issues.md` says when. Work stays on the branch you were started on; if that is a problem, say so and ask.
 
 ## Where things live (read the source — do not restate it here)
 
@@ -29,7 +30,7 @@ Solution file: `src/AddressBook.slnx`.
 - When a change spans the API and the Web frontend, wire both sides so the feature is complete.
 - For a feature request, list the decisions neither the request nor the code settles (lengths and formats, required vs optional, uniqueness, where it shows and whether it is searchable, existing data) and ask the user to confirm them before implementing — do not pick them silently. Routine naming and layout calls are yours.
 - New or changed API behaviour ships with Playwright tests in `src/ApiTests` (happy path, boundaries, negatives).
-- Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai-harness.md](docs/ai-harness.md).
+- Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/implement-issues <n> <n> …` takes several small issues in order on one branch, one commit each, and ships one PR; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai-harness.md](docs/ai-harness.md).
 
 ## File-type coding standards
 

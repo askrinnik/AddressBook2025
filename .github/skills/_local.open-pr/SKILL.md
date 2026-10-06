@@ -29,12 +29,14 @@ Ship a verified change as a pull request into `main`. Use after the work is conf
 - Compose every commit with the **`git-commit`** skill. This is a task commit (Case 1): first line is `#<issue> <issue title>` (the exact issue title), then a blank separator line, then the dash-prefixed action list.
 - If the calling workflow hands you a commit message already composed by the `skill-runner` agent, check it against these rules and use it as is; do not re-compose it.
 - When the work spans several commits, the first line is identical on every commit; only the action lines differ.
+- A **batch** (`/implement-issues`) has one commit per issue, each with that issue's own `#<issue> <title>` first line, on one branch named `<first>-<last>-<short-slug>`.
 
 ## Pull request
 
 - Open the PR against `main` via the GitHub MCP server.
 - Title: `#<issue> <issue title>` (the exact issue title).
 - The description starts with `Closes #<issue>` so the issue closes on merge.
+- A batch PR has the title `#<a> #<b> #<c> <shared summary>` and one `Closes #<n>` line per issue at the start of the description.
 - If the calling workflow hands you a title and description already composed by the `skill-runner` agent, check them against these rules and use them as is.
 - Write the description to cover:
   - what the change does,

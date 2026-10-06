@@ -11,15 +11,18 @@ CLAUDE.md                              single instruction hub, read by Claude Co
 .ai/
   customizations.policy.json           layout and mirroring rules (audited by check.ps1)
   prompts/implement-issue.md           the workflow body, shared by both tools
+  prompts/implement-issues.md          the batch workflow body (several issues, one branch)
   benchmarks/harness/                  harness benchmark: fixtures, history, reports
 .github/
   instructions/*.instructions.md       file-type standards (source of truth; Copilot applies them via applyTo)
   skills/                              skills (source of truth)
   prompts/implement-issue.prompt.md    Copilot wrapper of the workflow
+  prompts/implement-issues.prompt.md   Copilot wrapper of the batch workflow
   agents/*.agent.md                    Copilot agents (full set)
 .claude/
   skills/                              byte-for-byte mirror of .github/skills
   commands/implement-issue.md          Claude Code wrapper of the workflow
+  commands/implement-issues.md         Claude Code wrapper of the batch workflow
   agents/*.md                          Claude Code agents (curated subset + workflow agents)
   rules/*.md                           path-scoped rules: pointers to .github/instructions
   settings.json                        shared permissions, attribution off, MCP servers enabled
@@ -51,6 +54,19 @@ One command takes any issue end to end. The issue's labels select the **lane**: 
 | 13 | Next issue recommended: merge the PR → new session → `/implement-issue <next>` |
 
 Context economy is built in: three `/compact` milestones with ready focus texts, a runaway guard, one issue per session, narrow reads, small tool output, and noisy work delegated to agents.
+
+## Batches: `/implement-issues <n> <n> …`
+
+For small issues the per-issue review stops cost more than the work. `/implement-issues 191 192 193` runs the `implement-issue` workflow for each issue in the given order on **one branch** (`<first>-<last>-<slug>`, created at the first commit, not earlier), one commit per issue (`#<n> <title>`), then verifies the branch once and ships **one pull request**. The batch body does not copy the workflow: it refers to `implement-issue.md` and lists only the differences, so a change to the workflow reaches the batch too.
+
+| Aspect | Behaviour |
+|---|---|
+| Stops | None by default. The batch halts on an unsettled question, an open blocker that is not earlier in the list, a closed issue, a plan of complexity `L`, a failed reproduction, or a failure two fixes do not resolve. `--review-plans` restores the plan-review stop |
+| Debatable decisions | Made, recorded in each plan's *Decisions* and reported together at the end |
+| Per issue | Plan, implementation, build and the affected tests, commit (starting the batch authorises the commits) |
+| Once at the end | Full suites, browser walk of every acceptance item, UI E2E, `security-reviewer` on the branch diff when the batch touches API, configuration, packages, the Web error pipeline or server-provided text; fixes go in further commits under their issue |
+| Ship | One confirmation of the result; then comments, push and PR, each after the user's go-ahead, or without further prompts with `--ship`. The PR has one `Closes #<n>` line per issue |
+| Limits | At most 5 issues of complexity S or M; never amend or rewrite a commit of the batch |
 
 ## Issue order: `next-issue`
 
