@@ -44,6 +44,15 @@ public class CreateContactTests : MudTestContext
     }
 
     [Fact]
+    public void Render_SubmitButton_IsEnabledAndLabelledCreate()
+    {
+        var form = RenderForm();
+
+        Assert.False(form.IsSubmitDisabled);
+        Assert.Equal("Create", form.SubmitText);
+    }
+
+    [Fact]
     public void Submit_OnlyFirstNameEmpty_BlocksSubmit_AndShowsOnlyFirstNameMessage()
     {
         var form = RenderForm();

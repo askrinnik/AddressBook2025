@@ -61,8 +61,6 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
     /// <summary>CSS classes of the load error alert; it carries <c>invisible</c> while there is no error.</summary>
     public string ErrorAlertClass => cut.Find(".mud-alert").ClassName ?? string.Empty;
 
-    public string SearchText => cut.FindByTestId(TestIds.ContactsSearch).GetAttribute("value") ?? string.Empty;
-
     /// <summary>Typing into the search field (MudTextField commits the value on change) -> table reload.</summary>
     public void Search(string text) => cut.FindByTestId(TestIds.ContactsSearch).Change(text);
 

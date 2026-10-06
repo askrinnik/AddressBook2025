@@ -277,7 +277,7 @@ src/AddressBook.Web.Tests/
   сопоставление серверных ошибок при сохранении. Зависит от B29.
 - [x] **B31** ([#199](https://github.com/askrinnik/AddressBook2025/issues/199)) `ContactsListTests` —
   навигация по страницам через `MudTablePager`. Зависит от B29.
-- [ ] **B32** ([#200](https://github.com/askrinnik/AddressBook2025/issues/200)) Сократить мета-тесты обвязки
+- [x] **B32** ([#200](https://github.com/askrinnik/AddressBook2025/issues/200)) Сократить мета-тесты обвязки
   (оставить `TestIdsTests`, `MudTestContextTests`, `FakeHttpMessageHandlerTests`) и удалить неиспользуемые
   хелперы/варианты `ContactBuilder`. Зависит от B28, B29.
 

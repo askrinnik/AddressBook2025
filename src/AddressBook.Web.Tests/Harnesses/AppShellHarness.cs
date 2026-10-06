@@ -4,7 +4,7 @@ namespace AddressBook.Web.Tests.Harnesses;
 
 /// <summary>
 /// Wrapper for the app shell (<c>MainLayout</c> + <c>NavMenu</c>): AppBar title, drawer,
-/// theme toggle and navigation links.
+/// and theme toggle.
 /// </summary>
 public sealed class AppShellHarness(IRenderedComponent<MainLayout> cut)
 {
@@ -18,12 +18,4 @@ public sealed class AppShellHarness(IRenderedComponent<MainLayout> cut)
     public bool IsDarkMode => cut.Instance.DarkLightModeButtonIcon == Icons.Material.Rounded.AutoMode;
 
     public void ToggleTheme() => cut.FindByTestId(TestIds.ThemeToggle).Click();
-
-    public string NavHomeHref => cut.FindByTestId(TestIds.NavHome).GetAttribute("href") ?? string.Empty;
-
-    public string NavContactsHref => cut.FindByTestId(TestIds.NavContacts).GetAttribute("href") ?? string.Empty;
-
-    public bool IsNavHomeActive => cut.FindByTestId(TestIds.NavHome).ClassList.Contains("active");
-
-    public bool IsNavContactsActive => cut.FindByTestId(TestIds.NavContacts).ClassList.Contains("active");
 }

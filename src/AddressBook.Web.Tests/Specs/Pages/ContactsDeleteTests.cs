@@ -18,10 +18,13 @@ public class ContactsDeleteTests : MudTestContext
     public void ClickDelete_OpensConfirmationDialog_WithoutDeleting()
     {
         var (table, dialog, contacts) = Arrange();
+        Assert.False(dialog.IsOpen);
 
         table.ClickDelete(contacts[0].Id);
 
         Assert.True(dialog.IsOpen);
+        Assert.Equal("Warning", dialog.Title);
+        Assert.Contains("Are you sure you want to delete this contact?", dialog.Message);
         ApiService.DidNotReceiveDelete();
     }
 

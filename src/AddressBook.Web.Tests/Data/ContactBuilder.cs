@@ -65,10 +65,6 @@ public static class ContactBuilder
 
         public static CreateContactModel LastName31Chars() => Mutate(m => m.LastName = NameOfLength(MaxNameLength + 1));
 
-        public static CreateContactModel EmptyFirstName() => Mutate(m => m.FirstName = string.Empty);
-
-        public static CreateContactModel EmptyLastName() => Mutate(m => m.LastName = string.Empty);
-
         /// <summary>Three spaces: not an empty string, but semantically an empty name.</summary>
         public static CreateContactModel WhitespaceFirstName() => Mutate(m => m.FirstName = "   ");
 
@@ -86,25 +82,9 @@ public static class ContactBuilder
 
         public static ContactModel WithoutBirthday(int? id = null) => ToExisting(New.WithoutBirthday(), id);
 
-        public static ContactModel FirstName30Chars(int? id = null) => ToExisting(New.FirstName30Chars(), id);
-
         public static ContactModel FirstName31Chars(int? id = null) => ToExisting(New.FirstName31Chars(), id);
 
-        public static ContactModel LastName30Chars(int? id = null) => ToExisting(New.LastName30Chars(), id);
-
-        public static ContactModel LastName31Chars(int? id = null) => ToExisting(New.LastName31Chars(), id);
-
-        public static ContactModel EmptyFirstName(int? id = null) => ToExisting(New.EmptyFirstName(), id);
-
-        public static ContactModel EmptyLastName(int? id = null) => ToExisting(New.EmptyLastName(), id);
-
-        public static ContactModel WhitespaceFirstName(int? id = null) => ToExisting(New.WhitespaceFirstName(), id);
-
-        public static ContactModel WhitespaceLastName(int? id = null) => ToExisting(New.WhitespaceLastName(), id);
-
         public static ContactModel BirthdayInFuture(int? id = null) => ToExisting(New.BirthdayInFuture(), id);
-
-        public static ContactModel BirthdayToday(int? id = null) => ToExisting(New.BirthdayToday(), id);
 
         /// <summary>A list of valid contacts with unique ids.</summary>
         public static IReadOnlyList<ContactModel> List(int count) =>
