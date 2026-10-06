@@ -1,4 +1,5 @@
 using AddressBook.Contracts.Models;
+using AddressBook.Web.ErrorHandling;
 
 namespace AddressBook.Web.Tests.Tests.Pages;
 
@@ -53,6 +54,75 @@ public class ContactsDeleteTests : MudTestContext
         ApiService.ReceivedDelete(target.Id);
         ApiService.ReceivedSearch(string.Empty, times: 2);
         Assert.False(dialog.IsOpen);
+        Assert.Equal(remaining.Select(c => c.Id), table.RowIds);
+    }
+
+    [Fact]
+    public void Confirm_ServerError_ShowsDetailInBanner_AndKeepsTableUsable()
+    {
+        var (table, dialog, contacts) = Arrange();
+        ApiService.ThrowsOnDelete(new ProblemDetailsException(
+            """{"title":"Internal Server Error","status":500,"detail":"Database is unavailable."}""".ToProblemDetails()));
+        table.ClickDelete(contacts[0].Id);
+
+        dialog.Confirm();
+
+        table.WaitForLoaded();
+        Assert.Equal("Database is unavailable.", table.ErrorBannerText);
+        Assert.False(dialog.IsOpen);
+        Assert.Equal(contacts.Select(c => c.Id), table.RowIds);
+    }
+
+    [Fact]
+    public void Confirm_NetworkError_ShowsExceptionMessageInBanner()
+    {
+        var (table, dialog, contacts) = Arrange();
+        ApiService.ThrowsOnDelete(new HttpRequestException("Connection refused"));
+        table.ClickDelete(contacts[0].Id);
+
+        dialog.Confirm();
+
+        table.WaitForLoaded();
+        Assert.Equal("Connection refused", table.ErrorBannerText);
+        Assert.Equal(contacts.Select(c => c.Id), table.RowIds);
+    }
+
+    [Fact]
+    public void Confirm_NotFound_ReloadsTableWithoutError()
+    {
+        var (table, dialog, contacts) = Arrange();
+        var target = contacts[0];
+        var remaining = contacts.Where(c => c.Id != target.Id).ToArray();
+        ApiService.ThrowsOnDelete(new ProblemDetailsException(
+            """{"title":"Not Found","status":404}""".ToProblemDetails()));
+        table.ClickDelete(target.Id);
+        ApiService.ReturnsContacts(remaining);
+
+        dialog.Confirm();
+
+        table.WaitForLoaded();
+        Assert.Null(table.ErrorBannerText);
+        ApiService.ReceivedSearch(string.Empty, times: 2);
+        Assert.Equal(remaining.Select(c => c.Id), table.RowIds);
+    }
+
+    [Fact]
+    public void Confirm_AfterFailedDelete_NextDeleteSucceeds()
+    {
+        var (table, dialog, contacts) = Arrange();
+        ApiService.ThrowsOnDelete(new HttpRequestException("Connection refused"));
+        table.ClickDelete(contacts[0].Id);
+        dialog.Confirm();
+        table.WaitForLoaded();
+        var remaining = contacts.Where(c => c.Id != contacts[1].Id).ToArray();
+        ApiService.DeleteContact(Arg.Any<int>()).Returns(Task.CompletedTask);
+        ApiService.ReturnsContacts(remaining);
+        table.ClickDelete(contacts[1].Id);
+
+        dialog.Confirm();
+
+        table.WaitForLoaded();
+        ApiService.ReceivedDelete(contacts[1].Id);
         Assert.Equal(remaining.Select(c => c.Id), table.RowIds);
     }
 }
