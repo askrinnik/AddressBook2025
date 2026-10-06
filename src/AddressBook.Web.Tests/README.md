@@ -76,7 +76,7 @@ src/AddressBook.Web.Tests/
 ├── Harnesses/         ContactFormHarness, ContactsTableHarness, DeleteDialogHarness, AppShellHarness
 └── Specs/
     ├── Components/    CustomValidationSummaryTests
-    ├── ErrorHandling/ ProblemDetailsExtensionsTests
+    ├── ErrorHandling/ ProblemDetailsExtensionsTests, ProblemDetailsHandlerTests
     ├── Layout/        MainLayoutTests, NavMenuTests, ErrorTests
     ├── Pages/         HomeTests, ContactsListTests, ContactsDeleteTests, ContactsErrorTests,
     │                  CreateContactTests, CreateContactServerErrorTests,
