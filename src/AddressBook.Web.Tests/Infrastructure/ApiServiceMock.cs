@@ -45,6 +45,21 @@ public static class ApiServiceMock
         return service;
     }
 
+    public static IAddressBookApiService ThrowsOnGetContact(this IAddressBookApiService service, int id, Exception exception)
+    {
+        service.GetContactByIdAsync(id, Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromException<ContactModel?>(exception));
+        return service;
+    }
+
+    /// <summary>The contact request stays pending until the returned source is completed.</summary>
+    public static TaskCompletionSource<ContactModel?> HoldsContactRequest(this IAddressBookApiService service, int id)
+    {
+        var pending = new TaskCompletionSource<ContactModel?>();
+        service.GetContactByIdAsync(id, Arg.Any<CancellationToken>()).Returns(pending.Task);
+        return pending;
+    }
+
     public static IAddressBookApiService ReturnsCreatedId(this IAddressBookApiService service, int id)
     {
         service.CreateContact(Arg.Any<CreateContactModel>()).Returns(id);

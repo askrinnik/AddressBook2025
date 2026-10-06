@@ -1,4 +1,5 @@
 @page "/edit-contact/{Id:int}"
+@using AddressBook.Contracts.Models
 @using AddressBook.Web.ErrorHandling
 @using AddressBook.Web.Models
 @inject NavigationManager Navigation
@@ -11,7 +12,16 @@
     <MudAlert Severity="Severity.Warning">Contact not found.</MudAlert>
     <MudButton Variant="Variant.Outlined" OnClick="Cancel" Class="mt-4">Back to Contacts</MudButton>
 }
-else if (_model != null)
+else if (_loadError != null)
+{
+    <MudAlert Severity="Severity.Error">@_loadError</MudAlert>
+    <MudButton Variant="Variant.Outlined" OnClick="Cancel" Class="mt-4">Back to Contacts</MudButton>
+}
+else if (_model == null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Loading contact" />
+}
+else
 {
     <EditForm EditContext="_editContext" OnSubmit="HandleUpdateContact">
         <DataAnnotationsValidator/>
@@ -43,10 +53,26 @@ else if (_model != null)
     private ValidationMessageStore? _messageStore;
     private bool _isLoading;
     private bool _notFound;
+    private string? _loadError;
 
     protected override async Task OnInitializedAsync()
     {
-        var contact = await AddressBookApiService.GetContactByIdAsync(Id, CancellationToken.None);
+        ContactModel? contact;
+        try
+        {
+            contact = await AddressBookApiService.GetContactByIdAsync(Id, CancellationToken.None);
+        }
+        catch (ProblemDetailsException ex)
+        {
+            _loadError = ex.ProblemDetails?.Detail ?? ex.ProblemDetails?.Title ?? ex.Message;
+            return;
+        }
+        catch (Exception ex)
+        {
+            _loadError = ex.Message;
+            return;
+        }
+
         if (contact == null)
         {
             _notFound = true;

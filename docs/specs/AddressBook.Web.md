@@ -224,9 +224,11 @@ Source: `src/AddressBook.Web/Pages/EditContact.razor`
 
 - Route includes integer parameter: `[Parameter] public int Id { get; set; }`.
 - `OnInitializedAsync` loads existing contact with `GetContactByIdAsync(Id, CancellationToken.None)`.
+- While the contact is loading, renders an indeterminate `MudProgressLinear`.
 - If contact is not found, sets `_notFound = true` and renders:
   - `MudAlert` warning
   - `Back to Contacts` button
+- If loading fails with any other error, renders an error `MudAlert` (problem detail, else title, else exception message) and the `Back to Contacts` button.
 - Edit form uses the same structure as create page (MudCard + two text fields + date picker + ValidationSummary).
 - Save flow validates and calls `UpdateContact`, then navigates to `/contacts`.
 - Error handling mirrors create page:
