@@ -99,6 +99,7 @@ The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does w
 │    ├─ Bug / Feature: <session> ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
 │    │                  real browser: every acceptance item (or the repro), console, network
 │    │                  ◀── evidence table
+│    │                  (skipped only on your explicit word for this issue)
 │    │                  (Test-authoring: no browser walk; the new tests in the build-runner summary
 │    │                   must pass and assert the intended behaviour)
 │    ├─ red or failed item → back to 7 (or 4 if the approach changes), then 8–9 again

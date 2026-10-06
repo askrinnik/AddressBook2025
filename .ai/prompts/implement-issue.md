@@ -147,6 +147,7 @@ The test suites ran in step 8; the browser walk goes to `issue-verifier`, which 
 - **Bug lane:** the `build-runner` summary shows the new regression case passing and nothing that passed before regressing. Then re-walk the original repro with `issue-verifier` in `verify` mode: the failure is gone and the console/network are clean.
 - **Feature lane:** hand **every** acceptance item to `issue-verifier` in `verify` mode (console/network checks, negatives).
 - **Test-authoring lane:** the browser walk does not apply. The new/changed tests appear in the `build-runner` summary, pass, and actually assert the intended behaviour — a test that passes without asserting anything is not done.
+- **The browser walk is not optional in the Bug and Feature lanes.** My go-ahead to skip the plan review or to go straight through the workflow does not cover it, and neither does test coverage of the same behaviour (for example a UI E2E spec that clicks the changed element). Skip it only when I explicitly say so for this issue, and name it in step 10 as not done.
 - If anything fails, go back to step 7 (or step 4 if the approach must change), then re-run steps 8–9. Stop the background servers before any rebuild.
 - **Milestone:** once everything is green, hand me the build-and-tests `/compact` command.
 
