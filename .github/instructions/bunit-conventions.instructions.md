@@ -22,12 +22,17 @@ substituted.
 - Call `RenderProviders()` before rendering anything that opens an overlay: dialogs, `MudSelect`,
   `MudDatePicker`, popovers, menus.
 - Check navigation through the `CurrentPath` property of the context, not through the raw `NavigationManager`.
+  When navigation happens after an asynchronous step completes, wait in the harness
+  (`ContactFormHarness.WaitForNavigation(path)`); do not keep the rendered component in a field just to wait.
+- The culture of the whole test assembly is fixed to en-US by the `[ModuleInitializer]` in
+  `Infrastructure/TestCulture.cs`. Do not set the culture in a test, and do not rely on the machine's regional settings.
 - Add missing MudBlazor JS stubs to `MudBlazorJsInterop`, not to an individual test.
 
 ## Layout and naming
 
-- Tests live in `Tests/<Area>/<Subject>Tests.cs` (`Components`, `ErrorHandling`, `Layout`, `Pages`, `Services`);
-  the self-tests of the test infrastructure live in `Tests/Infrastructure`, `Tests/Data`, `Tests/Harnesses`.
+- Tests live in `Specs/<Area>/<Subject>Tests.cs` (`Components`, `ErrorHandling`, `Layout`, `Pages`, `Services`)
+  in the namespace `AddressBook.Web.Tests.Specs.<Area>`; the self-tests of the test infrastructure live in
+  `Specs/Infrastructure`, `Specs/Data`, `Specs/Harnesses`.
 - Name a test `Action_Condition_Outcome`. One behaviour per test.
 - Use `[Theory]` with `[InlineData]` or `[MemberData]` instead of copy-pasted tests.
 - Pass `Xunit.TestContext.Current.CancellationToken` to asynchronous calls.
@@ -43,12 +48,19 @@ substituted.
 - Configure and verify `IAddressBookApiService` through the `ApiServiceMock` extension methods first;
   extend that class when a needed setup or check is missing.
 - Tests of `AddressBookApiService` itself use `FakeHttpMessageHandler`. Never make live HTTP calls.
+- Declare the handler with `using var handler = new FakeHttpMessageHandler()`: disposing it also disposes
+  every `HttpClient` it built through `CreateClient` or `CreateService`.
 
 ## Harnesses
 
 - `ContactFormHarness`, `ContactsTableHarness`, `DeleteDialogHarness` and `AppShellHarness` wrap the
   rendered components. Tests use them instead of raw selectors.
 - When an interaction is missing, add it to the harness. Do not put selectors into a test.
+- A harness method that dispatches to the renderer (`cut.InvokeAsync`) is `async` and named `…Async`
+  (`SetBirthdayAsync`, `FillAsync`, `SelectRowsPerPageAsync`); callers `await` it. Never block on a task with
+  `.GetAwaiter().GetResult()`, `.Result` or `.Wait()`.
+- Harness predicates search elements and compare their trimmed text exactly
+  (`FindAll(...).Any(e => e.TextContent.Trim() == "...")`); do not match substrings of `cut.Markup`.
 
 ## Locators
 
@@ -63,12 +75,15 @@ substituted.
   libraries (FluentAssertions v8 is commercial).
 - Wait for asynchronous rendering with `cut.WaitForState` or `cut.WaitForAssertion`. Never use
   `Task.Delay` or `Thread.Sleep`.
+- Always `await cut.InvokeAsync(...)`; a test that calls it is `async Task`. A discarded task hides exceptions
+  thrown on the renderer's dispatcher.
 
 ## Running
 
 - `dotnet test --project src/AddressBook.Web.Tests`. The suite runs on Microsoft.Testing.Platform, enabled
   through `global.json`; a bare positional project path is rejected on .NET 10 SDK.
 - Filter with `--filter-class`, `--filter-method`, `--filter-namespace`; never the VSTest `--filter`.
+  Example: `--filter-namespace "AddressBook.Web.Tests.Specs.Pages"`.
 
 ## Comments
 

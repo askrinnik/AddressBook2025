@@ -177,6 +177,7 @@ Sources:
 - Uses MudBlazor `MudTable<ContactModel>` with `ServerData="ServerReload"`.
 - Search input (`MudTextField`) calls `OnSearch`, which updates search state and triggers `_contactTable.ReloadServerData()`.
 - Toolbar includes `Create Contact` button, which navigates to `/create-contact`.
+- An empty table shows the text `No matching records found` (no quotation marks).
 
 ### Sorting and pagination
 
@@ -197,6 +198,8 @@ Sources:
 - `ServerReload` catches exceptions and:
   - Sends message to cascading `Error` component via `Error.ProcessError(ex.Message)`.
   - Stores message in `_errorText` and shows it in inline `MudAlert` inside table no-records area.
+- A successful `ServerReload` that follows a failed one resets `_errorText` and calls `Error.Clear()`, so both the inline alert and the top banner disappear.
+- A banner raised by a failed delete is not cleared by the table reload that follows the delete.
 - Contacts page follows code-behind pattern: markup in `.razor`, logic in partial class `.razor.cs`.
 
 ## 4.3 Create page (`/create-contact`)
@@ -205,8 +208,8 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
 
 - Uses `EditForm` with `EditContext` and `DataAnnotationsValidator`.
 - Layout: `MudCard` containing:
-  - `MudTextField` First Name
-  - `MudTextField` Last Name
+  - `MudTextField` labelled `First name`
+  - `MudTextField` labelled `Last name`
   - `MudDatePicker` Birthday
   - `ValidationSummary`
 - Submit flow:
@@ -215,6 +218,16 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
 - Error handling:
   - Catches `ProblemDetailsException`; maps server field errors into `ValidationMessageStore`.
   - Catches generic exceptions and adds general validation error.
+- `CreateContactModel` carries `[Display(Name = "First name")]` and `[Display(Name = "Last name")]`, so the required-field messages read `The First name field is required.` and `The Last name field is required.`. The field labels are set explicitly and match these names; server-error mapping still uses the property names `FirstName` / `LastName`.
+- Client validation follows the API rules (`CreateContactCommandValidator`, `UpdateContactCommandValidator`), so an invalid form never calls the service:
+
+  | Field | Rule | Message |
+  |---|---|---|
+  | First name, Last name | not empty or whitespace-only (`[Required]`) | `The First name field is required.` / `The Last name field is required.` |
+  | First name, Last name | at most 30 characters (`[StringLength(30)]`) | `The field First name must be a string with a maximum length of 30.` (same form for Last name) |
+  | Birthday | not later than today (`[NotInFuture]`) | `Birthday cannot be in the future` |
+
+- The `MudDatePicker` has `MaxDate = DateTime.Today`, so the picker disables future days. `MaxDate` limits the picker only; `[NotInFuture]` still validates a value that arrives another way.
 - Cancel button navigates to `/contacts`.
 - `_isLoading` disables submit button while API call is in progress.
 
@@ -234,6 +247,7 @@ Source: `src/AddressBook.Web/Pages/EditContact.razor`
 - Error handling mirrors create page:
   - `ProblemDetailsException` -> field-level mapping
   - generic exception -> general message
+- Uses the same client validation rules and `MaxDate` as the create page. A loaded contact that already breaks a rule cannot be saved unchanged; the field shows the message.
 - Includes Save and Cancel buttons.
 
 ## 5. Error Handling Subsystem
@@ -289,9 +303,9 @@ Used by both create and edit pages.
 
 | Property | Type | Notes |
 |---|---|---|
-| FirstName | string | `[Required]` |
-| LastName | string | `[Required]` |
-| Birthday | DateTime? | Converted to `DateOnly?` when sending command to API |
+| FirstName | string | `[Required]`, `[StringLength(30)]` |
+| LastName | string | `[Required]`, `[StringLength(30)]` |
+| Birthday | DateTime? | `[NotInFuture]` (`Models/NotInFutureAttribute.cs`, null is valid); converted to `DateOnly?` when sending command to API |
 
 ## 7. Layout and Shared UI
 

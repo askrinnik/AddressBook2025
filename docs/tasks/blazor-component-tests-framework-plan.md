@@ -270,7 +270,7 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 5 — Тестовый код и покрытие
 
-- [ ] **B29** ([#197](https://github.com/askrinnik/AddressBook2025/issues/197)) Качество тестового кода:
+- [x] **B29** ([#197](https://github.com/askrinnik/AddressBook2025/issues/197)) Качество тестового кода:
   `await cut.InvokeAsync`, async-методы harness вместо `.GetAwaiter().GetResult()`, ожидание навигации в
   harness, фиксированная культура, убрать `Tests.Tests` из namespace.
 - [ ] **B30** ([#198](https://github.com/askrinnik/AddressBook2025/issues/198)) `EditContactServerErrorTests` —

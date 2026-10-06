@@ -4,25 +4,24 @@ import { expectFieldError, expectNoFieldError } from '../../src/utils/assertions
 /*
  * Contact-form validation through the UI (U16), exercised on the create form.
  *
- * Client: `CreateContactModel` has `[Required]` on First/Last name only. A blocked submit stays on
- * `/create-contact` (the page returns before calling the API) and shows the inline Required error.
- * Server: there is no client length/date rule, so an over-length name or a future birthday passes
- * client validation, the POST returns 400, and the page maps the FluentValidation message onto the
- * form. Every rejected submit (client or server) creates nothing, so there is nothing to clean up.
+ * Client: `CreateContactModel` mirrors the API rules (Required, at most 30 characters for the names,
+ * birthday not in the future). A blocked submit stays on `/create-contact` (the page returns before
+ * calling the API) and shows the inline message. The date picker also disables days after today.
+ * Every rejected submit creates nothing, so there is nothing to clean up.
  *
  * All checks are web-first (the error accessors are `expect.poll`-backed); no fixed delays.
  */
 
 const ON_CREATE_PAGE = /\/create-contact$/;
 
-test.describe('contacts — validation (client Required)', () => {
+test.describe('contacts — validation (client)', () => {
   test('empty First name blocks submit', async ({ page, createContactPage }) => {
     await createContactPage.goto();
     await createContactPage.form.fillLastName('Valid-Last');
     await createContactPage.form.submit();
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'firstName', /required/i);
+    await expectFieldError(createContactPage.form, 'firstName', /The First name field is required/);
     await expectNoFieldError(createContactPage.form, 'lastName');
   });
 
@@ -32,13 +31,22 @@ test.describe('contacts — validation (client Required)', () => {
     await createContactPage.form.submit();
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'lastName', /required/i);
+    await expectFieldError(createContactPage.form, 'lastName', /The Last name field is required/);
     await expectNoFieldError(createContactPage.form, 'firstName');
   });
-});
 
-test.describe('contacts — validation (server 400)', () => {
-  test('a first name over 30 characters is rejected on the field', async ({
+  test('a whitespace-only First name blocks submit', async ({ page, createContactPage }) => {
+    await createContactPage.goto();
+    await createContactPage.form.fillFirstName('   ');
+    await createContactPage.form.fillLastName('Valid-Last');
+    await createContactPage.form.submit();
+
+    await expect(page).toHaveURL(ON_CREATE_PAGE);
+    await expectFieldError(createContactPage.form, 'firstName', /The First name field is required/);
+    await expectNoFieldError(createContactPage.form, 'lastName');
+  });
+
+  test('a first name over 30 characters blocks submit', async ({
     page,
     createContactPage,
     data,
@@ -50,10 +58,15 @@ test.describe('contacts — validation (server 400)', () => {
     await createContactPage.create(overLong);
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'firstName', /30/);
+    await expectFieldError(
+      createContactPage.form,
+      'firstName',
+      'The field First name must be a string with a maximum length of 30.',
+    );
+    await expectNoFieldError(createContactPage.form, 'lastName');
   });
 
-  test('a last name over 30 characters is rejected on the field', async ({
+  test('a last name over 30 characters blocks submit', async ({
     page,
     createContactPage,
     data,
@@ -65,16 +78,24 @@ test.describe('contacts — validation (server 400)', () => {
     await createContactPage.create(overLong);
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'lastName', /30/);
+    await expectFieldError(
+      createContactPage.form,
+      'lastName',
+      'The field Last name must be a string with a maximum length of 30.',
+    );
+    await expectNoFieldError(createContactPage.form, 'firstName');
   });
 
-  test('a future birthday is rejected', async ({ page, createContactPage, data }) => {
-    const future = data.birthdayInFuture();
+  test('the birthday picker disables the days after today', async ({ createContactPage }) => {
+    const today = new Date();
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const picker = createContactPage.form.birthday;
 
     await createContactPage.goto();
-    await createContactPage.create(future);
+    await picker.open();
 
-    await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'birthday', /future/i);
+    // The popover opens on the current month: today and the earlier days are chosen, the rest are refused.
+    await expect(picker.enabledDays).toHaveCount(today.getDate());
+    await expect(picker.disabledDays).toHaveCount(daysInMonth - today.getDate());
   });
 });

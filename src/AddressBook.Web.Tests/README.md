@@ -38,7 +38,7 @@ dotnet test --project src/AddressBook.Web.Tests
 | Все тесты | `dotnet test --project src/AddressBook.Web.Tests` |
 | Один класс | `dotnet test --project src/AddressBook.Web.Tests --filter-class "*ContactsListTests"` |
 | Один метод | `dotnet test --project src/AddressBook.Web.Tests --filter-method "*ContactsListTests.Search_RequestsTermAndReloadsRows"` |
-| Пространство имён | `dotnet test --project src/AddressBook.Web.Tests --filter-namespace "AddressBook.Web.Tests.Tests.Pages"` |
+| Пространство имён | `dotnet test --project src/AddressBook.Web.Tests --filter-namespace "AddressBook.Web.Tests.Specs.Pages"` |
 | Список тестов без запуска | `dotnet test --project src/AddressBook.Web.Tests --list-tests` |
 | Сборка всего решения | `dotnet build src/AddressBook.slnx` |
 
@@ -56,6 +56,7 @@ VSTest-опция `--filter` здесь не используется. Полн�
 | `MudBlazorJsInterop` | Заглушки JS-вызовов MudBlazor. |
 | `ApiServiceMock` | Extension-методы для NSubstitute-мока `IAddressBookApiService`: настройка ответов (`ReturnsContacts`, …) и проверки `Received`/`DidNotReceive`. |
 | `FakeHttpMessageHandler` | Управляемый `HttpMessageHandler` для тестов `AddressBookApiService` (без живого HTTP). |
+| `TestCulture` | `[ModuleInitializer]`: фиксирует культуру en-US для всей тестовой сборки, чтобы форматы дат и чисел не зависели от региональных настроек машины. |
 | `TestIds` | Константы `data-testid`; синхронизированы с `src/UiTests/src/utils/testids.ts`, рассинхрон ловит `TestIdsTests`. |
 | `RenderedComponentExtensions` | Поиск по `data-testid` и `aria-label` (`FindByTestId`, `FindByAriaLabel`, …). |
 | `ContactBuilder` | Тестовые данные на Bogus, включая граничные варианты. |
@@ -70,16 +71,16 @@ src/AddressBook.Web.Tests/
 ├── xunit.runner.json
 ├── packages.lock.json
 ├── Infrastructure/    MudTestContext, MudBlazorJsInterop, ApiServiceMock,
-│                      FakeHttpMessageHandler, TestIds, RenderedComponentExtensions
+│                      FakeHttpMessageHandler, TestIds, RenderedComponentExtensions, TestCulture
 ├── Data/              ContactBuilder
 ├── Harnesses/         ContactFormHarness, ContactsTableHarness, DeleteDialogHarness, AppShellHarness
-└── Tests/
+└── Specs/
     ├── Components/    CustomValidationSummaryTests
-    ├── ErrorHandling/ ProblemDetailsExtensionsTests
+    ├── ErrorHandling/ ProblemDetailsExtensionsTests, ProblemDetailsHandlerTests
     ├── Layout/        MainLayoutTests, NavMenuTests, ErrorTests
     ├── Pages/         HomeTests, ContactsListTests, ContactsDeleteTests, ContactsErrorTests,
     │                  CreateContactTests, CreateContactServerErrorTests,
-    │                  EditContactTests, EditContactNotFoundTests
+    │                  EditContactTests, EditContactNotFoundTests, EditContactLoadTests
     ├── Services/      AddressBookApiServiceTests
     ├── Infrastructure/ самотесты инфраструктуры: MudTestContextTests, ApiServiceMockTests,
     │                  FakeHttpMessageHandlerTests, RenderedComponentExtensionsTests, TestIdsTests
@@ -87,7 +88,7 @@ src/AddressBook.Web.Tests/
     └── Harnesses/     самотесты харнессов (по одному файлу на харнесс)
 ```
 
-`Tests/Infrastructure/`, `Tests/Data/` и `Tests/Harnesses/` — тесты самой обвязки, а не `AddressBook.Web`.
+`Specs/Infrastructure/`, `Specs/Data/` и `Specs/Harnesses/` — тесты самой обвязки, а не `AddressBook.Web`.
 
 ## Конвенции
 

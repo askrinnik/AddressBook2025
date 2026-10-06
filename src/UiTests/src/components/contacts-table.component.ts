@@ -16,7 +16,7 @@ import { TestIds, contactDeleteButton, contactEditButton, contactRow } from '../
  */
 const SORT_LABEL = '.mud-table-sort-label';
 const LOADING_TEXT = 'Loading...';
-// The page renders the empty-state label wrapped in literal quotes; a substring match ignores them.
+// Matched exactly so that stray characters around the empty-state label (such as quotes) fail the check.
 const NO_RECORDS_TEXT = 'No matching records found';
 
 export class ContactsTable {
@@ -36,7 +36,7 @@ export class ContactsTable {
   }
 
   get noRecords(): Locator {
-    return this.root.getByText(NO_RECORDS_TEXT);
+    return this.root.getByText(NO_RECORDS_TEXT, { exact: true });
   }
 
   get bodyRows(): Locator {
