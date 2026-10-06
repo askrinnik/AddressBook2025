@@ -122,7 +122,7 @@ dotnet build src/AddressBook.Web.Tests -c Release --no-restore
 dotnet test --project src/AddressBook.Web.Tests -c Release --no-build --results-directory TestResults -- --report-xunit-trx --coverage --coverage-output-format cobertura
 ```
 
-Шаг `dorny/test-reporter` читает `.trx` и создаёт check run «Web component test results» (job имеет `checks: write`)
+Шаг `dorny/test-reporter` читает `.trx` и создаёт check run «Web component test results» (job имеет `checks: write`, у шага задано `use-actions-summary: 'false'`; при значении по умолчанию отчёт попадает только в Job Summary и check run не создаётся)
 с числом пройденных, упавших и пропущенных тестов и списком упавших.
 
 Артефакт `web-tests-results` (хранится 30 дней, загружается и при падении тестов) содержит `.trx`-отчёт и

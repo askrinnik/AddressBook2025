@@ -28,7 +28,7 @@ Harden the `web-tests.yml` workflow after review and align `build.yml` with it.
 
 ## Approach
 
-1. `permissions`: workflow level `contents: read`; the `web-tests` job adds `checks: write` (least privilege).
+1. `permissions`: workflow level `contents: read`; the `web-tests` job adds `checks: write` (least privilege). `dorny/test-reporter` v3 creates a check run only with `use-actions-summary: 'false'`; its default writes the job summary alone, so the input is set explicitly.
 2. Triggers: `pull_request` and `push: branches: [main]`, both with `paths` (`src/AddressBook.Web/**`, `src/AddressBook.Web.Tests/**`, `src/AddressBook.Contracts/**`, `src/Directory.*.props`, `global.json`, `.github/workflows/web-tests.yml`), plus `workflow_dispatch`. The tool manifest `.config/dotnet-tools.json` is added to the filter because it changes the job's inputs.
 3. Concurrency: `cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}`.
 4. Threshold: ReportGenerator setting `minimumCoverageThresholds:lineCoverage=85` and `minimumCoverageThresholds:branchCoverage=70` (setting format `section:key=value`, verified in the ReportGenerator settings wiki and by a local run on 5.5.11). The report and summary are written before the failure is raised, so a failing run still shows them. A step prints a message naming the thresholds when ReportGenerator exits non-zero.

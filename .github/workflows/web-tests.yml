@@ -74,6 +74,8 @@ jobs:
           name: Web component test results
           path: TestResults/**/*.trx
           reporter: dotnet-trx
+          # With the default (true) the action writes only the job summary and creates no check run.
+          use-actions-summary: 'false'
           list-suites: failed
           list-tests: failed
 
