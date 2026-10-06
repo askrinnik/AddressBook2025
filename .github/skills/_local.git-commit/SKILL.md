@@ -70,10 +70,11 @@ Example:
 2. **Check the branch for task commits.** If the commit is part of a task (Case 1) and the current branch is the main branch (`main` or `master`), do NOT commit directly to it. First ask the user whether to create a new branch for the task. If they agree, create and switch to a branch named `<issue>-<short-slug>` (for example `git switch -c 145-scaffold-web-tests`) before staging, and make the commit there. If they decline, proceed on the current branch. This `<issue>-<short-slug>` form is the repo's branch convention (its history follows it) and matches the **`open-pr`** skill — treat `open-pr` as the source of truth for branch names, and never let another workflow's example override it.
 3. **Review what will be committed.** Run `git status` and `git diff` (or `git diff --staged`) to understand every change and enumerate the distinct actions for the body lines.
 4. **Stage the changes.** Use `git add` for the intended files. Never stage unrelated or in-progress files without confirmation.
-5. **Compose the message** following Case 1 or Case 2 above and write it to a scratch file. Do NOT use multiple `-m` flags: git inserts a blank line between each `-m`, which breaks the list formatting.
+5. **Compose the message** following Case 1 or Case 2 above and write it to a scratch file outside the repository (the session's scratch directory, or the system temp folder). Do NOT use multiple `-m` flags: git inserts a blank line between each `-m`, which breaks the list formatting.
 6. **Commit.** Run `git commit -F <file>` (or a single `-m` with real newlines). A successful exit is the confirmation. Do not push unless the user explicitly asks.
 7. **Check the message.** Compare `git log -1 --format=%B` with the format above. On a deviation fix the commit just made with `git commit --amend -F <file>`; never amend an earlier or a pushed commit.
-8. **Confirm.** Report the short SHA and the first line back to the user.
+8. **Clean up.** Once the commit and the check succeeded, delete the scratch file (`rm <file>`). If either failed, keep it and say where it is.
+9. **Confirm.** Report the short SHA and the first line back to the user.
 
 ## Inline or delegated
 

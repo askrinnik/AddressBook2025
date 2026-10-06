@@ -32,7 +32,7 @@ Ship a verified change as a pull request into `main`. Use after the work is conf
 
 ## Pull request
 
-- Open the PR against `main`. In Claude Code write the description to a scratch file and run `gh pr create --base main --head <branch> --title "<title>" --body-file <file>`; in Copilot use the GitHub MCP server. Report the PR URL; that is the confirmation.
+- Open the PR against `main`. In Claude Code write the description to a scratch file outside the repository (the session's scratch directory, or the system temp folder) and run `gh pr create --base main --head <branch> --title "<title>" --body-file <file>`; in Copilot use the GitHub MCP server. Report the PR URL; that is the confirmation. Once the PR is open, delete the scratch file (`rm <file>`); if opening it failed, keep the file and say where it is.
 - Title: `#<issue> <issue title>` (the exact issue title).
 - The description starts with `Closes #<issue>` so the issue closes on merge.
 - A batch PR has the title `#<a> #<b> #<c> <shared summary>` and one `Closes #<n>` line per issue at the start of the description.

@@ -28,6 +28,7 @@ Use only these facts and what you can read from the repository. Run one read-onl
 - **`git-commit`:** check or create the branch as given (`git branch --show-current`; `git switch -c <branch>` when it has to be created from `main`); stage exactly the given files with `git add <paths>`; write the message; `git commit -F <file>`; then `git log -1 --format=%B` and compare it with the skill's format. On any deviation fix it at once with `git commit --amend -F <file>` — only for the commit you just made, never an earlier one. Report the short SHA, the branch and the first line.
 - **`github-issue`:** write the comment for the lane and add it to the issue with the GitHub MCP server. Report the comment URL.
 - **`open-pr`:** write the title and the description and open the PR into `main` from the given head branch with the GitHub MCP server. Report the PR URL.
+- **Clean up:** once the commit succeeded and the `git log -1` check passed, delete the scratch file with `rm <file>`. On a failure keep it and name it in the report.
 
 ## Hard limits
 

@@ -66,13 +66,13 @@ Rules:
 - Do **not** include screenshots or local file paths.
 - Do not restate the full issue; report only the outcome.
 
-Post it in Claude Code by writing the body to a scratch file and running:
+Post it in Claude Code by writing the body to a scratch file outside the repository (the session's scratch directory, or the system temp folder) and running:
 
 ```
 gh issue comment <issue> --body-file <file>
 ```
 
-In Copilot, add the comment with the GitHub MCP server. Either way the result is the comment URL — report it; that is the confirmation. Do not re-read the issue to verify.
+In Copilot, add the comment with the GitHub MCP server. Either way the result is the comment URL — report it; that is the confirmation. Do not re-read the issue to verify. Once the comment is posted, delete the scratch file (`rm <file>`); if posting failed, keep it and say where it is.
 
 ## Acceptance boxes
 
