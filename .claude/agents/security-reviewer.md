@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: Reviews a change in AddressBook2025 for the security risks of this application — input validation gaps in the API (FluentValidation, model binding), injection through EF Core raw SQL, information leakage in RFC 7807 problem details and logs, CORS and configuration/secrets exposure, unsafe rendering in Blazor, and dependency risk. Read-only; returns findings by severity.
+description: Reviews a change in AddressBook2025 for the security risks of this application — input validation gaps in the API (FluentValidation, model binding), injection through EF Core raw SQL, information leakage in RFC 7807 problem details and logs, CORS and configuration/secrets exposure, unsafe rendering in Blazor, CI workflow risks (unpinned actions, broad permissions, secret and untrusted-input handling), and dependency risk. Read-only; returns findings by severity.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -24,7 +24,8 @@ You review a change for the security risks specific to AddressBook2025. The gene
 3. **Information leakage.** Exception details, stack traces or SQL in RFC 7807 responses outside Development; personal data or connection strings in logs.
 4. **Configuration and secrets.** Secrets or connection strings committed in `appsettings*.json`, launch profiles or CI files; CORS widened beyond the known Web origins; HTTPS or security headers weakened.
 5. **Blazor Web.** `MarkupString` or raw HTML built from API data; secrets or privileged URLs in WASM-shipped config (everything in `wwwroot` is public).
-6. **Dependencies.** New or updated NuGet/npm packages: known vulnerabilities, unmaintained or unnecessary packages.
+6. **Dependencies.** New or updated NuGet/npm packages and .NET tools (`.config/dotnet-tools.json`): known vulnerabilities, unmaintained or unnecessary packages, versions not pinned.
+7. **CI workflows.** For a change under `.github/workflows/**` or `.github/actions/**`, read `.claude/rules/github-actions.md` and check the changed workflows against its pinning, least-privilege, secrets and untrusted-input rules; also a widened trigger that lets fork pull requests reach secrets or write permissions.
 
 ## Output
 

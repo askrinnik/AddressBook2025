@@ -28,7 +28,7 @@ Both Playwright suites start the API (and `ui-tests` also the Web app) themselve
 
 ## What you run
 
-The working directory is already the repository root. Run **one command per tool call**, exactly as written in the table plus its redirect — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains, no extra `Write-Host` or exit-code variables: the tool result reports the exit code. Compound commands do not match the permission rules and interrupt the user. **Every** command redirects its output to its file in the scratch directory (`> <file> 2>&1`), even when it is expected to print nothing — the file is the evidence that the command ran. Note each command's exit code.
+The working directory is already the repository root. Run **one command per tool call**, exactly as written in the table plus its redirect — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains, no extra `Write-Host` or exit-code variables: the tool result reports the exit code. Compound commands do not match the permission rules and interrupt the user. In Bash write every path with forward slashes and in double quotes (`"C:/Users/…/build.txt"`): a backslash is an escape character there. **Every** command redirects its output to its file in the scratch directory (`> <file> 2>&1`), even when it is expected to print nothing — the file is the evidence that the command ran. Note each command's exit code.
 
 First, in a call of its own and without a redirect, make sure the scratch directory exists — redirecting into a missing directory fails: `New-Item -ItemType Directory -Force -Path <dir>` in PowerShell, or `mkdir -p <dir>` in Bash. Both do nothing when it already exists.
 

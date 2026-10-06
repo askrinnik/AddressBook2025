@@ -33,7 +33,7 @@ Given an issue number `<issue>`:
 The labels select the lane of the `implement-issue` workflow:
 
 - **Bug lane** — labelled `bug`: a defect to reproduce and fix at its root cause.
-- **Test-authoring lane** — the issue asks only for tests of behaviour that already exists, typically labelled `testing`.
+- **Test-authoring lane** — the issue asks only for tests of behaviour that already exists, typically labelled `testing`. A change to CI workflows, configuration or documentation is not test-authoring, even when labelled `testing`: it takes the Feature lane.
 - **Feature lane** — everything else (`api`, `ui`, `enhancement`, or an unlabelled task).
 
 If the labels and the issue text disagree, stop and confirm the lane with the user.

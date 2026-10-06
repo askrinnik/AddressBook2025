@@ -92,8 +92,9 @@ The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does w
 │    │    <session> ◀── verbatim summary lines + first errors
 │    │    (red → errors to 🤖 issue-developer → 🤖 build-runner again)
 │    ├─ <session>: review of the comments the change adds
-│    └─ if API / validators / data access / Program.cs / config / packages changed:
-│         <session> ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
+│    ├─ if API / validators / data access / Program.cs / config / CI workflows / packages / tools changed:
+│    │    <session> ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
+│    └─ (build-runner and the triggered review are skipped only on your explicit word)
 │
 ├─ 9. Verify
 │    ├─ Bug / Feature: <session> ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
@@ -169,7 +170,7 @@ flowchart TD
         S8["Review of added comments"]:::session
         A8S["Security review<br/>🤖 security-reviewer · Opus"]:::agent
         A8B -- "green" --> S8
-        S8 -. "API · config · packages" .-> A8S
+        S8 -. "API · config · CI · packages" .-> A8S
     end
     A7 --> A8B
     subgraph STEP9["9. Verify"]

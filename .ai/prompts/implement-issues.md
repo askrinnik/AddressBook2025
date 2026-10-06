@@ -47,7 +47,7 @@ Run on the branch as a whole, against `git diff main...HEAD`, in this order:
 
 1. `build-runner` with scope `full`: the build, the bUnit tests, the Playwright API suite and the UI E2E suite; it returns the summary lines verbatim and the first failures.
 2. **Browser walk** — hand every acceptance item of every issue to `issue-verifier` in `verify` mode (console and network checks, negatives). Include scenarios that need request interception for error paths.
-3. **Security review** — `security-reviewer` on the branch diff when any issue touched API controllers, validators, data access, `Program.cs`, configuration/CORS, packages, the Web error pipeline, or rendering of server-provided text.
+3. **Security review** — `security-reviewer` on the branch diff when any issue touched API controllers, validators, data access, `Program.cs`, configuration/CORS, CI workflows, packages or .NET tools, the Web error pipeline, or rendering of server-provided text.
 4. Fix what fails or what the review finds as **additional commits**, each under the `#<n>` of the issue it belongs to (Case 1), then re-run the affected checks.
 
 ## Report and confirmation
