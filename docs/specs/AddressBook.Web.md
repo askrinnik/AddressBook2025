@@ -177,6 +177,7 @@ Sources:
 - Uses MudBlazor `MudTable<ContactModel>` with `ServerData="ServerReload"`.
 - Search input (`MudTextField`) calls `OnSearch`, which updates search state and triggers `_contactTable.ReloadServerData()`.
 - Toolbar includes `Create Contact` button, which navigates to `/create-contact`.
+- The column headers read `First name`, `Last name` and `Birthday`, in the same sentence case as the form labels.
 - An empty table shows the text `No matching records found` (no quotation marks).
 
 ### Sorting and pagination

@@ -69,7 +69,7 @@ async function expectPageRange(table: ContactsTable, text: string): Promise<void
 }
 
 test.describe('contacts — sort & paginate', () => {
-  test('sorts by First Name ascending then descending', async ({
+  test('sorts by First name ascending then descending', async ({
     contactsApi,
     contactsPage,
     data,
@@ -102,14 +102,14 @@ test.describe('contacts — sort & paginate', () => {
     ]);
   });
 
-  test('sorts by Last Name ascending then descending', async ({
+  test('sorts by Last name ascending then descending', async ({
     contactsApi,
     contactsPage,
     data,
   }) => {
     const token = newTestToken();
     // First names are distinct and unrelated to last-name order, so the First-Name column order
-    // proves the sort followed the Last Name column (Alpha < Bravo < Charlie).
+    // proves the sort followed the Last name column (Alpha < Bravo < Charlie).
     const one = named(data, 'One', 'Charlie', '1990-01-01', token);
     const two = named(data, 'Two', 'Alpha', '1990-01-01', token);
     const three = named(data, 'Three', 'Bravo', '1990-01-01', token);

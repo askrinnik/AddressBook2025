@@ -28,14 +28,14 @@
                     Clearable="true" data-testid="contacts-search"></MudTextField>
             </ToolBarContent>
             <HeaderContent>
-                <MudTh><MudTableSortLabel SortLabel="fn_field" T="ContactModel">First Name</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortLabel="ln_field" T="ContactModel">Last Name</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortLabel="fn_field" T="ContactModel">First name</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortLabel="ln_field" T="ContactModel">Last name</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortLabel="bd_field" T="ContactModel">Birthday</MudTableSortLabel></MudTh>
                 <MudTh>Actions</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="First Name" data-testid="@($"contact-row-{context.Id}")">@context.FirstName</MudTd>
-                <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+                <MudTd DataLabel="First name" data-testid="@($"contact-row-{context.Id}")">@context.FirstName</MudTd>
+                <MudTd DataLabel="Last name">@context.LastName</MudTd>
                 <MudTd DataLabel="Birthday">@context.Birthday?.ToShortDateString()</MudTd>
                 <MudTd>
                     <MudButton Variant="Variant.Filled" OnClick="@(_ => Navigation.NavigateTo($"/edit-contact/{context.Id}"))" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" aria-label="Edit contact" data-testid="@($"contact-edit-{context.Id}")"></MudButton>
