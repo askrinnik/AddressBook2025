@@ -111,8 +111,10 @@ src/AddressBook.Web.Tests/
 
 ## CI
 
-Workflow [`web-tests.yml`](../../.github/workflows/web-tests.yml) («Web Component Tests») запускается на каждый push и вручную
-(`workflow_dispatch`). Ему нужен только .NET 10 SDK. Он выполняет те же шаги, что и локально:
+Workflow [`web-tests.yml`](../../.github/workflows/web-tests.yml) («Web Component Tests») запускается на pull request, на push в `main` и вручную
+(`workflow_dispatch`). Фильтр `paths` (`src/AddressBook.Web/**`, `src/AddressBook.Web.Tests/**`, `src/AddressBook.Contracts/**`,
+`src/Directory.*.props`, `global.json`, `.config/dotnet-tools.json`, сам workflow) не запускает его на изменения только в `docs/`.
+Новый прогон отменяет незавершённый на той же ветке, кроме `main`. Ему нужен только .NET 10 SDK. Он выполняет те же шаги, что и локально:
 
 ```bash
 dotnet restore src/AddressBook.Web.Tests --locked-mode
@@ -120,7 +122,7 @@ dotnet build src/AddressBook.Web.Tests -c Release --no-restore
 dotnet test --project src/AddressBook.Web.Tests -c Release --no-build --results-directory TestResults -- --report-xunit-trx --coverage --coverage-output-format cobertura
 ```
 
-Шаг `dorny/test-reporter` читает `.trx` и добавляет в Summary прогона отчёт «Web component test results»
+Шаг `dorny/test-reporter` читает `.trx` и создаёт check run «Web component test results» (job имеет `checks: write`, у шага задано `use-actions-summary: 'false'`; при значении по умолчанию отчёт попадает только в Job Summary и check run не создаётся)
 с числом пройденных, упавших и пропущенных тестов и списком упавших.
 
 Артефакт `web-tests-results` (хранится 30 дней, загружается и при падении тестов) содержит `.trx`-отчёт и
@@ -128,11 +130,14 @@ Cobertura-файл покрытия (`*.cobertura.xml`) из `TestResults/`. Т�
 
 Покрытие workflow превращает в отчёт через [ReportGenerator](https://github.com/danielpalme/ReportGenerator) (только сборка
 `AddressBook.Web`): markdown-сводка попадает в Job Summary прогона, а HTML-отчёт — в артефакт
-`web-tests-coverage-report` (открыть `index.html`). Локально то же самое:
+`web-tests-coverage-report` (открыть `index.html`). Версия ReportGenerator закреплена в
+[`.config/dotnet-tools.json`](../../.config/dotnet-tools.json); CI и локальный запуск ставят её через `dotnet tool restore`.
+Job падает с сообщением об ошибке, если покрытие строк ниже 85 % или веток ниже 70 %
+(`minimumCoverageThresholds` в вызове ReportGenerator); отчёты при этом всё равно публикуются. Локально то же самое:
 
 ```bash
-dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.5.11
-reportgenerator "-reports:TestResults/**/*.cobertura.xml" "-targetdir:coverage-report" "-reporttypes:HtmlInline_AzurePipelines" "-assemblyfilters:+AddressBook.Web"
+dotnet tool restore
+dotnet tool run reportgenerator "-reports:TestResults/**/*.cobertura.xml" "-targetdir:coverage-report" "-reporttypes:HtmlInline_AzurePipelines" "-assemblyfilters:+AddressBook.Web" "minimumCoverageThresholds:lineCoverage=85" "minimumCoverageThresholds:branchCoverage=70"
 ```
 
 ## План

@@ -149,7 +149,7 @@ askrinnik/AddressBook2025/
 │       ├── build.yml                # CI: dotnet build on every push
 │       ├── api-tests.yml            # API E2E (src/ApiTests) on every push + dispatch
 │       ├── ui-tests.yml             # UI E2E (src/UiTests) on every push + dispatch
-│       ├── web-tests.yml            # bUnit tests (src/AddressBook.Web.Tests) on every push + dispatch
+│       ├── web-tests.yml            # bUnit tests (src/AddressBook.Web.Tests) on PRs + main (path-filtered) + dispatch
 │       └── security.yml             # NuGet/npm vulnerability scan
 ├── .ai/
 │   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
@@ -238,13 +238,13 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 
 ### 6. CI/CD
 
-**`build.yml`** — Triggers on every push; runs `dotnet restore --locked-mode` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x.[^6]
+**`build.yml`** — Triggers on every push; runs `dotnet restore --locked-mode` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x. Read-only token (`contents: read`); actions are pinned to commit SHAs.[^6]
 
 **`api-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/ApiTests` API E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, then `npm ci` + `npm test` — Playwright's `webServer` block starts the API (port 5000) itself, pointed at the container via `Database__*` env overrides. No browser install (the tests use `APIRequestContext`). Publishes the HTML report as an artifact (30 days); traces on failure.
 
 **`ui-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/UiTests` UI E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, generates an HTTPS dev cert, then `npm ci` + `npx playwright install --with-deps` + `npm test` — Playwright's `webServer` block starts the API (port 5000) and Web (`https://localhost:7187`) itself, with the API pointed at the container via `Database__*` env overrides. Publishes the HTML report as an artifact (30 days); traces/videos on failure.
 
-**`web-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/AddressBook.Web.Tests` bUnit suite on `ubuntu-latest`. Needs only .NET 10.0.x: no SQL Server, Node or browser. Runs `dotnet restore --locked-mode`, `dotnet build -c Release`, then `dotnet test --project … --no-build` with the xUnit v3 TRX reporter and the Microsoft CodeCoverage extension (Cobertura). Adds a "Web component test results" report to the run summary from the TRX files with `dorny/test-reporter`. Uploads `TestResults/` as the `web-tests-results` artifact (30 days, also when tests fail). On success, ReportGenerator (a pinned .NET tool) builds a coverage report for the `AddressBook.Web` assembly: the markdown summary goes to the job summary and the HTML report is uploaded as `web-tests-coverage-report`. Actions are pinned to commit SHAs.
+**`web-tests.yml`** — Triggers on pull requests and on pushes to `main` (and manual dispatch), only when `src/AddressBook.Web/**`, `src/AddressBook.Web.Tests/**`, `src/AddressBook.Contracts/**`, `src/Directory.*.props`, `global.json`, `.config/dotnet-tools.json` or the workflow itself change, so a docs-only change does not start it. A newer run cancels an unfinished one on the same ref, except on `main`. The job has `checks: write` so `dorny/test-reporter` can create its check run. Runs the `src/AddressBook.Web.Tests` bUnit suite on `ubuntu-latest`. Needs only .NET 10.0.x: no SQL Server, Node or browser. Runs `dotnet restore --locked-mode`, `dotnet build -c Release`, then `dotnet test --project … --no-build` with the xUnit v3 TRX reporter and the Microsoft CodeCoverage extension (Cobertura). Publishes the TRX files with `dorny/test-reporter` as the "Web component test results" check run (`use-actions-summary: 'false'`; with the action's default the report goes only to the job summary and no check run is created). Uploads `TestResults/` as the `web-tests-results` artifact (30 days, also when tests fail). ReportGenerator (version pinned in `.config/dotnet-tools.json`, installed with `dotnet tool restore`) builds a coverage report for the `AddressBook.Web` assembly: the markdown summary goes to the job summary and the HTML report is uploaded as `web-tests-coverage-report`. The job fails when line coverage is below 85 % or branch coverage is below 70 % (`minimumCoverageThresholds`); the reports are still published. Actions are pinned to commit SHAs.
 
 **`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
 
