@@ -273,7 +273,7 @@ src/AddressBook.Web.Tests/
 - [x] **B29** ([#197](https://github.com/askrinnik/AddressBook2025/issues/197)) Качество тестового кода:
   `await cut.InvokeAsync`, async-методы harness вместо `.GetAwaiter().GetResult()`, ожидание навигации в
   harness, фиксированная культура, убрать `Tests.Tests` из namespace.
-- [ ] **B30** ([#198](https://github.com/askrinnik/AddressBook2025/issues/198)) `EditContactServerErrorTests` —
+- [x] **B30** ([#198](https://github.com/askrinnik/AddressBook2025/issues/198)) `EditContactServerErrorTests` —
   сопоставление серверных ошибок при сохранении. Зависит от B29.
 - [ ] **B31** ([#199](https://github.com/askrinnik/AddressBook2025/issues/199)) `ContactsListTests` —
   навигация по страницам через `MudTablePager`. Зависит от B29.
