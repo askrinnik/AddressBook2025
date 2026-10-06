@@ -247,7 +247,8 @@ Folder: `src/AddressBook.Web/ErrorHandling`
 - For non-success responses:
   - reads body as string,
   - converts string to `ClientProblemDetails` via extension,
-  - throws `ProblemDetailsException`.
+  - when the body is empty, not JSON, or not a problem object (gateway HTML, plain text, 401/405 without body), builds a fallback `ClientProblemDetails` with `Title` = response reason phrase and `Status` = response status code; a parsed problem without `status` also takes the response status,
+  - always throws `ProblemDetailsException`, never `JsonException`.
 
 ### 5.2 ClientProblemDetails.cs
 

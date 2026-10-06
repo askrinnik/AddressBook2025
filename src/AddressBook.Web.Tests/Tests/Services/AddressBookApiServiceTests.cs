@@ -221,6 +221,16 @@ public class AddressBookApiServiceTests
         }
 
         [Fact]
+        public async Task NotFoundWithEmptyBody_ReturnsNull()
+        {
+            var handler = new FakeHttpMessageHandler().Respond(HttpStatusCode.NotFound);
+
+            var result = await handler.CreateService().GetContactByIdAsync(404, Ct);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
         public async Task OtherProblem_IsNotSwallowed()
         {
             var handler = new FakeHttpMessageHandler().RespondProblem(HttpStatusCode.InternalServerError, "Server error");

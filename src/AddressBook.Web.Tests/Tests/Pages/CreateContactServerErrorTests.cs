@@ -1,3 +1,4 @@
+using System.Net;
 using AddressBook.Web.ErrorHandling;
 using AddressBook.Web.Pages;
 using Microsoft.AspNetCore.Components;
@@ -115,6 +116,21 @@ public class CreateContactServerErrorTests : MudTestContext
         form.Submit();
 
         Assert.Contains("Database is unavailable.", form.ValidationMessages);
+        Assert.Equal(InitialPath, CurrentPath);
+        Assert.False(form.IsSubmitDisabled);
+    }
+
+    [Fact]
+    public void Submit_GatewayReturnsHtmlBody_ShowsStatusTitle_NotJsonParserError()
+    {
+        var handler = new FakeHttpMessageHandler()
+            .RespondBody(HttpStatusCode.BadGateway, "<html><body>502 Bad Gateway</body></html>", "text/html");
+        Services.AddSingleton<IAddressBookApiService>(handler.CreateService());
+        var form = RenderFilledForm();
+
+        form.Submit();
+
+        Assert.Equal(["Bad Gateway"], form.ValidationMessages);
         Assert.Equal(InitialPath, CurrentPath);
         Assert.False(form.IsSubmitDisabled);
     }
