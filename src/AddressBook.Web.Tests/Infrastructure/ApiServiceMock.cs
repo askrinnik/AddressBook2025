@@ -12,14 +12,10 @@ public static class ApiServiceMock
     // --- Response setup ---
 
     /// <summary>Any list request (any term) returns the given contacts; TotalRows = their count.</summary>
-    public static IAddressBookApiService ReturnsContacts(this IAddressBookApiService service, params ContactModel[] contacts) =>
-        service.ReturnsContacts(contacts, contacts.Length);
-
-    public static IAddressBookApiService ReturnsContacts(
-        this IAddressBookApiService service, IReadOnlyCollection<ContactModel> contacts, int totalRows)
+    public static IAddressBookApiService ReturnsContacts(this IAddressBookApiService service, params ContactModel[] contacts)
     {
         service.GetFilteredContactsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(new GetFilteredContactsResponse(totalRows, contacts));
+            .Returns(new GetFilteredContactsResponse(contacts.Length, contacts));
         return service;
     }
 
@@ -106,17 +102,11 @@ public static class ApiServiceMock
     public static void ReceivedSearch(this IAddressBookApiService service, string searchTerm, int times = 1) =>
         service.Received(times).GetFilteredContactsAsync(searchTerm, Arg.Any<CancellationToken>());
 
-    public static void DidNotReceiveSearch(this IAddressBookApiService service) =>
-        service.DidNotReceive().GetFilteredContactsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
-
     public static void ReceivedDelete(this IAddressBookApiService service, int id, int times = 1) =>
         service.Received(times).DeleteContact(id);
 
     public static void DidNotReceiveDelete(this IAddressBookApiService service) =>
         service.DidNotReceive().DeleteContact(Arg.Any<int>());
-
-    public static void ReceivedCreate(this IAddressBookApiService service, int times = 1) =>
-        service.Received(times).CreateContact(Arg.Any<CreateContactModel>());
 
     public static void DidNotReceiveCreate(this IAddressBookApiService service) =>
         service.DidNotReceive().CreateContact(Arg.Any<CreateContactModel>());

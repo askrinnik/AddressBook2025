@@ -31,8 +31,12 @@ substituted.
 ## Layout and naming
 
 - Tests live in `Specs/<Area>/<Subject>Tests.cs` (`Components`, `ErrorHandling`, `Layout`, `Pages`, `Services`)
-  in the namespace `AddressBook.Web.Tests.Specs.<Area>`; the self-tests of the test infrastructure live in
-  `Specs/Infrastructure`, `Specs/Data`, `Specs/Harnesses`.
+  in the namespace `AddressBook.Web.Tests.Specs.<Area>`; the few self-tests of the test infrastructure live in
+  `Specs/Infrastructure` (`TestIdsTests`, `MudTestContextTests`, `FakeHttpMessageHandlerTests`) and `Specs/Data`
+  (two `ContactBuilderTests` guards).
+- Do not write self-tests for harnesses, `ApiServiceMock` or `RenderedComponentExtensions`: the page specs test
+  them by using them. Keep a self-test only for a guard that no page spec exercises.
+- Delete a helper, harness member or builder variant that no test uses; do not keep it for later.
 - Name a test `Action_Condition_Outcome`. One behaviour per test.
 - Use `[Theory]` with `[InlineData]` or `[MemberData]` instead of copy-pasted tests.
 - Pass `Xunit.TestContext.Current.CancellationToken` to asynchronous calls.

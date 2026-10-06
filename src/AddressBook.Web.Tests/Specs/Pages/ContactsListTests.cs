@@ -238,6 +238,29 @@ public class ContactsListTests : MudTestContext
     }
 
     [Fact]
+    public void ClickCreate_NavigatesToCreateContact()
+    {
+        ApiService.ReturnsContacts(ContactBuilder.Existing.List(1).ToArray());
+        var table = RenderTable();
+
+        table.ClickCreate();
+
+        Assert.Equal("/create-contact", CurrentPath);
+    }
+
+    [Fact]
+    public void ClickEdit_NavigatesToEditContactOfThatRow()
+    {
+        var contacts = ContactBuilder.Existing.List(3);
+        ApiService.ReturnsContacts(contacts.ToArray());
+        var table = RenderTable();
+
+        table.ClickEdit(contacts[1].Id);
+
+        Assert.Equal($"/edit-contact/{contacts[1].Id}", CurrentPath);
+    }
+
+    [Fact]
     public async Task RowsPerPage_ChangeToTwentyFive_ShowsAllRows()
     {
         var contacts = ContactBuilder.Existing.List(12);

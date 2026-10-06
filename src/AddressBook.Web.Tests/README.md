@@ -83,13 +83,13 @@ src/AddressBook.Web.Tests/
     │                  EditContactTests, EditContactServerErrorTests,
     │                  EditContactNotFoundTests, EditContactLoadTests
     ├── Services/      AddressBookApiServiceTests
-    ├── Infrastructure/ самотесты инфраструктуры: MudTestContextTests, ApiServiceMockTests,
-    │                  FakeHttpMessageHandlerTests, RenderedComponentExtensionsTests, TestIdsTests
-    ├── Data/          самотест ContactBuilderTests
-    └── Harnesses/     самотесты харнессов (по одному файлу на харнесс)
+    ├── Infrastructure/ самотесты инфраструктуры: MudTestContextTests, FakeHttpMessageHandlerTests,
+    │                  TestIdsTests
+    └── Data/          самотест ContactBuilderTests (два теста: уникальность id и длина имён)
 ```
 
-`Specs/Infrastructure/`, `Specs/Data/` и `Specs/Harnesses/` — тесты самой обвязки, а не `AddressBook.Web`.
+`Specs/Infrastructure/` и `Specs/Data/` — тесты самой обвязки, а не `AddressBook.Web`. Остальную обвязку
+(харнессы, `ApiServiceMock`, `RenderedComponentExtensions`) отдельно не тестируют: её проверяют страничные тесты.
 
 ## Конвенции
 
