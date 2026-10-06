@@ -30,12 +30,14 @@ Both Playwright suites start the API (and `ui-tests` also the Web app) themselve
 
 The working directory is already the repository root. Run **one command per tool call**, exactly as written in the table plus its redirect — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains, no extra `Write-Host` or exit-code variables: the tool result reports the exit code. Compound commands do not match the permission rules and interrupt the user. **Every** command redirects its output to its file in the scratch directory (`> <file> 2>&1`), even when it is expected to print nothing — the file is the evidence that the command ran. Note each command's exit code.
 
+First, in a call of its own and without a redirect, make sure the scratch directory exists — redirecting into a missing directory fails: `New-Item -ItemType Directory -Force -Path <dir>` in PowerShell, or `mkdir -p <dir>` in Bash. Both do nothing when it already exists.
+
 1. `dotnet build src/AddressBook.slnx -clp:ErrorsOnly` → `build.txt`. If the build fails, skip step 2: tests on a broken build mean nothing.
 2. Each suite of the scope, in the order of the table, one file per suite (`web-tests.txt`, `api-tests.txt`, `ui-tests.txt`). Run every suite of the scope even when an earlier one failed; they are independent.
 
 Read only what the report needs: search the output files for errors, the summary lines and failed tests. Do not read whole logs into the report.
 
-**Clean up when green.** Once the report is written and the build and every suite of the scope passed, delete the output files (`rm <file>`, one call per file) and then the scratch directory (`rmdir <dir>`). On any failure keep them: the caller may need more than the report holds, and the next run into the same directory overwrites them.
+**Clean up when green.** Once the report is written and the build and every suite of the scope passed, delete the scratch directory together with its files in one call: `Remove-Item -Recurse -Force <dir>` in PowerShell, or `rm -r <dir>` in Bash (`rm -rf` is denied). On any failure keep them: the caller may need more than the report holds, and the next run into the same directory overwrites them.
 
 ## Report
 
