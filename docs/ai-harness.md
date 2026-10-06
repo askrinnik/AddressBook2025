@@ -38,20 +38,181 @@ The layout is checked with `pwsh -File .github/skills/_local.sync-ai-customizati
 
 One command takes any issue end to end. The issue's labels select the **lane**: `bug` → Bug lane; tests-only work (typically `testing`) → Test-authoring lane; everything else → Feature lane.
 
-| Step | What happens |
-|---|---|
-| 0 | Switch to `main` and `git pull --ff-only`. Uncommitted changes stop the workflow. Staying on the current branch needs an explicit request |
-| 1 | Read the issue and its comments; without a number, `next-issue` recommends one. Check dependencies: an open blocker stops the workflow. Assign the issue |
-| 2 | Pick the lane |
-| 3 | Bug: reproduce in a browser (`issue-verifier`, `reproduce` mode) or with a failing test, `debug-issue` skill. Feature / Test-authoring: the acceptance list. All lanes: locate the code |
-| 4–6 | Plan from `issue-planner` (with an S/M/L complexity), saved as `docs/tasks/issue-<n>-<slug>.md`, reviewed with the user |
-| 7 | Implementation by `issue-developer` (Opus for `L`) or `playwright-tester` (tests-only); tests via `write-tests`; docs updated in the same change |
-| 8 | Build, review of added comments, `security-reviewer` when API, configuration or packages change |
-| 9 | Test suites run by the main session; browser walk of every acceptance item (or the repro) by `issue-verifier` |
-| 10 | Result confirmed by the user |
-| 11 | Issue comment for the lane (`skill-runner` may draft, the main session invokes `github-issue` and posts); verified acceptance boxes ticked in the issue body |
-| 12 | Base re-synced, branch `<n>-<slug>` created, commit / push / PR — each after the user's go-ahead; one CI check |
-| 13 | Next issue recommended: merge the PR → new session → `/implement-issue <next>` |
+The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does what at each step. Legend:
+
+- `<session>` — the main session, on whatever model it was started with;
+- agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](#agents-and-models));
+- 🤖 — an agent call (`.claude/agents/`);
+- 🧩 — a skill (`.claude/skills/`);
+- **[You]** — a point where the process waits for the user.
+
+```
+/implement-issue 42
+│
+├─ 0. Branch preparation ─────────── <session>: git status → git switch main → git pull --ff-only
+│                                    (uncommitted changes → stop, ask you; staying on the
+│                                     current branch only when you said so)
+├─ 1. Read the issue ─────────────── <session>: 🧩 github-issue (body, comments, sub-issues)
+│                                    (no number → 🧩 next-issue → [You] pick an issue)
+│                                    (closed issue → stop)
+│                                    (open blocker → stop, ask you)
+│                                    gh issue edit --add-assignee @me
+├─ 2. Lane ───────────────────────── <session>: label bug → Bug · tests only → Test-authoring
+│                                    · else Feature (labels and text disagree → [You])
+│
+├─ 3. Understand the problem
+│    ├─ Bug:  <session> ──▶ 🤖 issue-verifier (Sonnet), reproduce mode, + 🧩 debug-issue
+│    │          ◀── repro table (or a failing Playwright API spec)
+│    │          (cannot reproduce → [You])
+│    ├─ Feature / Test-authoring: <session>: 🧩 github-issue → acceptance list
+│    │          (material gaps → [You])
+│    └─ All lanes: <session> ──▶ 🤖 Explore (summary ≤ 30 lines): locate the code
+│
+├─ 4. Plan ──────────────────────────────────▶ 🤖 issue-planner (Opus, read-only)
+│                                    (large cross-layer change → optional 🤖 architect, Opus)
+│                                    ◀── plan text + complexity S/M/L
+├─ 5–6. Save and review ──────────── <session>: docs/tasks/issue-42-<slug>.md
+│                                    [You] review → edits → review again
+│                                    [You] /compact (ready-made command)
+│
+├─ 7. Implement
+│    ├─ Bug / Feature: <session> ──▶ 🤖 issue-developer (Sonnet · Opus for L)
+│    ├─ Test-authoring: <session> ──▶ 🤖 playwright-tester (Sonnet) for Playwright specs
+│    │                                🤖 issue-developer (Sonnet) for bUnit
+│    │                  tests via 🧩 write-tests · docs updated in the same change
+│    │                  ◀── change summary (no commits)
+│    └─ (tests reveal a broken behaviour in Test-authoring → stop, [You])
+│
+├─ 8. Build and review
+│    ├─ <session>: stop background servers · dotnet build -clp:ErrorsOnly
+│    ├─ <session>: review of the comments the change adds
+│    └─ if API / validators / data access / Program.cs / config / packages changed:
+│         <session> ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
+│
+├─ 9. Verify
+│    ├─ <session>: 🧩 run-tests (Playwright API and UI E2E; bUnit when Web changed)
+│    ├─ Bug / Feature: <session> ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
+│    │                  real browser: every acceptance item (or the repro), console, network
+│    │                  ◀── evidence table
+│    │                  (Test-authoring: no browser walk)
+│    ├─ red or failed item → back to 7 (or 4 if the approach changes), then 8–9 again
+│    └─ [You] /compact
+├─ 10. Confirm the result ────────── <session>: result table (acceptance, or root cause)
+│                                    [You] "result accepted?" → /compact
+│                                    (not accepted → back to 7 or 4)
+│
+├─ 11. Result comment
+│    ├─ [You] "yes, post the comment"
+│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts the text
+│    │    <session>: 🧩 github-issue → gh issue comment
+│    └─ [You] "yes, tick the acceptance boxes" → <session>: - [ ] → - [x] in the issue body
+│
+├─ 12. Ship
+│    ├─ <session>: git fetch; origin/main moved → git pull --ff-only and repeat 8–9
+│    ├─ <session>: ticks the plan checklist
+│    ├─ [You] "yes, commit"
+│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts the message
+│    │    <session>: 🧩 git-commit → branch 42-<slug> → git commit → git log -1 check
+│    ├─ [You] "yes, push" → <session>: git push -u origin 42-<slug>
+│    ├─ [You] "yes, open the PR"
+│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts title and description
+│    │    <session>: 🧩 open-pr → PR into main
+│    └─ <session>: gh pr checks (once, no polling)
+│
+└─ 13. What next ─────────────────── <session>: 🧩 next-issue -AssumeClosed 42
+                                     → "merge the PR → new session → /implement-issue N"
+```
+
+The same flow as a diagram (GitHub renders Mermaid), without `/compact` and the small commands, which are in the tree above. Grey blocks are the main session, blue are agents, green are skills, yellow are waits for the user, red is a return to implementation.
+
+```mermaid
+flowchart TD
+    START(["/implement-issue N"]) --> S0["0. Branch preparation<br/>git switch main · git pull --ff-only"]:::session
+    S0 --> S1["1. Read the issue<br/>🧩 github-issue · assign"]:::skill
+    S1 -. "no number" .-> NI0["🧩 next-issue"]:::skill
+    NI0 -.-> U1{{"[You] pick an issue"}}:::user
+    U1 -.-> S1
+    S1 --> S2["2. Lane<br/>Bug · Feature · Test-authoring"]:::session
+    subgraph STEP3["3. Understand the problem"]
+        A3B["Bug: reproduce<br/>🤖 issue-verifier · Sonnet<br/>🧩 debug-issue"]:::agent
+        S3F["Feature / Test-authoring<br/>🧩 github-issue<br/>acceptance list"]:::skill
+        A3E["Locate the code<br/>🤖 Explore"]:::agent
+        A3B --> A3E
+        S3F --> A3E
+    end
+    S2 -- "Bug" --> A3B
+    S2 -- "Feature / Test-authoring" --> S3F
+    A3B -. "cannot reproduce" .-> U3{{"[You] how to proceed"}}:::user
+    U3 -.-> A3B
+    S3F -. "material gaps" .-> U3G{{"[You] settle the gaps"}}:::user
+    U3G -.-> S3F
+    A3E --> A4["4. Plan<br/>🤖 issue-planner · Opus<br/>plan + complexity S/M/L"]:::agent
+    A4 --> S5["5–6. Save the plan<br/>docs/tasks/issue-N-slug.md"]:::session
+    S5 --> U5{{"[You] review the plan"}}:::user
+    U5 -- "comments" --> S5
+    U5 -- "approved" --> A7["7. Implement<br/>🤖 issue-developer · Sonnet, Opus for L<br/>🤖 playwright-tester · Sonnet, tests-only<br/>🧩 write-tests"]:::agent
+    subgraph STEP8["8. Build and review"]
+        S8["dotnet build<br/>review of added comments"]:::session
+        A8S["Security review<br/>🤖 security-reviewer · Opus"]:::agent
+        S8 -. "API · config · packages" .-> A8S
+    end
+    A7 --> S8
+    subgraph STEP9["9. Verify"]
+        S9["Test suites<br/>🧩 run-tests<br/>API E2E · UI E2E · bUnit"]:::skill
+        A9["Browser walk (Bug / Feature)<br/>🤖 issue-verifier · Sonnet<br/>🧩 verify-feature"]:::agent
+        S9 --> A9
+    end
+    S8 --> S9
+    A9 --> U10{{"10. [You] result accepted?"}}:::user
+    S8 -- "build error" --> FIX
+    A8S -. "findings" .-> FIX
+    S9 -- "red" --> FIX
+    A9 -- "failed item" --> FIX
+    U10 -- "no" --> FIX
+    FIX(["↩ fixes: back to step 7, or 4 if the approach changes"]):::fix
+    FIX --> A7
+    subgraph STEP11["11. Result comment"]
+        U11C{{"[You] yes, comment"}}:::user
+        A11["Comment text<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
+        U11T{{"[You] yes, tick the boxes"}}:::user
+        S11T["Acceptance boxes<br/>- [ ] → - [x]"]:::session
+        U11C --> A11 --> U11T --> S11T
+    end
+    U10 -- "yes" --> U11C
+    subgraph STEP12["12. Ship"]
+        U12{{"[You] yes, commit"}}:::user
+        A12["Commit<br/>🤖 skill-runner · Haiku<br/>🧩 git-commit<br/>branch · commit · check"]:::agent
+        U12P{{"[You] yes, push"}}:::user
+        S12P["git push"]:::session
+        U12R{{"[You] yes, open the PR"}}:::user
+        A12R["Pull request<br/>🤖 skill-runner · Haiku<br/>🧩 open-pr"]:::agent
+        U12 --> A12 --> U12P --> S12P --> U12R --> A12R
+    end
+    S11T --> U12
+    A12R --> NI13["13. What next<br/>🧩 next-issue -AssumeClosed N"]:::skill
+    NI13 --> END(["merge the PR → new session → /implement-issue"])
+
+    classDef session fill:#f3f4f6,stroke:#6b7280,color:#111827
+    classDef agent fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef skill fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef user fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef fix fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    style STEP3 fill:#f8fafc,stroke:#64748b,stroke-dasharray:4 3
+    style STEP8 fill:#f8fafc,stroke:#64748b,stroke-dasharray:4 3
+    style STEP9 fill:#f8fafc,stroke:#64748b,stroke-dasharray:4 3
+    style STEP11 fill:#f8fafc,stroke:#64748b,stroke-dasharray:4 3
+    style STEP12 fill:#f8fafc,stroke:#64748b,stroke-dasharray:4 3
+```
+
+The process waits for the user:
+
+- on a pick when no issue number was given, a blocked or closed issue, a lane conflict, an irreproducible bug, or a material gap in the requirement (steps 0–3);
+- on the plan review (steps 5–6);
+- on the result confirmation (step 10);
+- before each outward action: the issue comment, the acceptance boxes, the commit, the push and the pull request (steps 11–12) — each needs its own "yes";
+- on the three ready-made `/compact` commands (after steps 6, 9 and 10), which may be skipped while the conversation is short.
+
+`/implement-issues` runs this same cycle for several issues on one branch; it is described in [Batches](#batches-implement-issues-n-n-) and has no diagram of its own.
 
 Context economy is built in: three `/compact` milestones with ready focus texts, a runaway guard, one issue per session, narrow reads, small tool output, and noisy work delegated to agents.
 
