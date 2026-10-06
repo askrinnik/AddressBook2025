@@ -80,7 +80,8 @@ src/AddressBook.Web.Tests/
     ├── Layout/        MainLayoutTests, NavMenuTests, ErrorTests
     ├── Pages/         HomeTests, ContactsListTests, ContactsDeleteTests, ContactsErrorTests,
     │                  CreateContactTests, CreateContactServerErrorTests,
-    │                  EditContactTests, EditContactNotFoundTests, EditContactLoadTests
+    │                  EditContactTests, EditContactServerErrorTests,
+    │                  EditContactNotFoundTests, EditContactLoadTests
     ├── Services/      AddressBookApiServiceTests
     ├── Infrastructure/ самотесты инфраструктуры: MudTestContextTests, ApiServiceMockTests,
     │                  FakeHttpMessageHandlerTests, RenderedComponentExtensionsTests, TestIdsTests

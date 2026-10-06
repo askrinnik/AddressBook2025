@@ -53,15 +53,27 @@ public class ApiServiceMockTests
     }
 
     [Fact]
-    public async Task ThrowsOnGetContacts_OnDelete_AndOnCreate_Throw()
+    public async Task ThrowsOnGetContacts_OnDelete_OnCreate_AndOnUpdate_Throw()
     {
         _service.ThrowsOnGetContacts(new InvalidOperationException("boom"))
             .ThrowsOnDelete(new HttpRequestException("nope"))
-            .ThrowsOnCreate(new TimeoutException("slow"));
+            .ThrowsOnCreate(new TimeoutException("slow"))
+            .ThrowsOnUpdate(new NotSupportedException("read-only"));
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.GetFilteredContactsAsync("x", Ct));
         await Assert.ThrowsAsync<HttpRequestException>(() => _service.DeleteContact(1));
         await Assert.ThrowsAsync<TimeoutException>(() => _service.CreateContact(new CreateContactModel()));
+        await Assert.ThrowsAsync<NotSupportedException>(() => _service.UpdateContact(1, new CreateContactModel(), Ct));
+    }
+
+    [Fact]
+    public async Task CompletesUpdate_OverridesThrowsOnUpdate()
+    {
+        _service.ThrowsOnUpdate(new NotSupportedException("read-only")).CompletesUpdate();
+
+        await _service.UpdateContact(1, new CreateContactModel(), Ct);
+
+        _service.ReceivedUpdate(1);
     }
 
     [Fact]

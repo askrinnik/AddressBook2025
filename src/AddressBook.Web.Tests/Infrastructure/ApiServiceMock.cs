@@ -79,6 +79,22 @@ public static class ApiServiceMock
         return service;
     }
 
+    /// <summary>Any update request fails with the given exception.</summary>
+    public static IAddressBookApiService ThrowsOnUpdate(this IAddressBookApiService service, Exception exception)
+    {
+        service.UpdateContact(Arg.Any<int>(), Arg.Any<CreateContactModel>(), Arg.Any<CancellationToken>())
+            .Returns(_ => Task.FromException(exception));
+        return service;
+    }
+
+    /// <summary>Any update request completes successfully (overrides <c>ThrowsOnUpdate</c>).</summary>
+    public static IAddressBookApiService CompletesUpdate(this IAddressBookApiService service)
+    {
+        service.UpdateContact(Arg.Any<int>(), Arg.Any<CreateContactModel>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+        return service;
+    }
+
     public static IAddressBookApiService ThrowsOnDelete(this IAddressBookApiService service, Exception exception)
     {
         service.DeleteContact(Arg.Any<int>()).Returns(_ => Task.FromException(exception));
