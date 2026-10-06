@@ -22,7 +22,7 @@ test.describe('contacts — validation (client Required)', () => {
     await createContactPage.form.submit();
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'firstName', /required/i);
+    await expectFieldError(createContactPage.form, 'firstName', /The First name field is required/);
     await expectNoFieldError(createContactPage.form, 'lastName');
   });
 
@@ -32,7 +32,7 @@ test.describe('contacts — validation (client Required)', () => {
     await createContactPage.form.submit();
 
     await expect(page).toHaveURL(ON_CREATE_PAGE);
-    await expectFieldError(createContactPage.form, 'lastName', /required/i);
+    await expectFieldError(createContactPage.form, 'lastName', /The Last name field is required/);
     await expectNoFieldError(createContactPage.form, 'firstName');
   });
 });

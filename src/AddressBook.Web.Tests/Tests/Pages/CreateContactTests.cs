@@ -7,6 +7,8 @@ namespace AddressBook.Web.Tests.Tests.Pages;
 public class CreateContactTests : MudTestContext
 {
     private const string InitialPath = "/create-contact";
+    private const string FirstNameRequired = "The First name field is required.";
+    private const string LastNameRequired = "The Last name field is required.";
 
     private IRenderedComponent<CreateContact> _cut = null!;
 
@@ -27,8 +29,17 @@ public class CreateContactTests : MudTestContext
 
         ApiService.DidNotReceiveCreate();
         Assert.Equal(InitialPath, CurrentPath);
-        Assert.Contains(form.ValidationMessages, m => m.Contains("FirstName") && m.Contains("required"));
-        Assert.Contains(form.ValidationMessages, m => m.Contains("LastName") && m.Contains("required"));
+        Assert.Contains(FirstNameRequired, form.ValidationMessages);
+        Assert.Contains(LastNameRequired, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Render_ShowsSentenceCaseFieldLabels()
+    {
+        var form = RenderForm();
+
+        Assert.Contains("First name", form.FieldLabels);
+        Assert.Contains("Last name", form.FieldLabels);
     }
 
     [Fact]
@@ -40,8 +51,8 @@ public class CreateContactTests : MudTestContext
         form.Submit();
 
         ApiService.DidNotReceiveCreate();
-        Assert.Contains(form.ValidationMessages, m => m.Contains("FirstName") && m.Contains("required"));
-        Assert.DoesNotContain(form.ValidationMessages, m => m.Contains("LastName"));
+        Assert.Contains(FirstNameRequired, form.ValidationMessages);
+        Assert.DoesNotContain(LastNameRequired, form.ValidationMessages);
     }
 
     [Fact]
@@ -53,8 +64,8 @@ public class CreateContactTests : MudTestContext
         form.Submit();
 
         ApiService.DidNotReceiveCreate();
-        Assert.Contains(form.ValidationMessages, m => m.Contains("LastName") && m.Contains("required"));
-        Assert.DoesNotContain(form.ValidationMessages, m => m.Contains("FirstName"));
+        Assert.Contains(LastNameRequired, form.ValidationMessages);
+        Assert.DoesNotContain(FirstNameRequired, form.ValidationMessages);
     }
 
     [Fact]

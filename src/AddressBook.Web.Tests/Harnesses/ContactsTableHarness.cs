@@ -35,7 +35,10 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
 
     public int RowCount => RowIds.Count;
 
-    public bool IsNoRecordsShown => cut.Markup.Contains("No matching records found", StringComparison.Ordinal);
+    /// <summary>True when an empty-row text equals the empty-state message exactly (no surrounding quotes).</summary>
+    public bool IsNoRecordsShown =>
+        cut.FindAll(".mud-table-empty-row .mud-typography")
+            .Any(e => e.TextContent.Trim() == "No matching records found");
 
     public bool IsLoading => cut.Markup.Contains("Loading...", StringComparison.Ordinal);
 

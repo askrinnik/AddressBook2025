@@ -11,7 +11,7 @@
             <MudCard>
                 <MudCardContent>
                     <MudTextField Label="First name" @bind-Value="_model.FirstName" For="@(() => _model.FirstName)" data-testid="contact-form-first-name" />
-                    <MudTextField Label="Last Name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" data-testid="contact-form-last-name" />
+                    <MudTextField Label="Last name" Class="mt-3" @bind-Value="_model.LastName" For="@(() => _model.LastName)" data-testid="contact-form-last-name" />
                     <MudDatePicker Label="Birthday" @bind-Date="_model.Birthday" For="@(() => _model.Birthday)" data-testid="contact-form-birthday" />
                     <ValidationSummary Model="_model" class="mt-4"/>
                 </MudCardContent>

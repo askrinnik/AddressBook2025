@@ -177,6 +177,7 @@ Sources:
 - Uses MudBlazor `MudTable<ContactModel>` with `ServerData="ServerReload"`.
 - Search input (`MudTextField`) calls `OnSearch`, which updates search state and triggers `_contactTable.ReloadServerData()`.
 - Toolbar includes `Create Contact` button, which navigates to `/create-contact`.
+- An empty table shows the text `No matching records found` (no quotation marks).
 
 ### Sorting and pagination
 
@@ -207,8 +208,8 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
 
 - Uses `EditForm` with `EditContext` and `DataAnnotationsValidator`.
 - Layout: `MudCard` containing:
-  - `MudTextField` First Name
-  - `MudTextField` Last Name
+  - `MudTextField` labelled `First name`
+  - `MudTextField` labelled `Last name`
   - `MudDatePicker` Birthday
   - `ValidationSummary`
 - Submit flow:
@@ -217,6 +218,7 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
 - Error handling:
   - Catches `ProblemDetailsException`; maps server field errors into `ValidationMessageStore`.
   - Catches generic exceptions and adds general validation error.
+- `CreateContactModel` carries `[Display(Name = "First name")]` and `[Display(Name = "Last name")]`, so the required-field messages read `The First name field is required.` and `The Last name field is required.`. The field labels are set explicitly and match these names; server-error mapping still uses the property names `FirstName` / `LastName`.
 - Cancel button navigates to `/contacts`.
 - `_isLoading` disables submit button while API call is in progress.
 

@@ -94,8 +94,17 @@ public class EditContactTests : MudTestContext
 
         ApiService.DidNotReceiveUpdate();
         Assert.Equal(PathFor(contact.Id), CurrentPath);
-        Assert.Contains(form.ValidationMessages, m => m.Contains("FirstName") && m.Contains("required"));
-        Assert.Contains(form.ValidationMessages, m => m.Contains("LastName") && m.Contains("required"));
+        Assert.Contains("The First name field is required.", form.ValidationMessages);
+        Assert.Contains("The Last name field is required.", form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Render_ShowsSentenceCaseFieldLabels()
+    {
+        var form = RenderForm(ContactBuilder.Existing.Valid());
+
+        Assert.Contains("First name", form.FieldLabels);
+        Assert.Contains("Last name", form.FieldLabels);
     }
 
     [Fact]

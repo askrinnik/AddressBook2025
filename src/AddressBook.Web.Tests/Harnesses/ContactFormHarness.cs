@@ -14,6 +14,13 @@ public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
 
     public string LastName => cut.FindByTestId(TestIds.ContactFormLastName).GetAttribute("value") ?? string.Empty;
 
+    /// <summary>Texts of the field labels (<c>label.mud-input-label</c>) in render order.</summary>
+    public IReadOnlyList<string> FieldLabels =>
+        cut.FindAll("label.mud-input-label")
+            .Select(e => e.TextContent.Trim())
+            .Where(t => t.Length > 0)
+            .ToList();
+
     public DateTime? Birthday => cut.FindComponent<MudDatePicker>().Instance.Date;
 
     public bool IsSubmitDisabled => cut.FindByTestId(TestIds.ContactFormSubmit).HasAttribute("disabled");
