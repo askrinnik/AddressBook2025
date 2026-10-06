@@ -11,7 +11,7 @@ description: >
 
 > Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
 
-Repository: **`askrinnik/AddressBook2025`**. All issue reads and writes go through the GitHub MCP server.
+Repository: **`askrinnik/AddressBook2025`**. Issue reads and writes go through `gh` in Claude Code and through the GitHub MCP server in Copilot.
 
 ## When to Use
 
@@ -46,7 +46,7 @@ If the labels and the issue text disagree, stop and confirm the lane with the us
 
 ## Posting the result comment
 
-When the work is confirmed, add an English comment to issue `<issue>` via the GitHub MCP server. Keep it factual and technical, based only on what was actually done. The headings depend on the lane.
+When the work is confirmed, add an English comment to issue `<issue>`. Keep it factual and technical, based only on what was actually done. The headings depend on the lane.
 
 **Feature lane and Test-authoring lane:**
 
@@ -65,3 +65,29 @@ Rules:
 - Write in English, Markdown, imperative and concise.
 - Do **not** include screenshots or local file paths.
 - Do not restate the full issue; report only the outcome.
+
+Post it in Claude Code by writing the body to a scratch file and running:
+
+```
+gh issue comment <issue> --body-file <file>
+```
+
+In Copilot, add the comment with the GitHub MCP server. Either way the result is the comment URL — report it; that is the confirmation. Do not re-read the issue to verify.
+
+## Acceptance boxes
+
+After the comment, and after the user's go-ahead, tick the verified items of the issue's acceptance section in the issue body with the script — one call, no reading or rewriting of the body by hand:
+
+```
+pwsh -NoProfile -File .github/skills/_local.github-issue/scripts/Set-AcceptanceChecks.ps1 -Issue <issue> -Items 1,2,4
+```
+
+- The acceptance section is the first `## Критерии приёмки`, `## Acceptance criteria` or `## Acceptance` heading; a note in parentheses after the heading is allowed.
+- `-Items` are the positions of the verified checkboxes within that section, 1-based, in document order, as one comma-separated value.
+- The script changes only those `- [ ]` marks and refuses to write if anything else in the body would differ; it never unticks.
+- Its output lists every checkbox with `ticked now`, `already ticked` or `left unticked` — name the unticked ones to the user. `-DryRun` shows the result without editing.
+- Skip this when the body has no checklist.
+
+## Inline or delegated
+
+Run this skill inline when the user asks for a comment directly. Inside `/implement-issue` and `/implement-issues`, after the user's go-ahead, *Posting the result comment* — composing and posting — runs in the `skill-runner` agent: the caller hands it this skill's name, the compact facts (issue number and title, lane, changed files with one line each, the acceptance items with how each was verified or the root cause, build and test results, the PR URL if it exists) and a scratch file path for the body; it posts the comment and returns its URL. Reading the issue and ticking the acceptance boxes stay with the caller. If you *are* the skill-runner, do not delegate again.

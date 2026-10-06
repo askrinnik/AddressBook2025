@@ -83,18 +83,24 @@ The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does w
 │    │                  ◀── change summary (no commits)
 │    └─ (tests reveal a broken behaviour in Test-authoring → stop, [You])
 │
-├─ 8. Build and review
-│    ├─ <session>: stop background servers · dotnet build -clp:ErrorsOnly
+├─ 8. Build, tests and review
+│    ├─ <session>: stop background servers
+│    ├─ <session> ──1 call──▶ 🤖 build-runner (Haiku), scope full
+│    │                         dotnet build -clp:ErrorsOnly
+│    │                         bUnit · Playwright API · Playwright UI E2E (output to files;
+│    │                         the Playwright suites start API and Web themselves)
+│    │    <session> ◀── verbatim summary lines + first errors
+│    │    (red → errors to 🤖 issue-developer → 🤖 build-runner again)
 │    ├─ <session>: review of the comments the change adds
 │    └─ if API / validators / data access / Program.cs / config / packages changed:
 │         <session> ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
 │
 ├─ 9. Verify
-│    ├─ <session>: 🧩 run-tests (Playwright API and UI E2E; bUnit when Web changed)
 │    ├─ Bug / Feature: <session> ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
 │    │                  real browser: every acceptance item (or the repro), console, network
 │    │                  ◀── evidence table
-│    │                  (Test-authoring: no browser walk)
+│    │                  (Test-authoring: no browser walk; the new tests in the build-runner summary
+│    │                   must pass and assert the intended behaviour)
 │    ├─ red or failed item → back to 7 (or 4 if the approach changes), then 8–9 again
 │    └─ [You] /compact
 ├─ 10. Confirm the result ────────── <session>: result table (acceptance, or root cause)
@@ -103,20 +109,26 @@ The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does w
 │
 ├─ 11. Result comment
 │    ├─ [You] "yes, post the comment"
-│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts the text
-│    │    <session>: 🧩 github-issue → gh issue comment
-│    └─ [You] "yes, tick the acceptance boxes" → <session>: - [ ] → - [x] in the issue body
+│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 github-issue
+│    │                           text → gh issue comment --body-file
+│    │    <session> ◀── comment URL
+│    └─ [You] "yes, tick the acceptance boxes" → <session>: Set-AcceptanceChecks.ps1 (- [ ] → - [x])
 │
 ├─ 12. Ship
-│    ├─ <session>: git fetch; origin/main moved → git pull --ff-only and repeat 8–9
+│    ├─ <session>: git fetch; origin/main moved → git pull --ff-only and repeat 8–9 (🤖 build-runner)
 │    ├─ <session>: ticks the plan checklist
 │    ├─ [You] "yes, commit"
-│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts the message
-│    │    <session>: 🧩 git-commit → branch 42-<slug> → git commit → git log -1 check
+│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 git-commit
+│    │                           creates branch 42-<slug>
+│    │                           git add <the given list>
+│    │                           writes the text → git commit -F
+│    │                           git log -1 → --amend on a deviation
+│    │    <session> ◀── "a1b2c3d #42 Title"
 │    ├─ [You] "yes, push" → <session>: git push -u origin 42-<slug>
 │    ├─ [You] "yes, open the PR"
-│    │    <session> ──▶ 🤖 skill-runner (Haiku) drafts title and description
-│    │    <session>: 🧩 open-pr → PR into main
+│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 open-pr
+│    │                           text → gh pr create --body-file
+│    │    <session> ◀── PR URL
 │    └─ <session>: gh pr checks (once, no polling)
 │
 └─ 13. What next ─────────────────── <session>: 🧩 next-issue -AssumeClosed 42
@@ -151,31 +163,30 @@ flowchart TD
     S5 --> U5{{"[You] review the plan"}}:::user
     U5 -- "comments" --> S5
     U5 -- "approved" --> A7["7. Implement<br/>🤖 issue-developer · Sonnet, Opus for L<br/>🤖 playwright-tester · Sonnet, tests-only<br/>🧩 write-tests"]:::agent
-    subgraph STEP8["8. Build and review"]
-        S8["dotnet build<br/>review of added comments"]:::session
+    subgraph STEP8["8. Build, tests and review"]
+        A8B["Build and test suites<br/>🤖 build-runner · Haiku<br/>build · bUnit · API E2E · UI E2E"]:::agent
+        S8["Review of added comments"]:::session
         A8S["Security review<br/>🤖 security-reviewer · Opus"]:::agent
+        A8B -- "green" --> S8
         S8 -. "API · config · packages" .-> A8S
     end
-    A7 --> S8
+    A7 --> A8B
     subgraph STEP9["9. Verify"]
-        S9["Test suites<br/>🧩 run-tests<br/>API E2E · UI E2E · bUnit"]:::skill
         A9["Browser walk (Bug / Feature)<br/>🤖 issue-verifier · Sonnet<br/>🧩 verify-feature"]:::agent
-        S9 --> A9
     end
-    S8 --> S9
+    S8 --> A9
     A9 --> U10{{"10. [You] result accepted?"}}:::user
-    S8 -- "build error" --> FIX
+    A8B -- "red" --> FIX
     A8S -. "findings" .-> FIX
-    S9 -- "red" --> FIX
     A9 -- "failed item" --> FIX
     U10 -- "no" --> FIX
     FIX(["↩ fixes: back to step 7, or 4 if the approach changes"]):::fix
     FIX --> A7
     subgraph STEP11["11. Result comment"]
         U11C{{"[You] yes, comment"}}:::user
-        A11["Comment text<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
+        A11["Issue comment<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
         U11T{{"[You] yes, tick the boxes"}}:::user
-        S11T["Acceptance boxes<br/>- [ ] → - [x]"]:::session
+        S11T["Acceptance boxes<br/>Set-AcceptanceChecks.ps1<br/>- [ ] → - [x]"]:::session
         U11C --> A11 --> U11T --> S11T
     end
     U10 -- "yes" --> U11C
@@ -224,8 +235,8 @@ For small issues the per-issue review stops cost more than the work. `/implement
 |---|---|
 | Stops | None by default. The batch halts on an unsettled question, an open blocker that is not earlier in the list, a closed issue, a plan of complexity `L`, a failed reproduction, or a failure two fixes do not resolve. `--review-plans` restores the plan-review stop |
 | Debatable decisions | Made, recorded in each plan's *Decisions* and reported together at the end |
-| Per issue | Plan, implementation, build and the affected tests, commit (starting the batch authorises the commits) |
-| Once at the end | Full suites, browser walk of every acceptance item, UI E2E, `security-reviewer` on the branch diff when the batch touches API, configuration, packages, the Web error pipeline or server-provided text; fixes go in further commits under their issue |
+| Per issue | Plan, implementation, `build-runner` (the build and the affected suites without UI E2E), commit through `skill-runner` (starting the batch authorises the commits) |
+| Once at the end | `build-runner` with every suite including UI E2E, browser walk of every acceptance item, `security-reviewer` on the branch diff when the batch touches API, configuration, packages, the Web error pipeline or server-provided text; fixes go in further commits under their issue |
 | Ship | One confirmation of the result; then comments, push and PR, each after the user's go-ahead, or without further prompts with `--ship`. The PR has one `Closes #<n>` line per issue |
 | Limits | At most 5 issues of complexity S or M; never amend or rewrite a commit of the batch |
 
@@ -241,11 +252,12 @@ For small issues the per-issue review stops cost more than the work. `/implement
 | `issue-developer` | Sonnet; Opus for complexity `L` | Implementing an approved plan is well-specified work; `L` (migration, contract ripple, validation/security logic, > ~8 files) gets the stronger model |
 | `issue-verifier` | Sonnet | Browser walks are mechanical but produce huge snapshots; isolating them keeps the main context small |
 | `security-reviewer` | Opus | Rare, and finding a real issue needs the strongest reasoning |
-| `skill-runner` | Haiku | Drafts commit messages, issue comments and PR text in a fixed format from compact facts; the main session still invokes the matching skill (`git-commit`, `github-issue`, `open-pr`) before acting |
+| `build-runner` | Haiku | The build-and-test gate of step 8: the build, bUnit, the Playwright API suite and the UI E2E suite. It returns the runners' summary lines verbatim with the first errors, so a retelling cannot distort the result; the main session spends one call on the gate, and the noisy build and test output stays out of its context. It checks independently of the implementer and fixes nothing |
+| `skill-runner` | Haiku | Carries out one already-approved action end to end by its skill: the issue comment (`github-issue`), the commit (`git-commit`) or the pull request (`open-pr`) — writes the text in English, runs the `git`/`gh` command, checks the result. The main session spends one call on the action and does not load the skill into its own context. It never pushes, edits the issue body or merges |
 | `architect` | Opus | Design questions on cross-layer changes |
 | `playwright-tester` | Sonnet | Test-authoring lane: explores the UI with Playwright MCP and writes specs |
 
-The main session keeps every gate: plan review, build, test runs, both confirmations, and every `git` / GitHub action. A subagent's "passed" is input, not proof. Copilot cannot override a subagent's model per call, so there an `L` plan is implemented in the main session. Agent parity between `.claude/agents` and `.github/agents` is manual.
+The main session keeps every gate: plan review, both confirmations, the user's go-ahead before every outward action, the push, the acceptance ticks and the CI check. The implementer's "passed" is input, not proof: `build-runner` builds and tests again, independently. Copilot cannot override a subagent's model per call, so there an `L` plan is implemented in the main session. Agent parity between `.claude/agents` and `.github/agents` is manual.
 
 ## Rules (`.claude/rules/`)
 
@@ -257,7 +269,7 @@ Repository-local skills (`_local.*`, invoked as `/<name>`):
 
 | Skill | Purpose |
 |---|---|
-| `github-issue` | Read an issue; post the result comment for the lane |
+| `github-issue` | Read an issue; post the result comment for the lane. Its script `Set-AcceptanceChecks.ps1` ticks the verified items of the acceptance section (`## Критерии приёмки`, `## Acceptance criteria` or `## Acceptance`) by their positions in one call; it changes nothing else in the issue and refuses to write if anything besides the marks would differ |
 | `run-api`, `run-tests` | Start the API; run the Playwright API suite |
 | `verify-feature` | Start API + Web and walk acceptance items in a browser |
 | `open-pr`, `git-commit` | Commit and pull-request conventions |
@@ -286,7 +298,7 @@ Claude Code asks each user once to approve the project servers in `.mcp.json`.
 
 `.claude/settings.json` is shared through git:
 
-- **allow** — build, tests, running the API and the Web app, `git` and `gh` reads, the shipping commands (`git add`/`commit`/`push`, `gh pr create`, `gh issue comment`/`edit`), the `_local.*` scripts, and the documentation MCP servers. Commit, push and PR stay gated by instruction: the assistant does them only when the user asks (`CLAUDE.md`);
+- **allow** — build, tests, running the API and the Web app, `git` and `gh` reads, the shipping commands (`git add`/`commit`/`push`, `gh pr create`, `gh issue comment`/`edit`), the `_local.*` scripts, and the documentation MCP servers. Commit, push and PR stay gated by instruction: the assistant does them only when the user asks (`CLAUDE.md`). The same holds for `Set-AcceptanceChecks.ps1`: it runs without a system prompt like every `_local.*` script, but it edits the issue body and so runs only after the user's "yes";
 - **ask** — merging, PR comments and edits, creating or closing issues, GitHub API writes, `dotnet ef database`;
 - **deny** — force-push, `reset --hard`, `git clean`, `rm -rf`, and reading `.env` or local `appsettings.*.local.json` secrets.
 

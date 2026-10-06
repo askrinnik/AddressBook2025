@@ -72,7 +72,8 @@ Workflow agents of `/implement-issue` (each pinned to the model that fits its st
 - **issue-developer** (Sonnet; the workflow passes Opus for `L`) — implements the approved plan with tests; never commits or posts.
 - **issue-verifier** (Sonnet) — reproduces a bug or walks the acceptance items in a real browser; returns an evidence table.
 - **security-reviewer** (Opus) — read-only security review of a change, run when API, configuration or packages change.
-- **skill-runner** (Haiku) — composes commit messages, issue comments and PR text from a named skill; never acts.
+- **build-runner** (Haiku) — runs the build, the bUnit tests and both Playwright suites and returns the runners' summary lines verbatim; never edits or fixes anything.
+- **skill-runner** (Haiku) — carries out one approved commit, issue comment or pull request end to end by following the matching skill (`git-commit`, `github-issue`, `open-pr`); never pushes and never acts beyond that one action. The caller gets the user's go-ahead first.
 
 Not translated to `.claude/agents` because a **Claude Code** built-in already covers the role (this is a Claude-Code judgement only — it says nothing about whether Copilot needs the corresponding `.github/agents` file): planning → the `Plan` agent; research → `Explore` / general-purpose; review → the `/code-review` skill; plus debugging/QA/design/regression roles handled inline or by general-purpose.
 

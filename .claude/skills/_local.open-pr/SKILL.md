@@ -3,8 +3,8 @@ name: open-pr
 description: >
   Ship a completed change for AddressBook2025 as a pull request: commit onto an
   issue branch (never main), include the plan file, and open a PR targeting main
-  via the GitHub MCP server. Use after the work is verified and the user agrees
-  to ship it.
+  with gh (Claude Code) or the GitHub MCP server (Copilot). Use after the work
+  is verified and the user agrees to ship it.
 ---
 
 # Open a Pull Request
@@ -27,20 +27,22 @@ Ship a verified change as a pull request into `main`. Use after the work is conf
 
 - Always include the plan copy (`docs/tasks/issue-<issue>-<short-slug>.md`) in the commit together with the code — never leave it untracked or out of the commit.
 - Compose every commit with the **`git-commit`** skill. This is a task commit (Case 1): first line is `#<issue> <issue title>` (the exact issue title), then a blank separator line, then the dash-prefixed action list.
-- If the calling workflow hands you a commit message already composed by the `skill-runner` agent, check it against these rules and use it as is; do not re-compose it.
 - When the work spans several commits, the first line is identical on every commit; only the action lines differ.
 - A **batch** (`/implement-issues`) has one commit per issue, each with that issue's own `#<issue> <title>` first line, on one branch named `<first>-<last>-<short-slug>`.
 
 ## Pull request
 
-- Open the PR against `main` via the GitHub MCP server.
+- Open the PR against `main`. In Claude Code write the description to a scratch file and run `gh pr create --base main --head <branch> --title "<title>" --body-file <file>`; in Copilot use the GitHub MCP server. Report the PR URL; that is the confirmation.
 - Title: `#<issue> <issue title>` (the exact issue title).
 - The description starts with `Closes #<issue>` so the issue closes on merge.
 - A batch PR has the title `#<a> #<b> #<c> <shared summary>` and one `Closes #<n>` line per issue at the start of the description.
-- If the calling workflow hands you a title and description already composed by the `skill-runner` agent, check them against these rules and use them as is.
 - Write the description to cover:
   - what the change does,
   - the non-obvious decisions or constraints a reviewer could not infer from the diff,
   - anything that deserves particular attention (a destructive path, a residual risk, a deviation from the plan),
   - how it was verified.
 - The full acceptance table and file list already live in the issue comment (see the `github-issue` skill), so do not repeat them in the PR description.
+
+## Inline or delegated
+
+Run this skill inline when the user asks for a PR directly. Inside `/implement-issue` and `/implement-issues` the commit is its own `skill-runner` call with the `git-commit` skill, and after the user's go-ahead and once the branch is pushed, *Pull request* — composing and opening the PR — runs in the `skill-runner` agent: the caller hands it this skill's name, the issue number(s) and exact title(s), the head branch, the posted issue comment (in a batch, where the comments follow the PR, a short summary per issue instead) and a scratch file path for the body; it opens the PR and returns its URL. Pushing and checking CI stay with the caller. If you *are* the skill-runner, do not delegate again.
