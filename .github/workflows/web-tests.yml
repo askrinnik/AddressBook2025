@@ -1,24 +1,47 @@
 name: Web Component Tests
 
 # Runs the src/AddressBook.Web.Tests bUnit/xUnit v3 suite. The tests render components in memory,
-# so the job needs only the .NET SDK: no database, no Node, no browser. Fires on any push
-# (like build.yml) and on demand.
+# so the job needs only the .NET SDK: no database, no Node, no browser. Fires on pull requests and
+# on pushes to main when the code under test or the build inputs change, and on demand.
 on:
+  pull_request:
+    paths:
+      - src/AddressBook.Web/**
+      - src/AddressBook.Web.Tests/**
+      - src/AddressBook.Contracts/**
+      - src/Directory.*.props
+      - global.json
+      - .config/dotnet-tools.json
+      - .github/workflows/web-tests.yml
   push:
+    branches: [main]
+    paths:
+      - src/AddressBook.Web/**
+      - src/AddressBook.Web.Tests/**
+      - src/AddressBook.Contracts/**
+      - src/Directory.*.props
+      - global.json
+      - .config/dotnet-tools.json
+      - .github/workflows/web-tests.yml
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# A newer run replaces an unfinished one on the same ref, except on main, where every merge is tested.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   web-tests:
     name: Web component tests (src/AddressBook.Web.Tests)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      # dorny/test-reporter creates the "Web component test results" check run.
+      checks: write
 
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -55,19 +78,31 @@ jobs:
           list-tests: failed
 
       - name: Build coverage report
-        # ReportGenerator turns the Cobertura file into an HTML report and a markdown summary
-        # limited to the AddressBook.Web assembly under test.
+        # ReportGenerator (version pinned in .config/dotnet-tools.json) turns the Cobertura file into
+        # an HTML report and a markdown summary limited to the AddressBook.Web assembly under test.
+        # It writes the reports first and then exits non-zero when line or branch coverage is below
+        # its minimum threshold, so the summary is published even for a failing run.
         run: |
-          dotnet tool install dotnet-reportgenerator-globaltool --version 5.5.11 --tool-path "$RUNNER_TEMP/tools"
-          "$RUNNER_TEMP/tools/reportgenerator" \
+          dotnet tool restore
+          status=0
+          dotnet tool run reportgenerator \
             "-reports:TestResults/**/*.cobertura.xml" \
             "-targetdir:coverage-report" \
             "-reporttypes:HtmlInline_AzurePipelines;MarkdownSummaryGithub" \
-            "-assemblyfilters:+AddressBook.Web"
-          cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+            "-assemblyfilters:+AddressBook.Web" \
+            "minimumCoverageThresholds:lineCoverage=85" \
+            "minimumCoverageThresholds:branchCoverage=70" || status=$?
+          if [ -f coverage-report/SummaryGithub.md ]; then
+            cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "$status" -ne 0 ]; then
+            echo "::error::Coverage of AddressBook.Web is below the minimum (lines 85 %, branches 70 %) or the report failed; see the coverage summary of this run."
+          fi
+          exit "$status"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ !cancelled() }}
         with:
           name: web-tests-coverage-report
           path: coverage-report/
