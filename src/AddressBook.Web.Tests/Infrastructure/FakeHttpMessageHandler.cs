@@ -21,6 +21,7 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
     private readonly Queue<Func<HttpRequestMessage, HttpResponseMessage>> _queue = new();
     private Func<HttpRequestMessage, HttpResponseMessage> _default = _ => new HttpResponseMessage(HttpStatusCode.OK);
     private readonly List<RecordedRequest> _requests = [];
+    private readonly List<HttpClient> _clients = [];
 
     public IReadOnlyList<RecordedRequest> Requests => _requests;
 
@@ -77,7 +78,9 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
     public HttpClient CreateClient(string baseAddress = DefaultBaseAddress, bool withProblemDetails = true)
     {
         HttpMessageHandler pipeline = withProblemDetails ? new ProblemDetailsHandler { InnerHandler = this } : this;
-        return new HttpClient(pipeline, disposeHandler: false) { BaseAddress = new Uri(baseAddress) };
+        var client = new HttpClient(pipeline, disposeHandler: false) { BaseAddress = new Uri(baseAddress) };
+        _clients.Add(client);
+        return client;
     }
 
     public AddressBookApiService CreateService(string baseAddress = DefaultBaseAddress, bool withProblemDetails = true) =>
@@ -90,6 +93,25 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
 
         var factory = _queue.Count > 0 ? _queue.Dequeue() : _default;
         return factory(request);
+    }
+
+    /// <summary>
+    /// Disposes the clients built by <see cref="CreateClient"/>. They do not own their handlers
+    /// (<c>disposeHandler: false</c>), so disposing a client never re-enters this handler.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            foreach (var client in _clients)
+            {
+                client.Dispose();
+            }
+
+            _clients.Clear();
+        }
+
+        base.Dispose(disposing);
     }
 
     private static HttpResponseMessage JsonResponse<T>(HttpStatusCode status, T value) =>

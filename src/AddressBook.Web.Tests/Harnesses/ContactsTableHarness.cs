@@ -40,7 +40,10 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
         cut.FindAll(".mud-table-empty-row .mud-typography")
             .Any(e => e.TextContent.Trim() == "No matching records found");
 
-    public bool IsLoading => cut.Markup.Contains("Loading...", StringComparison.Ordinal);
+    /// <summary>True when a text element of the table reads exactly "Loading..." (the <c>LoadingContent</c>).</summary>
+    public bool IsLoading =>
+        cut.FindAll(".mud-typography")
+            .Any(e => e.TextContent.Trim() == "Loading...");
 
     /// <summary>Row cell text: First Name, Last Name, Birthday (as displayed in the table).</summary>
     public (string FirstName, string LastName, string Birthday) RowText(int id)
@@ -84,10 +87,10 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
     /// Selects the page size via <c>MudSelect&lt;int&gt;</c> (its dropdown is a popover, unreliable in bUnit,
     /// so the value is set via the component's own <c>ValueChanged</c>).
     /// </summary>
-    public void SelectRowsPerPage(int size)
+    public async Task SelectRowsPerPageAsync(int size)
     {
         var select = cut.FindComponent<MudSelect<int>>();
-        cut.InvokeAsync(() => select.Instance.ValueChanged.InvokeAsync(size)).GetAwaiter().GetResult();
+        await cut.InvokeAsync(() => select.Instance.ValueChanged.InvokeAsync(size));
     }
 
     /// <summary>Waits until the initial/repeated table data load completes.</summary>

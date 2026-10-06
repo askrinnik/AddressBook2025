@@ -26,7 +26,7 @@ A decision a component makes gets a bUnit test, not a browser test; a validation
 ## Procedure
 
 1. **Find the requirement.** The issue's acceptance list and the code define the cases: required vs optional fields, boundary lengths and dates, success/error/empty/loading states.
-2. **Find the home.** The nearest existing spec or test class for the endpoint, page or component (`src/ApiTests/tests/contacts/*.spec.ts`, `src/AddressBook.Web.Tests/Tests/<area>/`, `src/UiTests/tests/`). Match its naming, fixtures and helpers.
+2. **Find the home.** The nearest existing spec or test class for the endpoint, page or component (`src/ApiTests/tests/contacts/*.spec.ts`, `src/AddressBook.Web.Tests/Specs/<area>/`, `src/UiTests/tests/`). Match its naming, fixtures and helpers.
 3. **Write the cases:** the success path, each failure path the code handles, and the boundaries. One behaviour per test; parametrise instead of copying (`[Theory]` in xUnit, a data table loop in Playwright).
 4. **Keep them isolated and deterministic:**
    - Playwright: data only through the factories (`contact.factory.ts`, `ContactFactory`), a unique run token in names, Create → Verify → Delete; the database is a shared SQL Server that is never reset, so never assert on absolute counts or "the first row". Web-first assertions only, never `waitForTimeout`.
