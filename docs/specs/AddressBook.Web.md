@@ -149,7 +149,7 @@ Source: `src/AddressBook.Web/AddressBookApiService.cs`
 |---|---|---|
 | GetFilteredContactsAsync | GET `contacts` or `contacts?search={term}` | Uses GetFromJsonAsync; adds `?search=` only for a non-blank term, percent-encoded with `Uri.EscapeDataString`; returns deserialized `GetFilteredContactsResponse?` |
 | DeleteContact | DELETE `contacts/{id}` | Throws HttpRequestException when status is non-success |
-| CreateContact | POST `contacts` | Sends CreateContactCommand; on success parses new ID from `Location` header segments; returns 0 on failure |
+| CreateContact | POST `contacts` | Sends CreateContactCommand; on success parses new ID from `Location` header segments; calls EnsureSuccessStatusCode first, so a non-success status throws; returns 0 when `Location` is missing or its last segment is not numeric |
 | GetContactByIdAsync | GET `contacts/{id}` | Returns null on 404; otherwise EnsureSuccessStatusCode + ReadFromJsonAsync<ContactModel> |
 | UpdateContact | PUT `contacts/{id}` | Sends UpdateContactCommand and calls EnsureSuccessStatusCode |
 

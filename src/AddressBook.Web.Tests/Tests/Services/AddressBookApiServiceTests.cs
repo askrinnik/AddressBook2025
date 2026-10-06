@@ -161,14 +161,12 @@ public class AddressBookApiServiceTests
         }
 
         [Fact]
-        public async Task NonSuccessWithoutProblemDetailsHandler_ReturnsZero()
+        public async Task NonSuccessWithoutProblemDetailsHandler_ThrowsHttpRequestException()
         {
             var handler = new FakeHttpMessageHandler().Respond(HttpStatusCode.BadRequest);
             var service = handler.CreateService(withProblemDetails: false);
 
-            var id = await service.CreateContact(ContactBuilder.New.Valid());
-
-            Assert.Equal(0, id);
+            await Assert.ThrowsAsync<HttpRequestException>(() => service.CreateContact(ContactBuilder.New.Valid()));
         }
 
         [Fact]
