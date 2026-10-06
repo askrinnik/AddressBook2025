@@ -11,6 +11,9 @@ public partial class Contacts
 {
     private string _searchString = String.Empty;
     private string _errorText = String.Empty;
+    // True while the top error banner shows a list-load failure, so only a successful load clears it
+    // and a banner raised by a failed delete survives the reload that follows the delete.
+    private bool _loadErrorShown;
     private MudMessageBox _confirmDeleteMessageBox = null!;
     private MudTable<ContactModel> _contactTable = null!;
 
@@ -47,12 +50,19 @@ public partial class Contacts
             var totalItems = response.TotalRows;
             var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
             _errorText = "";
+            if (_loadErrorShown)
+            {
+                Error.Clear();
+                _loadErrorShown = false;
+            }
+
             return new() { TotalItems = totalItems, Items = pagedData };
         }
         catch (Exception ex)
         {
             Error.ProcessError(ex.Message);
             _errorText = ex.Message;
+            _loadErrorShown = true;
             return new() { TotalItems = 0, Items = [] };
         }
     }
@@ -79,6 +89,8 @@ public partial class Contacts
         catch (Exception ex)
         {
             Error.ProcessError(DescribeDeleteFailure(ex));
+            // The banner now belongs to the delete failure, so the reload below must not clear it.
+            _loadErrorShown = false;
         }
 
         await _contactTable.ReloadServerData();

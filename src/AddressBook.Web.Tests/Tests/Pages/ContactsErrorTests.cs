@@ -55,4 +55,18 @@ public class ContactsErrorTests : MudTestContext
         Assert.Null(table.ErrorAlertText);
         Assert.Contains("invisible", table.ErrorAlertClass);
     }
+
+    [Fact]
+    public void SuccessfulSearchAfterFailure_ClearsErrorBanner()
+    {
+        ApiService.ThrowsOnGetContacts(new HttpRequestException(ErrorMessage));
+        var table = RenderTable();
+        Assert.Equal(ErrorMessage, table.ErrorBannerText);
+        ApiService.ReturnsContactsFor("nobody");
+
+        table.Search("nobody");
+
+        table.WaitForLoaded();
+        Assert.Null(table.ErrorBannerText);
+    }
 }

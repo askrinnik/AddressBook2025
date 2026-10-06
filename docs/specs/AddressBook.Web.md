@@ -197,6 +197,8 @@ Sources:
 - `ServerReload` catches exceptions and:
   - Sends message to cascading `Error` component via `Error.ProcessError(ex.Message)`.
   - Stores message in `_errorText` and shows it in inline `MudAlert` inside table no-records area.
+- A successful `ServerReload` that follows a failed one resets `_errorText` and calls `Error.Clear()`, so both the inline alert and the top banner disappear.
+- A banner raised by a failed delete is not cleared by the table reload that follows the delete.
 - Contacts page follows code-behind pattern: markup in `.razor`, logic in partial class `.razor.cs`.
 
 ## 4.3 Create page (`/create-contact`)
