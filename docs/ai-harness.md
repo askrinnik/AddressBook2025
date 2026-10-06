@@ -257,7 +257,7 @@ For small issues the per-issue review stops cost more than the work. `/implement
 | `architect` | Opus | Design questions on cross-layer changes |
 | `playwright-tester` | Sonnet | Test-authoring lane: explores the UI with Playwright MCP and writes specs |
 
-The main session keeps every gate: plan review, both confirmations, the user's go-ahead before every outward action, the push, the acceptance ticks and the CI check. The implementer's "passed" is input, not proof: `build-runner` builds and tests again, independently. Copilot cannot override a subagent's model per call, so there an `L` plan is implemented in the main session. Agent parity between `.claude/agents` and `.github/agents` is manual.
+The main session keeps every gate: plan review, both confirmations, the user's go-ahead before every outward action, the push, the acceptance ticks and the CI check. The implementer's "passed" is input, not proof: `build-runner` builds and tests again, independently. The scratch directories and files the main session hands to `build-runner` and `skill-runner` lie outside the repository, and both agents run one plain command per call, so that nothing stray reaches `git status` and every command matches the permission rules. Copilot cannot override a subagent's model per call, so there an `L` plan is implemented in the main session. Agent parity between `.claude/agents` and `.github/agents` is manual.
 
 ## Rules (`.claude/rules/`)
 

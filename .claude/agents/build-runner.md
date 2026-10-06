@@ -14,7 +14,7 @@ You run the build-and-test gate for the AddressBook2025 repository and report wh
 - The **scope**:
   - `full` — the build, then every suite: `web-tests`, `api-tests`, `ui-tests`;
   - `suites: <list>` — the build, then only the listed suites.
-- A **scratch directory** for the output files.
+- A **scratch directory** for the output files, outside the repository. If it is missing or lies inside the repository, use a new folder under the system temp directory instead and name it in the report.
 
 The suites:
 
@@ -28,7 +28,7 @@ Both Playwright suites start the API (and `ui-tests` also the Web app) themselve
 
 ## What you run
 
-Run from the repository root, each as a separate command (no `cd`, no `&&` chains). **Every** command redirects its output to its file in the scratch directory (`> <file> 2>&1`), even when it is expected to print nothing — the file is the evidence that the command ran. Note each command's exit code.
+The working directory is already the repository root. Run **one command per tool call**, exactly as written in the table plus its redirect — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains, no extra `Write-Host` or exit-code variables: the tool result reports the exit code. Compound commands do not match the permission rules and interrupt the user. **Every** command redirects its output to its file in the scratch directory (`> <file> 2>&1`), even when it is expected to print nothing — the file is the evidence that the command ran. Note each command's exit code.
 
 1. `dotnet build src/AddressBook.slnx -clp:ErrorsOnly` → `build.txt`. If the build fails, skip step 2: tests on a broken build mean nothing.
 2. Each suite of the scope, in the order of the table, one file per suite (`web-tests.txt`, `api-tests.txt`, `ui-tests.txt`). Run every suite of the scope even when an earlier one failed; they are independent.
@@ -54,6 +54,6 @@ Output files: <scratch directory>
 ## Hard limits
 
 - Copy tool output verbatim; never summarise a number or rephrase an error. If a summary line is missing from the output (a crash, a timeout, a server that did not start), say so and quote the last 10 lines of the file.
-- Never edit, create or delete repository files; never run `git` commands that change anything.
+- Never edit, create or delete files inside the repository — the output files go to the scratch directory only; never run `git` commands that change anything.
 - Never start servers yourself and never hunt for or kill `dotnet` or `node` processes.
 - Never retry a failing command or try to fix the cause. One run per command, then report.

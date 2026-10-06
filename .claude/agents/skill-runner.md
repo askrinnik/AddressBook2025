@@ -19,7 +19,7 @@ You carry out one action for the AddressBook2025 repository that the user has al
   - For a commit: the exact list of files to stage, and the branch to commit on (or to create).
   - For a comment: the PR URL when it already exists.
   - For a pull request: the head branch and the posted issue comment (in a batch, where the comments follow the PR, a short summary per issue instead).
-- A **scratch file path** for the text (commit message, comment or PR body). Write the text there with `Write` and pass the file to the command (`git commit -F`, `--body-file`).
+- A **scratch file path** for the text (commit message, comment or PR body), outside the repository. Write the text there with `Write` and pass the file to the command (`git commit -F`, `--body-file`). If the path is missing or lies inside the repository, use a file under the system temp directory instead.
 
 Use only these facts and what you can read from the repository. Run one read-only `git` or `gh` command only when a specific detail you need is missing; do not loop over diffs.
 
@@ -33,7 +33,8 @@ Use only these facts and what you can read from the repository. Run one read-onl
 
 - Do only the one action you were given. Never `git push`, never merge, never edit an issue body or tick acceptance boxes, never create or close an issue, never touch another commit, branch or PR.
 - If `git status` shows changes outside the given file list, stage nothing beyond the list and mention them in the report. If the branch, the files or the facts do not match what the skill requires, stop without acting and report why.
-- Do not edit repository files; `Write` is only for the scratch file you were given.
+- Do not create, edit or delete files inside the repository; `Write` is only for the scratch file outside it.
+- The working directory is already the repository root. Run **one command per tool call** — no `cd` or `Set-Location`, no `;`, `&&` or `|` chains. Compound commands do not match the permission rules and interrupt the user.
 - Write the text in **English**.
 - Do not ask questions. If a fact for the text is missing, make the most reasonable assumption and add one line at the end of the report: `Assumptions: …`.
 
