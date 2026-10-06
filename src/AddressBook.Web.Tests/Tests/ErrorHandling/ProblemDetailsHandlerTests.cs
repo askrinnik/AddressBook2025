@@ -90,6 +90,34 @@ public class ProblemDetailsHandlerTests
         Assert.Equal("Not Found", ex.ProblemDetails.Title);
     }
 
+    [Theory]
+    [InlineData("{}")]
+    [InlineData("""{"message":"upstream failed"}""")]
+    [InlineData("""{"title":"  ","status":502}""")]
+    public async Task JsonObjectWithoutTitle_TakesTitleFromResponse(string body)
+    {
+        var handler = new FakeHttpMessageHandler().RespondBody(HttpStatusCode.BadGateway, body, "application/json");
+
+        var ex = await SendAsync(handler);
+
+        Assert.Equal(502, ex.ProblemDetails!.Status);
+        Assert.Equal("Bad Gateway", ex.ProblemDetails.Title);
+    }
+
+    [Fact]
+    public async Task OversizedBody_ThrowsWithStatusAndReasonPhrase()
+    {
+        var oversizedDetail = new string('x', 200 * 1024);
+        var body = $$"""{"title":"Server Error","status":500,"detail":"{{oversizedDetail}}"}""";
+        var handler = new FakeHttpMessageHandler().RespondBody(HttpStatusCode.InternalServerError, body, "application/problem+json");
+
+        var ex = await SendAsync(handler);
+
+        Assert.Equal(500, ex.ProblemDetails!.Status);
+        Assert.Equal("Internal Server Error", ex.ProblemDetails.Title);
+        Assert.Null(ex.ProblemDetails.Detail);
+    }
+
     [Fact]
     public async Task JsonObjectWithoutStatus_TakesStatusFromResponse()
     {

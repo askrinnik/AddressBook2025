@@ -4,6 +4,7 @@
 @using AddressBook.Web.Models
 @inject NavigationManager Navigation
 @inject IAddressBookApiService AddressBookApiService
+@inject ILogger<EditContact> Logger
 
 <PageTitle>Edit Contact</PageTitle>
 
@@ -55,6 +56,8 @@ else
     private bool _notFound;
     private string? _loadError;
 
+    private const string LoadFailedMessage = "Could not load the contact.";
+
     protected override async Task OnInitializedAsync()
     {
         ContactModel? contact;
@@ -64,12 +67,15 @@ else
         }
         catch (ProblemDetailsException ex)
         {
-            _loadError = ex.ProblemDetails?.Detail ?? ex.ProblemDetails?.Title ?? ex.Message;
+            _loadError = ex.ProblemDetails?.Detail ?? ex.ProblemDetails?.Title ?? LoadFailedMessage;
+            Logger.LogError(ex, "Loading contact {ContactId} failed", Id);
             return;
         }
         catch (Exception ex)
         {
-            _loadError = ex.Message;
+            // Runtime and browser messages ("TypeError: Failed to fetch") mean nothing to the user; they go to the log.
+            _loadError = LoadFailedMessage;
+            Logger.LogError(ex, "Loading contact {ContactId} failed", Id);
             return;
         }
 

@@ -228,7 +228,7 @@ Source: `src/AddressBook.Web/Pages/EditContact.razor`
 - If contact is not found, sets `_notFound = true` and renders:
   - `MudAlert` warning
   - `Back to Contacts` button
-- If loading fails with any other error, renders an error `MudAlert` (problem detail, else title, else exception message) and the `Back to Contacts` button.
+- If loading fails with any other error, renders an error `MudAlert` and the `Back to Contacts` button. The message is the problem detail, else the title, else "Could not load the contact."; runtime exceptions show the generic text and are logged through `ILogger`.
 - Edit form uses the same structure as create page (MudCard + two text fields + date picker + ValidationSummary).
 - Save flow validates and calls `UpdateContact`, then navigates to `/contacts`.
 - Error handling mirrors create page:
@@ -245,9 +245,9 @@ Folder: `src/AddressBook.Web/ErrorHandling`
 - Custom `DelegatingHandler` in the typed HttpClient pipeline.
 - For success responses: returns response unchanged.
 - For non-success responses:
-  - reads body as string,
+  - reads at most 64 KB of the body as a string (a larger body is truncated, so it does not parse),
   - converts string to `ClientProblemDetails` via extension,
-  - when the body is empty, not JSON, or not a problem object (gateway HTML, plain text, 401/405 without body), builds a fallback `ClientProblemDetails` with `Title` = response reason phrase and `Status` = response status code; a parsed problem without `status` also takes the response status,
+  - when the body is empty, not JSON, or not a problem object (gateway HTML, plain text, 401/405 without body), builds a fallback `ClientProblemDetails` with `Title` = response reason phrase and `Status` = response status code; a parsed problem without a `title` or `status` also takes them from the response,
   - always throws `ProblemDetailsException`, never `JsonException`.
 
 ### 5.2 ClientProblemDetails.cs
@@ -275,7 +275,7 @@ ProblemDetailsException(ClientProblemDetails? problemDetails)
 
 - `GetErrors()` extension on `ClientProblemDetails`:
   - reads `errors` from `Extensions`,
-  - deserializes into `Dictionary<string, string[]>`.
+  - deserializes into `Dictionary<string, string[]>`; an `errors` member of another shape yields an empty dictionary.
 - `ToProblemDetails()` extension on `string`:
   - deserializes JSON text into `ClientProblemDetails` using case-insensitive options.
 

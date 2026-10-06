@@ -45,13 +45,23 @@ public class EditContactLoadTests : MudTestContext
     }
 
     [Fact]
-    public void Render_NetworkError_ShowsExceptionMessage()
+    public void Render_NetworkError_ShowsGenericMessage_NotExceptionText()
     {
-        ApiService.ThrowsOnGetContact(ContactId, new HttpRequestException("Network down"));
+        ApiService.ThrowsOnGetContact(ContactId, new HttpRequestException("TypeError: Failed to fetch"));
 
         var cut = RenderPage();
 
-        Assert.Equal("Network down", cut.Find(".mud-alert").TextContent.Trim());
+        Assert.Equal("Could not load the contact.", cut.Find(".mud-alert").TextContent.Trim());
+    }
+
+    [Fact]
+    public void Render_ProblemDetailsWithoutBody_ShowsGenericMessage()
+    {
+        ApiService.ThrowsOnGetContact(ContactId, new ProblemDetailsException(null));
+
+        var cut = RenderPage();
+
+        Assert.Equal("Could not load the contact.", cut.Find(".mud-alert").TextContent.Trim());
     }
 
     [Fact]

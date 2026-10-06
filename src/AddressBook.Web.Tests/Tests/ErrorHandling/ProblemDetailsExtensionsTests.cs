@@ -20,6 +20,17 @@ public class ProblemDetailsExtensionsTests
         Assert.Empty(problem.GetErrors());
     }
 
+    [Theory]
+    [InlineData("""{"status":400,"errors":"Bad input"}""")]
+    [InlineData("""{"status":400,"errors":["Bad input"]}""")]
+    [InlineData("""{"status":400,"errors":{"FirstName":"Required"}}""")]
+    public void GetErrors_WithErrorsOfUnexpectedShape_ReturnsEmpty(string body)
+    {
+        var problem = body.ToProblemDetails()!;
+
+        Assert.Empty(problem.GetErrors());
+    }
+
     [Fact]
     public void GetErrors_WithoutAnyExtensions_ReturnsEmpty()
     {
