@@ -157,7 +157,7 @@ The test-suite run is yours; the browser walk goes to `issue-verifier`, which fo
 
 ## 11. Post the result comment
 
-**Delegate the text, keep the action.** The commit message, the issue comment and the PR text are composed by `skill-runner` from the compact facts you already hold (issue number and exact title, lane, `git diff --stat` with one line per changed file, the acceptance table or root cause, build and test results, and for the PR the posted comment). You post, commit, push and open the PR yourself, each after my go-ahead.
+**Delegate the text, keep the action.** The commit message, the issue comment and the PR text may be drafted by `skill-runner` from the compact facts you already hold (issue number and exact title, lane, `git diff --stat` with one line per changed file, the acceptance table or root cause, build and test results, and for the PR the posted comment). Drafting does not replace the skill: before each action you invoke the matching skill yourself, in this session (`git-commit` before a commit, `github-issue` before a comment, `open-pr` before a PR — the `Skill` tool in Claude Code). You post, commit, push and open the PR yourself, each after my go-ahead.
 
 Once confirmed, use the **`github-issue`** skill to post the comment for the lane on issue `<issue>` (Bug: *Root Cause / Resolution / Verification*; Feature and Test-authoring: *Implementation / Acceptance Criteria / Verification*) — English, factual, based only on what was actually done; no screenshots or local paths.
 
@@ -169,7 +169,7 @@ Do not commit, push, or open a PR without my explicit go-ahead — each is its o
 
 - **Re-sync the base.** `git fetch origin`; if `origin/main` moved since step 0, `git pull --ff-only` (the uncommitted changes travel with you) and re-run steps 8–9 so nothing regressed against the newer base. Otherwise say it is unchanged.
 - **Tick the plan.** Update the checklist in `docs/tasks/issue-<issue>-<short-slug>.md` to match the work.
-- **Commit.** Ask me to confirm; only then create the commit(s) with the message `skill-runner` composed by the `git-commit` skill, onto branch `<issue>-<short-slug>` (never `main`), including the plan file.
+- **Commit.** Ask me to confirm; only then invoke the `git-commit` skill and create the commit(s) with it — one `-m` with real newlines or `-F <file>`, never several `-m` — onto branch `<issue>-<short-slug>` (never `main`), including the plan file. Check `git log -1 --format=%B` against the skill's format afterwards and fix a deviation with `git commit --amend` before pushing.
 - **Push.** Ask me to confirm; only then push the branch.
 - **Open the pull request.** Ask me to confirm; only then use the **`open-pr`** skill to open the PR into `main` with the title and description `skill-runner` composed. Report the PR URL.
 - **CI.** Check once with `gh pr checks <pr>`. If checks are still running, say so — the desktop app can watch CI; do not poll in a loop. If a check fails, report the failing job and its first error, and fix it on the same branch after I agree.

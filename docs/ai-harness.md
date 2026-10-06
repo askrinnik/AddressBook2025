@@ -49,7 +49,7 @@ One command takes any issue end to end. The issue's labels select the **lane**: 
 | 8 | Build, review of added comments, `security-reviewer` when API, configuration or packages change |
 | 9 | Test suites run by the main session; browser walk of every acceptance item (or the repro) by `issue-verifier` |
 | 10 | Result confirmed by the user |
-| 11 | Issue comment for the lane (`skill-runner` composes, the main session posts); verified acceptance boxes ticked in the issue body |
+| 11 | Issue comment for the lane (`skill-runner` may draft, the main session invokes `github-issue` and posts); verified acceptance boxes ticked in the issue body |
 | 12 | Base re-synced, branch `<n>-<slug>` created, commit / push / PR — each after the user's go-ahead; one CI check |
 | 13 | Next issue recommended: merge the PR → new session → `/implement-issue <next>` |
 
@@ -80,7 +80,7 @@ For small issues the per-issue review stops cost more than the work. `/implement
 | `issue-developer` | Sonnet; Opus for complexity `L` | Implementing an approved plan is well-specified work; `L` (migration, contract ripple, validation/security logic, > ~8 files) gets the stronger model |
 | `issue-verifier` | Sonnet | Browser walks are mechanical but produce huge snapshots; isolating them keeps the main context small |
 | `security-reviewer` | Opus | Rare, and finding a real issue needs the strongest reasoning |
-| `skill-runner` | Haiku | Commit messages, issue comments and PR text follow a fixed format from compact facts |
+| `skill-runner` | Haiku | Drafts commit messages, issue comments and PR text in a fixed format from compact facts; the main session still invokes the matching skill (`git-commit`, `github-issue`, `open-pr`) before acting |
 | `architect` | Opus | Design questions on cross-layer changes |
 | `playwright-tester` | Sonnet | Test-authoring lane: explores the UI with Playwright MCP and writes specs |
 
