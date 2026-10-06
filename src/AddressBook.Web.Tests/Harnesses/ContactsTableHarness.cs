@@ -93,6 +93,15 @@ public sealed class ContactsTableHarness(IRenderedComponent<Contacts> cut, IRend
         await cut.InvokeAsync(() => select.Instance.ValueChanged.InvokeAsync(size));
     }
 
+    /// <summary>Pager range text as displayed, for example "1-10 of 12".</summary>
+    public string PagerInfo => cut.Find(".mud-table-page-number-information").TextContent.Trim();
+
+    /// <summary>Click on the pager's "Next page" button; the new page loads asynchronously.</summary>
+    public void NextPage() => cut.Find("button[aria-label=\"Next page\"]").Click();
+
+    /// <summary>Click on the pager's "Previous page" button; the new page loads asynchronously.</summary>
+    public void PreviousPage() => cut.Find("button[aria-label=\"Previous page\"]").Click();
+
     /// <summary>Waits until the initial/repeated table data load completes.</summary>
     public ContactsTableHarness WaitForLoaded()
     {

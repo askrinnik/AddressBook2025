@@ -108,6 +108,23 @@ public class ContactsTableHarnessTests : MudTestContext
     }
 
     [Fact]
+    public void NextPageAndPreviousPage_MoveBetweenPages_AndPagerInfoFollows()
+    {
+        var contacts = ContactBuilder.Existing.List(12);
+        ApiService.ReturnsContacts(contacts.ToArray());
+        var table = RenderTable();
+        Assert.Equal("1-10 of 12", table.PagerInfo);
+
+        table.NextPage();
+        table.WaitForLoaded();
+        Assert.Equal("11-12 of 12", table.PagerInfo);
+
+        table.PreviousPage();
+        table.WaitForLoaded();
+        Assert.Equal("1-10 of 12", table.PagerInfo);
+    }
+
+    [Fact]
     public async Task RowsPerPage_DefaultsAndCanBeChanged()
     {
         ApiService.ReturnsContacts(ContactBuilder.Existing.List(2).ToArray());
