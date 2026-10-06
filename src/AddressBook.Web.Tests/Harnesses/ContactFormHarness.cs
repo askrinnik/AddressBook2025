@@ -23,6 +23,9 @@ public sealed class ContactFormHarness(IRenderedComponent<IComponent> cut)
 
     public DateTime? Birthday => cut.FindComponent<MudDatePicker>().Instance.Date;
 
+    /// <summary>The latest date the birthday picker offers (the <c>MaxDate</c> of the <see cref="MudDatePicker"/>).</summary>
+    public DateTime? BirthdayMaxDate => cut.FindComponent<MudDatePicker>().Instance.MaxDate;
+
     public bool IsSubmitDisabled => cut.FindByTestId(TestIds.ContactFormSubmit).HasAttribute("disabled");
 
     public string SubmitText => cut.FindByTestId(TestIds.ContactFormSubmit).TextContent.Trim();

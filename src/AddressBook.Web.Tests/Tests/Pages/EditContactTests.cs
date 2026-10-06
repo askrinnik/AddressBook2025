@@ -7,6 +7,10 @@ namespace AddressBook.Web.Tests.Tests.Pages;
 
 public class EditContactTests : MudTestContext
 {
+    private const string FirstNameTooLong = "The field First name must be a string with a maximum length of 30.";
+    private const string LastNameTooLong = "The field Last name must be a string with a maximum length of 30.";
+    private const string BirthdayInFutureMessage = "Birthday cannot be in the future";
+
     private IRenderedComponent<EditContact> _cut = null!;
 
     private static string PathFor(int id) => $"/edit-contact/{id}";
@@ -96,6 +100,130 @@ public class EditContactTests : MudTestContext
         Assert.Equal(PathFor(contact.Id), CurrentPath);
         Assert.Contains("The First name field is required.", form.ValidationMessages);
         Assert.Contains("The Last name field is required.", form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_LoadedFirstName31Chars_BlocksSubmit_AndShowsLengthMessage()
+    {
+        var contact = ContactBuilder.Existing.FirstName31Chars();
+        var form = RenderForm(contact);
+
+        form.Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Equal(PathFor(contact.Id), CurrentPath);
+        Assert.Contains(FirstNameTooLong, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_LoadedBirthdayInFuture_BlocksSubmit_AndShowsBirthdayMessage()
+    {
+        var contact = ContactBuilder.Existing.BirthdayInFuture();
+        var form = RenderForm(contact);
+
+        form.Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Equal(PathFor(contact.Id), CurrentPath);
+        Assert.Contains(BirthdayInFutureMessage, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_FirstName30Chars_UpdatesContact()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+        var edited = ContactBuilder.New.FirstName30Chars();
+
+        form.Fill(edited).Submit();
+
+        ApiService.Received(1).UpdateContact(contact.Id, Arg.Is<CreateContactModel>(m => m.FirstName == edited.FirstName),
+            Arg.Any<CancellationToken>());
+        Assert.Equal("/contacts", CurrentPath);
+    }
+
+    [Fact]
+    public void Submit_LastName30Chars_UpdatesContact()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+        var edited = ContactBuilder.New.LastName30Chars();
+
+        form.Fill(edited).Submit();
+
+        ApiService.Received(1).UpdateContact(contact.Id, Arg.Is<CreateContactModel>(m => m.LastName == edited.LastName),
+            Arg.Any<CancellationToken>());
+        Assert.Equal("/contacts", CurrentPath);
+    }
+
+    [Fact]
+    public void Submit_FirstName31Chars_BlocksSubmit_AndShowsLengthMessage()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+
+        form.Fill(ContactBuilder.New.FirstName31Chars()).Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Contains(FirstNameTooLong, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_LastName31Chars_BlocksSubmit_AndShowsLengthMessage()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+
+        form.Fill(ContactBuilder.New.LastName31Chars()).Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Contains(LastNameTooLong, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_WhitespaceNames_BlocksSubmit_AndShowsRequiredMessages()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+
+        form.SetFirstName("   ").SetLastName("   ").Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Contains("The First name field is required.", form.ValidationMessages);
+        Assert.Contains("The Last name field is required.", form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Submit_BirthdayToday_UpdatesContact()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+
+        form.Fill(ContactBuilder.New.BirthdayToday()).Submit();
+
+        ApiService.Received(1).UpdateContact(contact.Id, Arg.Is<CreateContactModel>(m => m.Birthday == DateTime.Today),
+            Arg.Any<CancellationToken>());
+        Assert.Equal("/contacts", CurrentPath);
+    }
+
+    [Fact]
+    public void Submit_BirthdayInFuture_BlocksSubmit_AndShowsBirthdayMessage()
+    {
+        var contact = ContactBuilder.Existing.Valid();
+        var form = RenderForm(contact);
+
+        form.Fill(ContactBuilder.New.BirthdayInFuture()).Submit();
+
+        ApiService.DidNotReceiveUpdate();
+        Assert.Contains(BirthdayInFutureMessage, form.ValidationMessages);
+    }
+
+    [Fact]
+    public void Render_BirthdayPickerMaxDate_IsToday()
+    {
+        var form = RenderForm(ContactBuilder.Existing.Valid());
+
+        Assert.Equal(DateTime.Today, form.BirthdayMaxDate);
     }
 
     [Fact]

@@ -86,6 +86,16 @@ export class DatePicker {
       .click();
   }
 
+  /** Day buttons of the displayed month that the picker lets the user choose. */
+  get enabledDays(): Locator {
+    return this.page.locator('button.mud-day:not(.mud-hidden):not([disabled])');
+  }
+
+  /** Day buttons of the displayed month that the picker refuses (after `MaxDate`). */
+  get disabledDays(): Locator {
+    return this.page.locator('button.mud-day:not(.mud-hidden)[disabled]');
+  }
+
   /** The displayed value (`M/D/YYYY`), or `''` when unset. */
   async value(): Promise<string> {
     return this.input.inputValue();

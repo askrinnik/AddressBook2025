@@ -219,6 +219,15 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
   - Catches `ProblemDetailsException`; maps server field errors into `ValidationMessageStore`.
   - Catches generic exceptions and adds general validation error.
 - `CreateContactModel` carries `[Display(Name = "First name")]` and `[Display(Name = "Last name")]`, so the required-field messages read `The First name field is required.` and `The Last name field is required.`. The field labels are set explicitly and match these names; server-error mapping still uses the property names `FirstName` / `LastName`.
+- Client validation follows the API rules (`CreateContactCommandValidator`, `UpdateContactCommandValidator`), so an invalid form never calls the service:
+
+  | Field | Rule | Message |
+  |---|---|---|
+  | First name, Last name | not empty or whitespace-only (`[Required]`) | `The First name field is required.` / `The Last name field is required.` |
+  | First name, Last name | at most 30 characters (`[StringLength(30)]`) | `The field First name must be a string with a maximum length of 30.` (same form for Last name) |
+  | Birthday | not later than today (`[NotInFuture]`) | `Birthday cannot be in the future` |
+
+- The `MudDatePicker` has `MaxDate = DateTime.Today`, so the picker disables future days. `MaxDate` limits the picker only; `[NotInFuture]` still validates a value that arrives another way.
 - Cancel button navigates to `/contacts`.
 - `_isLoading` disables submit button while API call is in progress.
 
@@ -238,6 +247,7 @@ Source: `src/AddressBook.Web/Pages/EditContact.razor`
 - Error handling mirrors create page:
   - `ProblemDetailsException` -> field-level mapping
   - generic exception -> general message
+- Uses the same client validation rules and `MaxDate` as the create page. A loaded contact that already breaks a rule cannot be saved unchanged; the field shows the message.
 - Includes Save and Cancel buttons.
 
 ## 5. Error Handling Subsystem
@@ -293,9 +303,9 @@ Used by both create and edit pages.
 
 | Property | Type | Notes |
 |---|---|---|
-| FirstName | string | `[Required]` |
-| LastName | string | `[Required]` |
-| Birthday | DateTime? | Converted to `DateOnly?` when sending command to API |
+| FirstName | string | `[Required]`, `[StringLength(30)]` |
+| LastName | string | `[Required]`, `[StringLength(30)]` |
+| Birthday | DateTime? | `[NotInFuture]` (`Models/NotInFutureAttribute.cs`, null is valid); converted to `DateOnly?` when sending command to API |
 
 ## 7. Layout and Shared UI
 
