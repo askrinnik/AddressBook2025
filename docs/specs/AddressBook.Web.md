@@ -149,7 +149,7 @@ Source: `src/AddressBook.Web/AddressBookApiService.cs`
 |---|---|---|
 | GetFilteredContactsAsync | GET `contacts` or `contacts?search={term}` | Uses GetFromJsonAsync; adds `?search=` only for a non-blank term, percent-encoded with `Uri.EscapeDataString`; returns deserialized `GetFilteredContactsResponse?` |
 | DeleteContact | DELETE `contacts/{id}` | Throws HttpRequestException when status is non-success |
-| CreateContact | POST `contacts` | Sends CreateContactCommand; on success parses new ID from `Location` header segments; returns 0 on failure |
+| CreateContact | POST `contacts` | Sends CreateContactCommand; on success parses new ID from `Location` header segments; calls EnsureSuccessStatusCode first, so a non-success status throws; returns 0 when `Location` is missing or its last segment is not numeric |
 | GetContactByIdAsync | GET `contacts/{id}` | Returns null on 404; otherwise EnsureSuccessStatusCode + ReadFromJsonAsync<ContactModel> |
 | UpdateContact | PUT `contacts/{id}` | Sends UpdateContactCommand and calls EnsureSuccessStatusCode |
 
@@ -224,9 +224,11 @@ Source: `src/AddressBook.Web/Pages/EditContact.razor`
 
 - Route includes integer parameter: `[Parameter] public int Id { get; set; }`.
 - `OnInitializedAsync` loads existing contact with `GetContactByIdAsync(Id, CancellationToken.None)`.
+- While the contact is loading, renders an indeterminate `MudProgressLinear`.
 - If contact is not found, sets `_notFound = true` and renders:
   - `MudAlert` warning
   - `Back to Contacts` button
+- If loading fails with any other error, renders an error `MudAlert` and the `Back to Contacts` button. The message is the problem detail, else the title, else "Could not load the contact."; runtime exceptions show the generic text and are logged through `ILogger`.
 - Edit form uses the same structure as create page (MudCard + two text fields + date picker + ValidationSummary).
 - Save flow validates and calls `UpdateContact`, then navigates to `/contacts`.
 - Error handling mirrors create page:
@@ -243,9 +245,10 @@ Folder: `src/AddressBook.Web/ErrorHandling`
 - Custom `DelegatingHandler` in the typed HttpClient pipeline.
 - For success responses: returns response unchanged.
 - For non-success responses:
-  - reads body as string,
+  - reads at most 64 KB of the body as a string (a larger body is truncated, so it does not parse),
   - converts string to `ClientProblemDetails` via extension,
-  - throws `ProblemDetailsException`.
+  - when the body is empty, not JSON, or not a problem object (gateway HTML, plain text, 401/405 without body), builds a fallback `ClientProblemDetails` with `Title` = response reason phrase and `Status` = response status code; a parsed problem without a `title` or `status` also takes them from the response,
+  - always throws `ProblemDetailsException`, never `JsonException`.
 
 ### 5.2 ClientProblemDetails.cs
 
@@ -272,7 +275,7 @@ ProblemDetailsException(ClientProblemDetails? problemDetails)
 
 - `GetErrors()` extension on `ClientProblemDetails`:
   - reads `errors` from `Extensions`,
-  - deserializes into `Dictionary<string, string[]>`.
+  - deserializes into `Dictionary<string, string[]>`; an `errors` member of another shape yields an empty dictionary.
 - `ToProblemDetails()` extension on `string`:
   - deserializes JSON text into `ClientProblemDetails` using case-insensitive options.
 

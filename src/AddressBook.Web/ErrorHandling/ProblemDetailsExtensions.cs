@@ -24,7 +24,15 @@ public static  class ProblemDetailsExtensions
         if (problemDetails.Extensions is null || !problemDetails.Extensions.TryGetValue("errors", out var errors))
             return [];
 
-        return JsonSerializer.Deserialize<Dictionary<string, string[]>>(errors.ToString()!) ?? [];
+        // A proxy or another service may send an `errors` member in a different shape; treat it as no field errors.
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<string, string[]>>(errors.ToString()!) ?? [];
+        }
+        catch (JsonException)
+        {
+            return [];
+        }
     }
 
     public static ClientProblemDetails? ToProblemDetails(this string content) =>

@@ -37,14 +37,11 @@ public class AddressBookApiService(HttpClient httpClient) : IAddressBookApiServi
         };
         var response = await httpClient.PostAsJsonAsync("contacts", command);
 
-        if (response.IsSuccessStatusCode)
-        {
-            var idString = response.Headers.Location?.Segments.LastOrDefault();
-            var id = int.TryParse(idString, out var parsedId) ? parsedId : 0;
-            return id;
-        }
+        response.EnsureSuccessStatusCode();
 
-        return 0;
+        var idString = response.Headers.Location?.Segments.LastOrDefault();
+        var id = int.TryParse(idString, out var parsedId) ? parsedId : 0;
+        return id;
     }
 
     public async Task<ContactModel?> GetContactByIdAsync(int id, CancellationToken cancellationToken)

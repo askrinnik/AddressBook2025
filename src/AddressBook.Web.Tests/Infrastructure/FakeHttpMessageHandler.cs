@@ -54,6 +54,13 @@ public sealed class FakeHttpMessageHandler : HttpMessageHandler
         IDictionary<string, string[]>? errors = null) =>
         Respond(_ => ProblemResponse(status, title, detail, errors));
 
+    /// <summary>A response with an arbitrary body and content type, e.g. an HTML error page from a gateway.</summary>
+    public FakeHttpMessageHandler RespondBody(HttpStatusCode status, string body, string contentType) =>
+        Respond(_ => new HttpResponseMessage(status)
+        {
+            Content = new StringContent(body, Encoding.UTF8, new MediaTypeHeaderValue(contentType))
+        });
+
     /// <summary>Adds a one-off response to the queue (for sequential calls).</summary>
     public FakeHttpMessageHandler Enqueue(Func<HttpRequestMessage, HttpResponseMessage> factory)
     {
