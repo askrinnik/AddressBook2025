@@ -2,7 +2,7 @@
 
 Results of the `harness-quality-check` skill (`.github/skills/_local.harness-quality-check/`): what the harness costs
 (context at the start of a session, tokens a file read adds, path-scoped rules loaded) and whether it still works
-(answers scored by a judge against a ground truth). How the harness is built is described in `docs/ai-harness.md`.
+(answers scored by a judge against a ground truth). How the harness is built is described in `docs/ai/README.md`.
 
 - `fixtures/` — the tests: one folder per fixture (`prompt.txt`, optionally `fixture.json`, `seed.patch`,
   `ground-truth.md`).

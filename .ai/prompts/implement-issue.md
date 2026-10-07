@@ -130,7 +130,7 @@ Every plan has: the requirement (or the bug and its root cause), the acceptance 
 - Pick the test layer and write the tests with the **`write-tests`** skill.
 - All Playwright tests follow `playwright-conventions.instructions.md` (route calls through the API client, use the data factories, Create → Verify → Delete isolation) and cover the happy path, boundaries and negatives.
 - If the plan turns out to be wrong once you are in the code, say so, update the plan file, and confirm with me before diverging materially from it.
-- Update the documentation the change affects **in the same change** — the table in `.claude/rules/update-docs-on-code-change.md` says where (`docs/specs/*.md`, test-suite READMEs, `docs/ai-harness.md`, `docs/ai/`); the `update-docs` skill has the mechanics.
+- Update the documentation the change affects **in the same change** — the table in `.claude/rules/update-docs-on-code-change.md` says where (`docs/specs/*.md`, test-suite READMEs, `docs/ai/`); the `update-docs` skill has the mechanics.
 
 ## 8. Build, tests and review
 

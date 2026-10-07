@@ -5,7 +5,7 @@ One command takes any issue end to end. The issue's labels select the **lane**: 
 The body is `.ai/prompts/implement-issue.md`, shared by both tools; `.claude/commands/implement-issue.md` (Claude Code) and `.github/prompts/implement-issue.prompt.md` (Copilot) are thin wrappers around it. The diagram below shows who does what at each step. Legend:
 
 - 💻 — the main session, on whatever model it was started with;
-- agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](../ai-harness.md#agents-and-models));
+- agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](README.md#agents-and-models));
 - 🤖 — an agent call (`.claude/agents/`);
 - 🧩 — a skill (`.claude/skills/`);
 - 🙋 — a point where the process waits for the user.

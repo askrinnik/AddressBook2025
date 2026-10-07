@@ -30,7 +30,7 @@ Solution file: `src/AddressBook.slnx`.
 - When a change spans the API and the Web frontend, wire both sides so the feature is complete.
 - For a feature request, list the decisions neither the request nor the code settles (lengths and formats, required vs optional, uniqueness, where it shows and whether it is searchable, existing data) and ask the user to confirm them before implementing — do not pick them silently. Routine naming and layout calls are yours.
 - New or changed API behaviour ships with Playwright tests in `src/ApiTests` (happy path, boundaries, negatives).
-- Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/implement-issues <n> <n> …` takes several small issues in order on one branch, one commit each, and ships one PR; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai-harness.md](docs/ai-harness.md); one document per command in [docs/ai/](docs/ai/) (step tree and flowchart).
+- Entry points: `/implement-issue <n>` takes one issue (bug, feature or tests) end to end; `/implement-issues <n> <n> …` takes several small issues in order on one branch, one commit each, and ships one PR; `/next-issue` (the `next-issue` skill) recommends what to take next. How the AI harness is built: [docs/ai/README.md](docs/ai/README.md); one document per command next to it in [docs/ai/](docs/ai/) (step tree and flowchart).
 
 ## File-type coding standards
 

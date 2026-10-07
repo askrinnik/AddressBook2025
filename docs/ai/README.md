@@ -29,8 +29,7 @@ CLAUDE.md                              single instruction hub, read by Claude Co
 docs/
   specs/                               specifications (API, Contracts, Web, Architecture)
   tasks/                               one plan per issue: issue-<n>-<slug>.md
-  ai-harness.md                        this document: the harness hub
-  ai/                                  one document per workflow command
+  ai/                                  the harness hub (README.md) and one document per workflow command
 ```
 
 The layout is checked with `pwsh -File .github/skills/_local.sync-ai-customizations/scripts/check.ps1`.
@@ -41,8 +40,8 @@ Each command has its own document in `docs/ai/`: a step tree and a Mermaid flowc
 
 | Command | Document | What it does |
 |---|---|---|
-| `/implement-issue <n>` | [docs/ai/implement-issue.md](ai/implement-issue.md) | One issue end to end; the labels select the Bug, Feature or Test-authoring lane; two checkpoints with the user |
-| `/implement-issues <n> <n> …` | [docs/ai/implement-issues.md](ai/implement-issues.md) | Several small issues on one branch, one commit each, one pull request |
+| `/implement-issue <n>` | [docs/ai/implement-issue.md](implement-issue.md) | One issue end to end; the labels select the Bug, Feature or Test-authoring lane; two checkpoints with the user |
+| `/implement-issues <n> <n> …` | [docs/ai/implement-issues.md](implement-issues.md) | Several small issues on one branch, one commit each, one pull request |
 
 The sections below describe what all workflows share: the agents and their models, the rules, the skills, the MCP servers and the permissions.
 

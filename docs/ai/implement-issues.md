@@ -5,7 +5,7 @@ For small issues the per-issue review stops cost more than the work. The command
 The body is `.ai/prompts/implement-issues.md`, shared by both tools; `.claude/commands/implement-issues.md` (Claude Code) and `.github/prompts/implement-issues.prompt.md` (Copilot) are thin wrappers around it. The body does not copy the `implement-issue` workflow: it refers to it and lists only the differences, so a change to the workflow reaches the batch too. Legend:
 
 - 💻 — the main session, on whatever model it was started with;
-- agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](../ai-harness.md#agents-and-models));
+- agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](README.md#agents-and-models));
 - 🤖 — an agent call (`.claude/agents/`);
 - 🧩 — a skill (`.claude/skills/`);
 - 🙋 — a point where the process waits for the user.
