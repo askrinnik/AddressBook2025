@@ -10,11 +10,11 @@ opening the `MudMessageBox`; Cancel → `DeleteContact` not called; Yes → call
 
 ## 2. Acceptance
 
-- [ ] Delete click opens the confirmation dialog; nothing is deleted while it is open.
-- [ ] Cancel → `DeleteContact` not called, no table reload, rows unchanged, dialog closed.
-- [ ] Yes → `DeleteContact` called with the clicked row's id (not another row), the table is reloaded and shows the remaining rows, dialog closed.
-- [ ] Only `MudTestContext` + `ContactsTableHarness` + `DeleteDialogHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
+- [x] Delete click opens the confirmation dialog; nothing is deleted while it is open.
+- [x] Cancel → `DeleteContact` not called, no table reload, rows unchanged, dialog closed.
+- [x] Yes → `DeleteContact` called with the clicked row's id (not another row), the table is reloaded and shows the remaining rows, dialog closed.
+- [x] Only `MudTestContext` + `ContactsTableHarness` + `DeleteDialogHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
 
 ## 3. Affected files
 

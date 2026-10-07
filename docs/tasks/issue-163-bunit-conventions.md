@@ -24,7 +24,7 @@ The bUnit suite (`src/AddressBook.Web.Tests`) gets one authoritative conventions
 - [x] The `write-tests` skill (both copies, byte-identical) and the instruction lists of the `issue-developer` and `issue-planner` agents (`.claude` and `.github`) name the new file.
 - [x] Other stale facts in `Architecture.md` are fixed: MudBlazor 9.3.0 to 9.8.0, the tree gains `.claude/rules/`, `src/AddressBook.Web.Tests/` and `global.json`, and the "Russian-language comments are allowed" statement becomes the English-only rule.
 - [x] `pwsh -File .github/skills/_local.sync-ai-customizations/scripts/check.ps1` reports 0 errors and 0 warnings.
-- [ ] B19 is ticked in `docs/tasks/blazor-component-tests-framework-plan.md`.
+- [x] B19 is ticked in `docs/tasks/blazor-component-tests-framework-plan.md`.
 
 ## Affected files
 
@@ -103,4 +103,4 @@ Pending confirmation:
 - [x] Update `Architecture.md` and `AddressBook.Web.md`.
 - [x] Add the `.vscode/tasks.json` task.
 - [x] Run `check.ps1`, the bUnit suite and the grep checks.
-- [ ] Tick B19 in the framework plan and this checklist.
+- [x] Tick B19 in the framework plan and this checklist.

@@ -10,12 +10,12 @@ the service mock throws → the top `Error` banner and the `MudAlert` in `NoReco
 
 ## 2. Acceptance
 
-- [ ] Load failure → `Error` banner shows the exception message.
-- [ ] Load failure → `MudAlert` shows the same message, the table has no rows and shows "No matching records found".
-- [ ] Load failure → the alert is visible (not the `invisible` class).
-- [ ] A later successful search (empty result) clears the alert text and hides it again.
-- [ ] Only `MudTestContext` + `ContactsTableHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
+- [x] Load failure → `Error` banner shows the exception message.
+- [x] Load failure → `MudAlert` shows the same message, the table has no rows and shows "No matching records found".
+- [x] Load failure → the alert is visible (not the `invisible` class).
+- [x] A later successful search (empty result) clears the alert text and hides it again.
+- [x] Only `MudTestContext` + `ContactsTableHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
 
 ## 3. Affected files
 

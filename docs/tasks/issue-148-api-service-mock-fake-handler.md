@@ -11,14 +11,14 @@ problem+json) для тестов сервиса.
 
 ## 2. Acceptance
 
-- [ ] `ApiServiceMock` — extension-методы над `IAddressBookApiService`: настройка ответов
+- [x] `ApiServiceMock` — extension-методы над `IAddressBookApiService`: настройка ответов
   (`GetFilteredContactsAsync`, `GetContactByIdAsync`, `CreateContact`, ошибки) и проверки вызовов
   (`Received`/`DidNotReceive` для search/delete/create/update).
-- [ ] `FakeHttpMessageHandler` — отдаёт заданный ответ: статус, `Location`, JSON-тело, problem+json;
+- [x] `FakeHttpMessageHandler` — отдаёт заданный ответ: статус, `Location`, JSON-тело, problem+json;
   запоминает запросы (метод, URI, тело) для ассертов.
-- [ ] `FakeHttpMessageHandler.CreateClient()` собирает `HttpClient` с реальным `ProblemDetailsHandler`
+- [x] `FakeHttpMessageHandler.CreateClient()` собирает `HttpClient` с реальным `ProblemDetailsHandler`
   в pipeline (non-success → `ProblemDetailsException`), как в `Program.cs`.
-- [ ] Хелперы покрыты тестами; `dotnet build src/AddressBook.slnx` без предупреждений, `dotnet test` зелёный.
+- [x] Хелперы покрыты тестами; `dotnet build src/AddressBook.slnx` без предупреждений, `dotnet test` зелёный.
 
 ## 3. Затронутые файлы (только `src/AddressBook.Web.Tests`)
 

@@ -10,15 +10,15 @@
 
 ## 2. Acceptance
 
-- [ ] Начальное состояние (`ErrorMessage` пуст): баннер не рендерится, `ChildContent` отрендерен.
-- [ ] `ProcessError("...")` показывает баннер (`alert-danger`, заголовок «Woops!») с переданным текстом; `ChildContent` остаётся на месте.
-- [ ] `ProcessError("")` (граница) — баннер не рендерится.
-- [ ] Повторный `ProcessError` заменяет текст предыдущего сообщения (баннер один).
-- [ ] `ProcessProblem(problem)` показывает баннер с `problem.Extensions`, сериализованными в indented JSON (ключи и значения видны в тексте).
-- [ ] `Clear()` скрывает баннер и сбрасывает `ErrorMessage`; вызов `Clear()` без баннера — безопасный no-op.
-- [ ] После `Clear()` новый `ProcessError` снова показывает баннер.
-- [ ] Только `MudTestContext` + bUnit `Find`/`FindAll` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
+- [x] Начальное состояние (`ErrorMessage` пуст): баннер не рендерится, `ChildContent` отрендерен.
+- [x] `ProcessError("...")` показывает баннер (`alert-danger`, заголовок «Woops!») с переданным текстом; `ChildContent` остаётся на месте.
+- [x] `ProcessError("")` (граница) — баннер не рендерится.
+- [x] Повторный `ProcessError` заменяет текст предыдущего сообщения (баннер один).
+- [x] `ProcessProblem(problem)` показывает баннер с `problem.Extensions`, сериализованными в indented JSON (ключи и значения видны в тексте).
+- [x] `Clear()` скрывает баннер и сбрасывает `ErrorMessage`; вызов `Clear()` без баннера — безопасный no-op.
+- [x] После `Clear()` новый `ProcessError` снова показывает баннер.
+- [x] Только `MudTestContext` + bUnit `Find`/`FindAll` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
 
 ## 3. Затронутые файлы (только `src/AddressBook.Web.Tests`)
 

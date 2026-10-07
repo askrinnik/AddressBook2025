@@ -114,8 +114,8 @@ src/ApiTests/
 ### Фаза 3 — Обвязка и документация
 
 - [x] **T17** ([#71](https://github.com/askrinnik/AddressBook2025/issues/71)) `README.md` для `src/ApiTests`.
-- [ ] **T18** ([#74](https://github.com/askrinnik/AddressBook2025/issues/74)) (опционально, с подтверждением) CI-workflow + обновление skills/instructions.
-- [ ] **T19** ([#66](https://github.com/askrinnik/AddressBook2025/issues/66)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
+- [x] **T18** ([#74](https://github.com/askrinnik/AddressBook2025/issues/74)) (опционально, с подтверждением) CI-workflow + обновление skills/instructions.
+- [x] **T19** ([#66](https://github.com/askrinnik/AddressBook2025/issues/66)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/AutoTests`
 

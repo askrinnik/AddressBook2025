@@ -98,4 +98,4 @@ Pending confirmation:
 - [x] Run the CI sequence locally; run a whole-solution locked restore.
 - [x] Lint the YAML.
 - [x] Update the docs listed above.
-- [ ] After push, confirm the run is green and the artifact exists.
+- [x] After push, confirm the run is green and the artifact exists.

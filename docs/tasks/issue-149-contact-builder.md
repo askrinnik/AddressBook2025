@@ -10,12 +10,12 @@
 
 ## 2. Acceptance
 
-- [ ] `ContactBuilder.New` строит `CreateContactModel` (форма create/edit), `ContactBuilder.Existing` — `ContactModel` (строка списка / ответ API).
-- [ ] Именованные варианты в обоих: `Valid`, `WithoutBirthday`, `FirstName30/31Chars`, `LastName30/31Chars`, `EmptyFirst/LastName`, `WhitespaceFirst/LastName`, `BirthdayInFuture`, `BirthdayToday`.
-- [ ] Длины 30/31 совпадают с `MaximumLength(30)` валидаторов API; валидный контакт всегда в пределах правил (имена ≤ 30, непустые, birthday строго в прошлом).
-- [ ] `Existing.*` принимает опциональный `id` (по умолчанию уникальный, потокобезопасный счётчик); `Existing.List(count)` — список с уникальными id.
-- [ ] Потокобезопасность при параллельном запуске xUnit (новый `Faker` на вызов).
-- [ ] Тесты билдера; `dotnet build src/AddressBook.slnx` без предупреждений, `dotnet test` зелёный.
+- [x] `ContactBuilder.New` строит `CreateContactModel` (форма create/edit), `ContactBuilder.Existing` — `ContactModel` (строка списка / ответ API).
+- [x] Именованные варианты в обоих: `Valid`, `WithoutBirthday`, `FirstName30/31Chars`, `LastName30/31Chars`, `EmptyFirst/LastName`, `WhitespaceFirst/LastName`, `BirthdayInFuture`, `BirthdayToday`.
+- [x] Длины 30/31 совпадают с `MaximumLength(30)` валидаторов API; валидный контакт всегда в пределах правил (имена ≤ 30, непустые, birthday строго в прошлом).
+- [x] `Existing.*` принимает опциональный `id` (по умолчанию уникальный, потокобезопасный счётчик); `Existing.List(count)` — список с уникальными id.
+- [x] Потокобезопасность при параллельном запуске xUnit (новый `Faker` на вызов).
+- [x] Тесты билдера; `dotnet build src/AddressBook.slnx` без предупреждений, `dotnet test` зелёный.
 
 ## 3. Затронутые файлы (только `src/AddressBook.Web.Tests`)
 

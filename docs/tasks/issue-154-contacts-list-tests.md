@@ -10,14 +10,14 @@
 
 ## 2. Acceptance
 
-- [ ] Строки рендерятся из мока в порядке ответа; имя, фамилия и дата рождения отображаются; отсутствующий Birthday — пустая ячейка.
-- [ ] Поиск вызывает `GetFilteredContactsAsync` с введённым термином и перезагружает таблицу (строки заменяются).
-- [ ] Очистка поиска перезагружает таблицу с пустым термином.
-- [ ] Пустой результат (в т.ч. поиска) показывает «No matching records found».
-- [ ] Сортировка по First Name / Last Name / Birthday: первый клик — по возрастанию, второй — по убыванию.
-- [ ] Смена rows-per-page: по умолчанию 10 строк на странице; после выбора 25 видны все строки.
-- [ ] Только `MudTestContext` + `ContactsTableHarness` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
+- [x] Строки рендерятся из мока в порядке ответа; имя, фамилия и дата рождения отображаются; отсутствующий Birthday — пустая ячейка.
+- [x] Поиск вызывает `GetFilteredContactsAsync` с введённым термином и перезагружает таблицу (строки заменяются).
+- [x] Очистка поиска перезагружает таблицу с пустым термином.
+- [x] Пустой результат (в т.ч. поиска) показывает «No matching records found».
+- [x] Сортировка по First Name / Last Name / Birthday: первый клик — по возрастанию, второй — по убыванию.
+- [x] Смена rows-per-page: по умолчанию 10 строк на странице; после выбора 25 видны все строки.
+- [x] Только `MudTestContext` + `ContactsTableHarness` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
 
 ## 3. Затронутые файлы
 

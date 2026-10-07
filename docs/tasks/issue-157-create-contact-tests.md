@@ -10,14 +10,14 @@ a valid form calls `CreateContact` and navigates, Cancel navigates without a cal
 
 ## 2. Acceptance
 
-- [ ] Empty First/Last name → submit does not call `CreateContact`; the required messages for both fields are visible; no navigation.
-- [ ] Only one name empty → still blocked, message for that field only.
-- [ ] Valid form → `CreateContact` called once with the entered values → navigation to `/contacts`.
-- [ ] Valid form without birthday (optional field) → `CreateContact` called with `Birthday == null` → navigation to `/contacts`.
-- [ ] Cancel → navigation to `/contacts`, `CreateContact` not called.
-- [ ] While `CreateContact` is pending, the submit button is disabled; after it completes it is enabled again / navigation done.
-- [ ] Only `MudTestContext` + `ContactFormHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
+- [x] Empty First/Last name → submit does not call `CreateContact`; the required messages for both fields are visible; no navigation.
+- [x] Only one name empty → still blocked, message for that field only.
+- [x] Valid form → `CreateContact` called once with the entered values → navigation to `/contacts`.
+- [x] Valid form without birthday (optional field) → `CreateContact` called with `Birthday == null` → navigation to `/contacts`.
+- [x] Cancel → navigation to `/contacts`, `CreateContact` not called.
+- [x] While `CreateContact` is pending, the submit button is disabled; after it completes it is enabled again / navigation done.
+- [x] Only `MudTestContext` + `ContactFormHarness` + xUnit `Assert`; no `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` without new warnings; `dotnet test --project src/AddressBook.Web.Tests` green.
 
 ## 3. Affected files
 

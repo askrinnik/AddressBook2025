@@ -9,12 +9,12 @@
 
 ## 2. Acceptance
 
-- [ ] Рендерится заголовок `<h1>` «Contacts application».
-- [ ] Рендерится приветственный текст «Welcome to your Contacts app.».
-- [ ] `PageTitle` устанавливает заголовок документа «Home» (через `HeadOutlet`).
-- [ ] Компонент не вызывает `IAddressBookApiService` (статическая страница).
-- [ ] Только `MudTestContext` + bUnit `Find` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
-- [ ] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
+- [x] Рендерится заголовок `<h1>` «Contacts application».
+- [x] Рендерится приветственный текст «Welcome to your Contacts app.».
+- [x] `PageTitle` устанавливает заголовок документа «Home» (через `HeadOutlet`).
+- [x] Компонент не вызывает `IAddressBookApiService` (статическая страница).
+- [x] Только `MudTestContext` + bUnit `Find` + xUnit `Assert`; без `Task.Delay`/`Sleep`.
+- [x] `dotnet build src/AddressBook.slnx` без новых предупреждений, `dotnet test --project src/AddressBook.Web.Tests` зелёный.
 
 ## 3. Затронутые файлы
 

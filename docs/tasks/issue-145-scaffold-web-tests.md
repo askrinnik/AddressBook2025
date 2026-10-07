@@ -51,12 +51,12 @@
 
 ## Критерии приёмки
 
-- [ ] Проект `src/AddressBook.Web.Tests` существует с корректным `.csproj` (net10.0, все пакеты,
+- [x] Проект `src/AddressBook.Web.Tests` существует с корректным `.csproj` (net10.0, все пакеты,
   `ProjectReference` на `AddressBook.Web`, `IsPackable=false`).
-- [ ] Присутствуют `xunit.runner.json`, `GlobalUsings.cs`, `.gitignore`, `README.md`, `CLAUDE.md`.
-- [ ] Проект добавлен в `src/AddressBook.slnx`.
-- [ ] `dotnet build src/AddressBook.slnx` проходит без ошибок (без новых предупреждений от каркаса).
-- [ ] `dotnet test --project src/AddressBook.Web.Tests` запускает MTP-раннер xUnit v3 (0 тестов на
+- [x] Присутствуют `xunit.runner.json`, `GlobalUsings.cs`, `.gitignore`, `README.md`, `CLAUDE.md`.
+- [x] Проект добавлен в `src/AddressBook.slnx`.
+- [x] `dotnet build src/AddressBook.slnx` проходит без ошибок (без новых предупреждений от каркаса).
+- [x] `dotnet test --project src/AddressBook.Web.Tests` запускает MTP-раннер xUnit v3 (0 тестов на
   этапе B1 → exit code 8 «zero tests»; станет 0 после первого теста в B2).
 
 ## Вне области

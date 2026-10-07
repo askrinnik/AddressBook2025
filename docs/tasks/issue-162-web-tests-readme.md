@@ -87,4 +87,4 @@ Pending confirmation:
 - [x] Update `CLAUDE.md`.
 - [x] Restate the csproj comment.
 - [x] Run every README command; check links, versions and tree.
-- [ ] Tick B18 in the framework plan and this checklist.
+- [x] Tick B18 in the framework plan and this checklist.

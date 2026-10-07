@@ -253,19 +253,19 @@ src/AddressBook.Web.Tests/
 `EditContact` 57.7 % / 41.6 %) нашло дефекты, которые тесты не ловят. Каждый исправляется вместе с
 регрессионным bUnit-тестом. Задачи с пометкой «решение» требуют продуктового решения до реализации.
 
-- [ ] **B22** ([#190](https://github.com/askrinnik/AddressBook2025/issues/190)) `Contacts`: ошибка
+- [x] **B22** ([#190](https://github.com/askrinnik/AddressBook2025/issues/190)) `Contacts`: ошибка
   `DeleteContact` не перехватывается → необработанное исключение в WASM. Решение: где показывать ошибку и как вести себя при 404.
-- [ ] **B23** ([#191](https://github.com/askrinnik/AddressBook2025/issues/191)) `EditContact`: ошибка
+- [x] **B23** ([#191](https://github.com/askrinnik/AddressBook2025/issues/191)) `EditContact`: ошибка
   загрузки (кроме 404) не перехватывается; во время загрузки страница пустая. Решение: как показывать ошибку, вид индикатора.
-- [ ] **B24** ([#192](https://github.com/askrinnik/AddressBook2025/issues/192)) `ProblemDetailsHandler`:
+- [x] **B24** ([#192](https://github.com/askrinnik/AddressBook2025/issues/192)) `ProblemDetailsHandler`:
   пустое/не-JSON тело → `JsonException` вместо `ProblemDetailsException`; 404 без тела не распознаётся.
-- [ ] **B25** ([#193](https://github.com/askrinnik/AddressBook2025/issues/193)) `AddressBookApiService.CreateContact`
+- [x] **B25** ([#193](https://github.com/askrinnik/AddressBook2025/issues/193)) `AddressBookApiService.CreateContact`
   на неуспешный статус возвращает `0` вместо исключения.
-- [ ] **B26** ([#194](https://github.com/askrinnik/AddressBook2025/issues/194)) `Contacts`: баннер `Error`
+- [x] **B26** ([#194](https://github.com/askrinnik/AddressBook2025/issues/194)) `Contacts`: баннер `Error`
   остаётся после успешной перезагрузки (решение: очищать / закрывать вручную / оставить).
-- [ ] **B27** ([#195](https://github.com/askrinnik/AddressBook2025/issues/195)) Тексты UI: кавычки в
+- [x] **B27** ([#195](https://github.com/askrinnik/AddressBook2025/issues/195)) Тексты UI: кавычки в
   «No matching records found»; имена свойств (`FirstName`) в сообщениях валидации (решение: отображаемые имена).
-- [ ] **B28** ([#196](https://github.com/askrinnik/AddressBook2025/issues/196)) Клиентская валидация по
+- [x] **B28** ([#196](https://github.com/askrinnik/AddressBook2025/issues/196)) Клиентская валидация по
   правилам API: длина ≤ 30, пробелы, дата рождения в будущем (решение: дублировать ли на клиенте).
 
 ### Фаза 5 — Тестовый код и покрытие
@@ -283,7 +283,7 @@ src/AddressBook.Web.Tests/
 
 ### Фаза 6 — CI
 
-- [ ] **B33** ([#201](https://github.com/askrinnik/AddressBook2025/issues/201)) `web-tests.yml`: `checks: write`
+- [x] **B33** ([#201](https://github.com/askrinnik/AddressBook2025/issues/201)) `web-tests.yml`: `checks: write`
   (check run test-reporter сейчас не создаётся), `pull_request` + `paths`, `cancel-in-progress` не для `main`,
   порог покрытия, ReportGenerator в `.config/dotnet-tools.json`; попутно SHA-пины и `permissions` в `build.yml`.
 
