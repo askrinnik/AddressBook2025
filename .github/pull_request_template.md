@@ -16,5 +16,5 @@ Closes #<issue>
 
 - [ ] New or changed API behaviour has Playwright tests in `src/ApiTests` (happy path, boundaries, negatives)
 - [ ] A change spanning API and Web is wired on both sides
-- [ ] Documentation affected by the change is updated (`docs/specs/`, test-suite READMEs, `docs/ai-harness.md`)
+- [ ] Documentation affected by the change is updated (`docs/specs/`, test-suite READMEs, `docs/ai-harness.md`, `docs/ai/`)
 - [ ] The plan `docs/tasks/issue-<issue>-<slug>.md` is included
