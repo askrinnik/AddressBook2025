@@ -27,13 +27,16 @@ substituted.
 - The culture of the whole test assembly is fixed to en-US by the `[ModuleInitializer]` in
   `Infrastructure/TestCulture.cs`. Do not set the culture in a test, and do not rely on the machine's regional settings.
 - Add missing MudBlazor JS stubs to `MudBlazorJsInterop`, not to an individual test.
+- The context registers `TimeProvider.System`. A test that depends on the date pins the clock with
+  `UseClock(new FixedTimeProvider(...))` (or `FixedTimeProvider.LocalDayAheadOfUtc()`) before rendering; do not
+  compare against `DateTime.Today` or `DateTime.Now`.
 
 ## Layout and naming
 
-- Tests live in `Specs/<Area>/<Subject>Tests.cs` (`Components`, `ErrorHandling`, `Layout`, `Pages`, `Services`)
+- Tests live in `Specs/<Area>/<Subject>Tests.cs` (`Components`, `ErrorHandling`, `Layout`, `Models`, `Pages`, `Services`)
   in the namespace `AddressBook.Web.Tests.Specs.<Area>`; the few self-tests of the test infrastructure live in
   `Specs/Infrastructure` (`TestIdsTests`, `MudTestContextTests`, `FakeHttpMessageHandlerTests`) and `Specs/Data`
-  (two `ContactBuilderTests` guards).
+  (the `ContactBuilderTests` guards).
 - Do not write self-tests for harnesses, `ApiServiceMock` or `RenderedComponentExtensions`: the page specs test
   them by using them. Keep a self-test only for a guard that no page spec exercises.
 - Delete a helper, harness member or builder variant that no test uses; do not keep it for later.

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AddressBook.Contracts;
 
 namespace AddressBook.Web.Models;
 
@@ -11,7 +12,7 @@ public class CreateContactModel
     /// First name
     /// </summary>
     [Required]
-    [StringLength(30)]
+    [StringLength(ContactRules.NameMaxLength)]
     [Display(Name = "First name")]
     public string FirstName { get; set; } = string.Empty;
 
@@ -19,7 +20,7 @@ public class CreateContactModel
     /// Last name
     /// </summary>
     [Required]
-    [StringLength(30)]
+    [StringLength(ContactRules.NameMaxLength)]
     [Display(Name = "Last name")]
     public string LastName { get; set; } = string.Empty;
 

@@ -17,4 +17,8 @@ builder.Services.AddHttpClient<IAddressBookApiService, AddressBookApiService>(
 
 builder.Services.AddMudServices();
 
+// The birthday rule and the date picker read the clock through TimeProvider and compare against the UTC date,
+// like the API; tests replace the clock with a fixed one.
+builder.Services.AddSingleton(TimeProvider.System);
+
 await builder.Build().RunAsync();

@@ -9,9 +9,13 @@ import { contactModelSchema } from '../../src/schemas/contact.schema.js';
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const BASE36 = /^[a-z0-9]+$/;
 
-function todayIsoLocal(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+// The API's birthday rule compares against the current UTC date, so the factory's boundaries are UTC dates.
+function todayIsoUtc(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function tomorrowIsoUtc(): string {
+  return new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
 test.describe('tokens', () => {
@@ -42,7 +46,7 @@ test.describe('contact.factory — valid variants (unit)', () => {
     expect(contact.firstName).toContain(RUN_TOKEN);
     expect(contact.lastName).toContain(RUN_TOKEN);
     expect(contact.birthday).toMatch(ISO_DATE);
-    expect(contact.birthday! <= todayIsoLocal()).toBe(true);
+    expect(contact.birthday! <= todayIsoUtc()).toBe(true);
   });
 
   test('validContactWithoutBirthday() sets birthday to null and keeps names valid', () => {
@@ -118,15 +122,15 @@ test.describe('contact.factory — empty and whitespace (unit)', () => {
 });
 
 test.describe('contact.factory — birthday boundaries (unit)', () => {
-  test('birthdayToday() returns local today in yyyy-MM-dd', () => {
+  test('birthdayToday() returns the UTC today in yyyy-MM-dd', () => {
     const c = ContactFactory.birthdayToday();
-    expect(c.birthday).toBe(todayIsoLocal());
+    expect(c.birthday).toBe(todayIsoUtc());
   });
 
-  test('birthdayInFuture() returns a date strictly after today', () => {
+  test('birthdayInFuture() returns the UTC tomorrow in yyyy-MM-dd', () => {
     const c = ContactFactory.birthdayInFuture();
     expect(c.birthday).toMatch(ISO_DATE);
-    expect(c.birthday! > todayIsoLocal()).toBe(true);
+    expect(c.birthday).toBe(tomorrowIsoUtc());
   });
 });
 

@@ -1,5 +1,6 @@
 ﻿using AddressBook.Api.DataAccess;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging.Console;
 using Scalar.AspNetCore;
 using System.Reflection;
@@ -43,6 +44,9 @@ public static class StartupExtensions
 
     webApplicationBuilder.Services.AddControllers();
 
+    // The validators read the clock through TimeProvider so the birthday rule compares against the UTC date
+    // and a test host can replace the clock.
+    webApplicationBuilder.Services.TryAddSingleton(TimeProvider.System);
     webApplicationBuilder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
 
     webApplicationBuilder.Services.AddSwaggerGen(c =>

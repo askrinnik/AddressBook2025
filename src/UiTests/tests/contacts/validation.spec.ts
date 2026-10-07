@@ -5,8 +5,9 @@ import { expectFieldError, expectNoFieldError } from '../../src/utils/assertions
  * Contact-form validation through the UI (U16), exercised on the create form.
  *
  * Client: `CreateContactModel` mirrors the API rules (Required, at most 30 characters for the names,
- * birthday not in the future). A blocked submit stays on `/create-contact` (the page returns before
- * calling the API) and shows the inline message. The date picker also disables days after today.
+ * birthday not later than the current UTC date). A blocked submit stays on `/create-contact` (the page
+ * returns before calling the API) and shows the inline message. The date picker also disables the days
+ * after the UTC today.
  * Every rejected submit creates nothing, so there is nothing to clean up.
  *
  * All checks are web-first (the error accessors are `expect.poll`-backed); no fixed delays.
@@ -86,16 +87,42 @@ test.describe('contacts — validation (client)', () => {
     await expectNoFieldError(createContactPage.form, 'firstName');
   });
 
-  test('the birthday picker disables the days after today', async ({ createContactPage }) => {
-    const today = new Date();
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  test('the birthday picker disables the days after today (UTC)', async ({ createContactPage }) => {
+    const now = new Date();
+    const todayUtc = now.getUTCDate();
+    const daysInMonth = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0),
+    ).getUTCDate();
     const picker = createContactPage.form.birthday;
 
     await createContactPage.goto();
     await picker.open();
 
-    // The popover opens on the current month: today and the earlier days are chosen, the rest are refused.
-    await expect(picker.enabledDays).toHaveCount(today.getDate());
-    await expect(picker.disabledDays).toHaveCount(daysInMonth - today.getDate());
+    // The popover opens on the current month: the UTC today and the earlier days are chosen, the rest are refused.
+    await expect(picker.enabledDays).toHaveCount(todayUtc);
+    await expect(picker.disabledDays).toHaveCount(daysInMonth - todayUtc);
+  });
+});
+
+/*
+ * The birthday rule compares against the UTC date, not the browser's local date. The browser runs in
+ * UTC+14 with its clock fixed at 2026-03-10 23:30 UTC, when the local date is already 2026-03-11:
+ * the picker offers March 1-10 and refuses March 11 onwards.
+ */
+test.describe('contacts — validation (client), browser time zone ahead of UTC', () => {
+  test.use({ timezoneId: 'Pacific/Kiritimati' });
+
+  test('the birthday picker offers the UTC today, not the local today', async ({
+    page,
+    createContactPage,
+  }) => {
+    await page.clock.setFixedTime(new Date('2026-03-10T23:30:00Z'));
+    const picker = createContactPage.form.birthday;
+
+    await createContactPage.goto();
+    await picker.open();
+
+    await expect(picker.enabledDays).toHaveCount(10);
+    await expect(picker.disabledDays).toHaveCount(31 - 10);
   });
 });

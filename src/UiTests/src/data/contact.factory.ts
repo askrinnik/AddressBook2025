@@ -2,28 +2,29 @@ import { faker } from '@faker-js/faker';
 import type { CreateContactCommand } from '../api/contacts-api.js';
 import { RUN_TOKEN, newTestToken } from './tokens.js';
 
-// Matches the API's CreateContactCommandValidator / UpdateContactCommandValidator (MaximumLength(30)).
+// Mirrors ContactRules.NameMaxLength in AddressBook.Contracts, which the API validators and the Web form read.
 const MAX_NAME_LENGTH = 30;
 
-function formatDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+// The client and the API reject a birthday later than the current UTC date, so the boundary dates are
+// UTC dates; local dates would flake whenever the local and the UTC calendar day differ.
+function formatUtcDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
 function today(): string {
-  return formatDate(new Date());
+  return formatUtcDate(new Date());
 }
 
 function tomorrow(): string {
-  return formatDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+  return formatUtcDate(new Date(Date.now() + ONE_DAY_MS));
 }
 
 function pastBirthday(): string {
   // refDate one day ago guarantees the value never lands on today by chance.
-  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  return formatDate(faker.date.past({ years: 60, refDate: oneDayAgo }));
+  const oneDayAgo = new Date(Date.now() - ONE_DAY_MS);
+  return formatUtcDate(faker.date.past({ years: 60, refDate: oneDayAgo }));
 }
 
 // Embed RUN_TOKEN so search-by-token UI tests can isolate their own rows on the shared DB.
