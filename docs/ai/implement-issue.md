@@ -76,14 +76,7 @@ The body is `.ai/prompts/implement-issue.md`, shared by both tools; `.claude/com
 │                                    🙋 "result accepted?" → /compact
 │                                    (not accepted → back to 7 or 4)
 │
-├─ 11. Result comment
-│    ├─ 🙋 "yes, post the comment"
-│    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 github-issue
-│    │                    text → gh issue comment --body-file
-│    │    💻 ◀── comment URL
-│    └─ 🙋 "yes, tick the acceptance boxes" → 💻 Set-AcceptanceChecks.ps1 (- [ ] → - [x])
-│
-├─ 12. Ship
+├─ 11. Commit and push
 │    ├─ 💻 git fetch; origin/main moved → git pull --ff-only and repeat 8–9 (🤖 build-runner)
 │    ├─ 💻 ticks the plan checklist and the issue's task in docs/tasks/*-plan.md, if there is one
 │    ├─ 🙋 "yes, commit"
@@ -93,7 +86,14 @@ The body is `.ai/prompts/implement-issue.md`, shared by both tools; `.claude/com
 │    │                    writes the text → git commit -F
 │    │                    git log -1 → --amend on a deviation
 │    │    💻 ◀── "a1b2c3d #42 Title"
-│    ├─ 🙋 "yes, push" → 💻 git push -u origin 42-<slug>
+│    └─ 🙋 "yes, push" → 💻 git push -u origin 42-<slug>
+│
+├─ 12. Comment and pull request
+│    ├─ 🙋 "yes, post the comment"
+│    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 github-issue
+│    │                    text → gh issue comment --body-file
+│    │    💻 ◀── comment URL
+│    ├─ 🙋 "yes, tick the acceptance boxes" → 💻 Set-AcceptanceChecks.ps1 (- [ ] → - [x])
 │    ├─ 🙋 "yes, open the PR"
 │    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 open-pr
 │    │                    text → gh pr create --body-file
@@ -159,24 +159,24 @@ flowchart TD
     U10 -- "no" --> FIX
     FIX(["↩ fixes: back to step 7, or 4 if the approach changes"]):::fix
     FIX --> A7
-    subgraph STEP11["11. Result comment"]
-        U11C{{"🙋 yes, comment"}}:::user
-        A11["Issue comment<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
-        U11T{{"🙋 yes, tick the boxes"}}:::user
-        S11T["💻 Acceptance boxes<br/>Set-AcceptanceChecks.ps1<br/>- [ ] → - [x]"]:::session
-        U11C --> A11 --> U11T --> S11T
+    subgraph STEP11["11. Commit and push"]
+        U11{{"🙋 yes, commit"}}:::user
+        A11["Commit<br/>🤖 skill-runner · Haiku<br/>🧩 git-commit<br/>branch · commit · check"]:::agent
+        U11P{{"🙋 yes, push"}}:::user
+        S11P["💻 git push"]:::session
+        U11 --> A11 --> U11P --> S11P
     end
-    U10 -- "yes" --> U11C
-    subgraph STEP12["12. Ship"]
-        U12{{"🙋 yes, commit"}}:::user
-        A12["Commit<br/>🤖 skill-runner · Haiku<br/>🧩 git-commit<br/>branch · commit · check"]:::agent
-        U12P{{"🙋 yes, push"}}:::user
-        S12P["💻 git push"]:::session
+    U10 -- "yes" --> U11
+    subgraph STEP12["12. Comment and pull request"]
+        U12C{{"🙋 yes, comment"}}:::user
+        A12C["Issue comment<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
+        U12T{{"🙋 yes, tick the boxes"}}:::user
+        S12T["💻 Acceptance boxes<br/>Set-AcceptanceChecks.ps1<br/>- [ ] → - [x]"]:::session
         U12R{{"🙋 yes, open the PR"}}:::user
         A12R["Pull request<br/>🤖 skill-runner · Haiku<br/>🧩 open-pr"]:::agent
-        U12 --> A12 --> U12P --> S12P --> U12R --> A12R
+        U12C --> A12C --> U12T --> S12T --> U12R --> A12R
     end
-    S11T --> U12
+    S11P --> U12C
     A12R --> NI13["💻 13. What next<br/>🧩 next-issue -AssumeClosed N"]:::skill
     NI13 --> END(["merge the PR → new session → /implement-issue"])
 
@@ -197,7 +197,7 @@ The process waits for the user:
 - on uncommitted changes in the working tree, a pick when no issue number was given, an open blocker, a lane conflict, an irreproducible bug, or a material gap in the requirement (steps 0–3); a closed issue stops the run;
 - on the plan review (steps 5–6);
 - on the result confirmation (step 10);
-- before each outward action: the issue comment, the acceptance boxes, the commit, the push and the pull request (steps 11–12) — each needs its own "yes";
+- before each outward action: the commit, the push, the issue comment, the acceptance boxes and the pull request (steps 11–12) — each needs its own "yes";
 - on the three ready-made `/compact` commands (after steps 6, 9 and 10), which may be skipped while the conversation is short.
 
 Context economy is built in: three `/compact` milestones with ready focus texts, a runaway guard, one issue per session, narrow reads, small tool output, and noisy work delegated to agents.

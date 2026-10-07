@@ -18,7 +18,7 @@ For every issue run the workflow in [.ai/prompts/implement-issue.md](implement-i
 | Steps 5–6, plan review stop | Save the plan and continue; stop only with `--review-plans` |
 | Steps 8–9, `build-runner` with scope `full`, browser walk and security review per issue | `build-runner` with scope `suites` (the suites the change touches, without `ui-tests`) per issue; scope `full`, the browser walk and the security review once at the end |
 | Step 10, result confirmation per issue | One confirmation for the whole batch |
-| Steps 11–12, comment, commit, push, PR per issue | A commit per issue; one comment per issue; one push and one PR at the end. The task tick in a multi-issue plan goes into each issue's commit |
+| Steps 11–12, commit, push, comment, PR per issue | A commit per issue; one comment per issue; one push and one PR at the end. The task tick in a multi-issue plan goes into each issue's commit |
 | Step 13 | Once, at the end |
 
 ## 0. Preflight (once)

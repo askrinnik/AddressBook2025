@@ -42,10 +42,11 @@ Each command has its own document in `docs/ai/`: a step tree and a Mermaid flowc
 |---|---|---|
 | `/implement-issue <n>` | [docs/ai/implement-issue.md](implement-issue.md) | One issue end to end; the labels select the Bug, Feature or Test-authoring lane; two checkpoints with the user |
 | `/implement-issues <n> <n> …` | [docs/ai/implement-issues.md](implement-issues.md) | Several small issues on one branch, one commit each, one pull request |
+| `/next-issue [<n> …]` | [Issue order](#issue-order-next-issue) below | Recommends the next ready issue; the numbers are treated as closed |
 
 The sections below describe what all workflows share: the agents and their models, the rules, the skills, the MCP servers and the permissions.
 
-## Issue order: `next-issue`
+## Issue order: `/next-issue`
 
 `.github/skills/_local.next-issue/scripts/Get-NextIssue.ps1` reads all open issues with one GraphQL query and lists the ready ones: no open pull request and every "blocked by" issue closed, ordered by issue number (issues of one plan are created in plan order). `-AssumeClosed <n>` treats an issue as closed, so the workflow can recommend the next issue before the current PR merges. Dependencies must be recorded as GitHub "blocked by" relations for the order to hold.
 
@@ -58,7 +59,7 @@ The sections below describe what all workflows share: the agents and their model
 | `issue-verifier` | Sonnet | Browser walks are mechanical but produce huge snapshots; isolating them keeps the main context small |
 | `security-reviewer` | Opus | Rare, and finding a real issue needs the strongest reasoning |
 | `build-runner` | Haiku | The build-and-test gate of step 8: the build, bUnit, the Playwright API suite and the UI E2E suite. It returns the runners' summary lines verbatim with the first errors, so a retelling cannot distort the result; the main session spends one call on the gate, and the noisy build and test output stays out of its context. It checks independently of the implementer and fixes nothing |
-| `skill-runner` | Haiku | Carries out one already-approved action end to end by its skill: the issue comment (`github-issue`), the commit (`git-commit`) or the pull request (`open-pr`) — writes the text in English, runs the `git`/`gh` command, checks the result. The main session spends one call on the action and does not load the skill into its own context. It never pushes, edits the issue body or merges |
+| `skill-runner` | Haiku | Carries out one already-approved action end to end by its skill: the commit (`git-commit`), the issue comment (`github-issue`) or the pull request (`open-pr`) — writes the text in English, runs the `git`/`gh` command, checks the result. The main session spends one call on the action and does not load the skill into its own context. It never pushes, edits the issue body or merges |
 | `architect` | Opus | Design questions on cross-layer changes |
 | `playwright-tester` | Sonnet | Test-authoring lane: explores the UI with Playwright MCP and writes specs |
 
@@ -77,7 +78,8 @@ Repository-local skills (`_local.*`, invoked as `/<name>`):
 | `github-issue` | Read an issue; post the result comment for the lane. Its script `Set-AcceptanceChecks.ps1` ticks the verified items of the acceptance section (`## Критерии приёмки`, `## Acceptance criteria` or `## Acceptance`) by their positions in one call; it changes nothing else in the issue and refuses to write if anything besides the marks would differ |
 | `run-api`, `run-tests` | Start the API; run the Playwright API suite |
 | `verify-feature` | Start API + Web and walk acceptance items in a browser |
-| `open-pr`, `git-commit` | Commit and pull-request conventions |
+| `git-commit` | Branch and commit-message conventions: the issue branch, staging with the plan file, the message check |
+| `open-pr` | Pull-request conventions only: target, title, `Closes #<n>`, description, merge commit, the CI check |
 | `next-issue` | Recommend the next issue |
 | `write-tests` | Pick the test layer (Playwright API / bUnit / Playwright UI) and write the tests |
 | `debug-issue` | Reproduce and find the root cause of a defect |
@@ -104,7 +106,7 @@ Claude Code asks each user once to approve the project servers in `.mcp.json`.
 `.claude/settings.json` is shared through git:
 
 - **allow** — build, tests, running the API and the Web app, `git` and `gh` reads, the shipping commands (`git add`/`commit`/`push`, `gh pr create`, `gh issue comment`/`edit`), the `_local.*` scripts, and the documentation MCP servers. Commit, push and PR stay gated by instruction: the assistant does them only when the user asks (`CLAUDE.md`). The same holds for `Set-AcceptanceChecks.ps1`: it runs without a system prompt like every `_local.*` script, but it edits the issue body and so runs only after the user's "yes";
-- **ask** — merging, PR comments and edits, creating or closing issues, GitHub API writes, `dotnet ef database`;
+- **ask** — merging, PR comments and edits, creating or closing issues, GitHub API writes and `gh api repos/…` calls, `dotnet ef database`;
 - **deny** — force-push, `reset --hard`, `git clean`, `rm -rf`, and reading `.env` or local `appsettings.*.local.json` secrets.
 
 It also turns off the automatic commit and PR attribution (commit messages follow the `git-commit` skill) and enables the `.mcp.json` servers. Personal overrides go to `.claude/settings.local.json`, which git ignores.
@@ -112,6 +114,26 @@ It also turns off the automatic commit and PR attribution (commit messages follo
 ## Harness benchmark
 
 The `harness-quality-check` skill starts fixed `claude -p` sessions and records the start context, the tokens a file read adds, the rules loaded, and a judge's score against a ground truth. History: `.ai/benchmarks/harness/run-history.csv`; reports: `.ai/benchmarks/harness/reports/`. Fixtures: `bench-base` (start context by area) and `quality-vertical-slice` (a feature request answered with the full slice, validation, tests and open decisions). Run it after changing `CLAUDE.md`, rules, skills, agents, MCP servers or settings; it uses part of the usage limit.
+
+## Porting to another project
+
+Carried over unchanged:
+
+- the `implement-issue` and `implement-issues` mechanics (steps, checkpoints, context economy);
+- the agents `issue-planner`, `issue-developer`, `skill-runner`, and `build-runner` with its build and test commands replaced;
+- the skills `_local.git-commit`, `_local.open-pr`, `_local.github-issue` and `_local.next-issue` — for any repository on GitHub;
+- the comment rules in `CLAUDE.md`;
+- the benchmark (`_local.harness-quality-check` and `bench-base`).
+
+Rewritten for the project:
+
+- `CLAUDE.md` and the `docs/specs/` it points to;
+- the build and test commands in `build-runner` and the security triggers of the workflows;
+- the stack rules and instructions (`api-architecture`, `blazor`, `bunit`, `playwright`) and the stack agents and skills (`issue-verifier`, `playwright-tester`, `run-api`, `run-tests`, `verify-feature`);
+- the package families in `_local.nuget-package-update`;
+- the ground truths of the `quality-*` fixtures.
+
+Preconditions: issues with an acceptance checklist and dependencies recorded as GitHub "blocked by" relations.
 
 ## Maintenance
 

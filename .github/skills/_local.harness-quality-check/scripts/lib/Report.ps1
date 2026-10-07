@@ -316,7 +316,7 @@ Every fixture is one scripted Claude Code session, or several repeats of it. All
     & git -C $repoRoot cat-file -e "$($p0.Commit)^{commit}" 2>$null
     if ($LASTEXITCODE -ne 0) { Line "Not available: commit $($p0.Commit) is not in this repository." }
     else {
-      $paths = @('.claude/rules', '.claude/agents', '.claude/skills', '.github/instructions', '.ai/prompts', 'CLAUDE.md', '.mcp.json', '.claude/settings.json')
+      $paths = @('.claude/rules', '.claude/agents', '.claude/skills', '.claude/commands', '.github/instructions', '.github/prompts', '.ai/prompts', 'CLAUDE.md', '.mcp.json', '.claude/settings.json')
       $stat = if ($c0.Dirty -eq 'no') { @(& git -C $repoRoot diff --stat $p0.Commit $c0.Commit -- @paths) } else { @(& git -C $repoRoot diff --stat $p0.Commit -- @paths) }
       $what = if ($c0.Dirty -eq 'no') { "``$($p0.Commit)`` to ``$($c0.Commit)``" } else { "``$($p0.Commit)`` to the working tree at report time (this run had uncommitted changes)" }
       if ($stat.Count) { Line "Changes in rules, agents, skills, ``CLAUDE.md`` and settings from $what :"; Line; Line '```'; foreach ($l in $stat) { Line $l }; Line '```' }

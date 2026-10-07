@@ -6,7 +6,7 @@ This workflow orchestrates existing skills instead of re-deriving their mechanic
 - **`github-issue`** — read the issue (body, comments, related issues), establish acceptance criteria, and post the result comment at the end.
 - **`run-api`** / **`run-tests`** — start the API and run the Playwright E2E suite.
 - **`verify-feature`** — start the API + Web, run Playwright E2E, and walk each acceptance item (or the bug repro) in a real browser.
-- **`open-pr`** — commit onto the issue branch (via `git-commit`), include the plan, and open the PR into `main`.
+- **`git-commit`** / **`open-pr`** — create the issue branch and commit onto it with the plan; open the PR into `main`.
 - **`next-issue`** — recommend what to take when no issue number is given, and what comes next after shipping.
 - **`debug-issue`** / **`write-tests`** — reproduce and diagnose a defect; pick the test layer and write the tests.
 
@@ -22,10 +22,10 @@ Noisy or specialised work goes to subagents so their raw output stays out of thi
 | Design of a cross-layer change | `architect` | Architect | Opus | 4 (optional) |
 | Implement — Bug / Feature lane | `issue-developer` | Issue Developer | Sonnet; Opus for complexity `L` | 7 |
 | Implement — Test-authoring lane | `playwright-tester` (Playwright specs); `issue-developer` (bUnit) | Playwright Tester / Issue Developer | Sonnet | 7 |
-| Build and test suites | `build-runner` | Build Runner | Haiku | 8, 12 |
+| Build and test suites | `build-runner` | Build Runner | Haiku | 8, 11 |
 | Browser reproduce / verify | `issue-verifier` | Issue Verifier | Sonnet | 3, 9 |
 | Security review (when triggered) | `security-reviewer` | Security Reviewer | Opus | 8 |
-| Issue comment, commit, pull request (after my go-ahead) | `skill-runner` | Skill Runner | Haiku | 11, 12 |
+| Commit, issue comment, pull request (after my go-ahead) | `skill-runner` | Skill Runner | Haiku | 11, 12 |
 | Broad code search | `Explore` (summary ≤ 30 lines) | — | default | 3 |
 
 - **You keep every gate:** the plan review, both confirmations with me, my go-ahead before every outward action, the push, the acceptance ticks and the CI check. The implementer's "passed" is input, not proof: the build and the suites run again in `build-runner`, independently of it. The issue comment, the commit and the pull request each run in one `skill-runner` call, only after my go-ahead.
@@ -43,9 +43,9 @@ Every model call re-reads the whole conversation, so cost is roughly calls × co
    - **Plan approved (end of step 6):** `/compact keep: issue number and exact title, lane, acceptance list, plan file path, decisions made during plan review, complexity`
    - **Build and tests green (end of step 9):** `/compact keep: issue number and exact title, lane, acceptance list, plan file path, list of changed files, build and test results, verification table`
    - **Result confirmed (end of step 10):** `/compact keep: issue number and exact title, lane, git diff --stat, one line per changed file, acceptance table with results or root cause, verification summary`
-2. **Runaway guard.** If one turn passes about 100 tool calls without reaching a milestone (repeated build-and-fix loops), stop at the next natural pause and offer `/compact` with a focus text of the same kind.
+2. **Runaway guard.** If one turn passes about 100 tool calls without reaching a milestone (repeated build-and-fix loops), stop at the next natural pause and offer `/compact` with a focus text of the same kind. Never let a single turn run past about 150 tool calls.
 3. **One issue per session.** After step 13, recommend a new session for the next issue instead of continuing in this one.
-4. **Read narrowly.** Grep first, then read around the match; never re-read a file you just edited.
+4. **Read narrowly.** Grep first, then read around the match. Read a whole file only when you will change most of it or it is under about 200 lines. Never re-read a file you just edited.
 5. **Small tool output at the source.** `dotnet build … -clp:ErrorsOnly`; Playwright with `--reporter=line`, captured to a file, reading only the summary and the first failures; `git diff --stat` before any full diff; `gh … --json <fields> --jq …`.
 
 ## 0. Start from an up-to-date `main`
@@ -57,7 +57,7 @@ Every model call re-reads the whole conversation, so cost is roughly calls × co
 - **Clean tree** → `git switch main` and `git pull --ff-only`, even when you are already on `main`.
   - If the branch you left has commits that are not in `main` (`git log main..<branch> --oneline` after the pull), mention it: its PR is probably not merged yet.
   - If the fast-forward fails, stop and report; never merge, reset or force.
-- Do not create the issue branch now — it is created at the commit gate (step 12), from the latest `main`.
+- Do not create the issue branch now — it is created at the commit gate (step 11), from the latest `main`.
 
 ## 1. Read the issue
 
@@ -159,24 +159,24 @@ The test suites ran in step 8; the browser walk goes to `issue-verifier`, which 
 - Ask me whether the result is acceptable. If not, go back to step 7 (or step 4) and iterate until I confirm.
 - **Milestone:** once confirmed, hand me the result-confirmed `/compact` command.
 
-## 11. Post the result comment
+## 11. Commit and push
 
-**Get my go-ahead, delegate the action.** The issue comment, the commit and the pull request are each carried out end to end by the `skill-runner` agent (cheap model, isolated context), which follows the whole skill — composes the text, runs the `git`/`gh` command and checks the result. Ask me first; only after the go-ahead make one `skill-runner` call for that one action. Give it the skill name (`github-issue`, `git-commit`, `open-pr`), the compact facts you already hold — issue number and exact title, lane, one line per changed file, the acceptance table or root cause, build and test results — the action-specific inputs named in the skill's *Inline or delegated* section, and a scratch file path for the text outside the repository — for every action, the commit included. The push, the acceptance ticks and the CI check stay with you.
+**Get my go-ahead, delegate the action.** The commit, the issue comment and the pull request are each carried out end to end by the `skill-runner` agent (cheap model, isolated context), which follows the whole skill — composes the text, runs the `git`/`gh` command and checks the result. Ask me first; only after the go-ahead make one `skill-runner` call for that one action. Give it the skill name (`git-commit`, `github-issue`, `open-pr`), the compact facts you already hold — issue number and exact title, lane, one line per changed file, the acceptance table or root cause, build and test results — the action-specific inputs named in the skill's *Inline or delegated* section, and a scratch file path for the text outside the repository — for every action, the commit included. The push, the acceptance ticks and the CI check stay with you.
 
-- **Issue comment.** After my go-ahead, one `skill-runner` call with the `github-issue` skill for the lane (Bug: *Root Cause / Resolution / Verification*; Feature and Test-authoring: *Implementation / Acceptance Criteria / Verification*) — English, factual, based only on what was actually done; no screenshots or local paths. It posts the comment and reports its URL.
-- **Acceptance boxes.** After my go-ahead, tick the verified items of the issue's acceptance section with one call of the `Set-AcceptanceChecks.ps1` script (`github-issue` skill, *Acceptance boxes*), passing their positions. Leave unverified items unticked and name them from the script's output. Skip this when the body has no checklist.
-
-## 12. Offer to ship
-
-Do not commit, push, or open a PR without my explicit go-ahead — each is its own gate:
+Do not commit, push, comment or open a PR without my explicit go-ahead — each is its own gate:
 
 - **Re-sync the base.** `git fetch origin`; if `origin/main` moved since step 0, `git pull --ff-only` (the uncommitted changes travel with you) and re-run steps 8–9 (step 8 is a `build-runner` call with scope `full`) so nothing regressed against the newer base. Otherwise say it is unchanged.
 - **Tick the plan.** Update the checklist in `docs/tasks/issue-<issue>-<short-slug>.md` to match the work. Also `Grep` `docs/tasks/` for the issue's link (`issues/<issue>)`): a hit is a task line `- [ ] **<id>** ([#<issue>](…))` in a multi-issue plan `docs/tasks/<topic>-plan.md`; change it to `- [x]` once I have confirmed the result in step 10. It goes into the same commit as the work.
 - **Commit.** Ask me to confirm; only then make one `skill-runner` call with the `git-commit` skill, the exact files to stage (including the plan file) and the branch — `<issue>-<short-slug>`, which it creates from the up-to-date `main` (never commit on `main`), or the existing branch you stayed on at my request (step 0). It commits with `-F`, checks the message with `git log -1` and fixes a deviation by amending the commit it just made, then reports the short SHA and the first line.
 - **Push.** Ask me to confirm; only then push the branch (`git push -u origin <branch>`).
+
+## 12. Issue comment, acceptance boxes, pull request
+
+- **Issue comment.** After my go-ahead, one `skill-runner` call with the `github-issue` skill for the lane (Bug: *Root Cause / Resolution / Verification*; Feature and Test-authoring: *Implementation / Acceptance Criteria / Verification*) — English, factual, based only on what was actually done; no screenshots or local paths. It posts the comment and reports its URL.
+- **Acceptance boxes.** After my go-ahead, tick the verified items of the issue's acceptance section with one call of the `Set-AcceptanceChecks.ps1` script (`github-issue` skill, *Acceptance boxes*), passing their positions. Leave unverified items unticked and name them from the script's output. Skip this when the body has no checklist.
 - **Open the pull request.** Ask me to confirm; only then make one `skill-runner` call with the `open-pr` skill, the head branch and the posted issue comment; it opens the PR into `main` (title `#<issue> <exact title>`, description with `Closes #<issue>`) and reports the URL. Pass the URL on to me.
 - **CI.** Check once with `gh pr checks <pr>`. If checks are still running, say so — the desktop app can watch CI; do not poll in a loop. If a check fails, report the failing job and its first error, and fix it on the same branch after I agree.
-- I merge the PR. Do not merge unless asked.
+- I merge the PR with a merge commit. Do not merge unless asked.
 
 ## 13. Recommend the next issue
 

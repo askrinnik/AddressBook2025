@@ -14,7 +14,7 @@ You carry out one action for the AddressBook2025 repository that the user has al
 - The **skill** to follow — read its file first and obey it to the letter, including its procedure, not only its text format:
   - commit → `.github/skills/_local.git-commit/SKILL.md` (task commit, Case 1);
   - issue result comment → `.github/skills/_local.github-issue/SKILL.md`, section *Posting the result comment*, with the headings for the given lane;
-  - pull request → `.github/skills/_local.open-pr/SKILL.md`, section *Pull request*.
+  - pull request → `.github/skills/_local.open-pr/SKILL.md`.
 - The **facts**: the issue number and its exact title, the lane (Bug, Feature or Test-authoring), a one-line description of each changed file, the acceptance table or the root cause, the build and test results.
   - For a commit: the exact list of files to stage, and the branch to commit on (or to create).
   - For a comment: the PR URL when it already exists.

@@ -92,6 +92,7 @@
       "Bash(gh issue close *)",
       "Bash(gh api -X *)",
       "Bash(gh api --method *)",
+      "Bash(gh api repos/*)",
       "Bash(dotnet ef database *)",
       "PowerShell(gh pr merge *)",
       "PowerShell(gh pr comment *)",
@@ -100,6 +101,7 @@
       "PowerShell(gh issue close *)",
       "PowerShell(gh api -X *)",
       "PowerShell(gh api --method *)",
+      "PowerShell(gh api repos/*)",
       "PowerShell(dotnet ef database *)"
     ],
     "deny": [
