@@ -1,0 +1,41 @@
+{
+  "run": "2026-10-07-16-54_parity-with-githubbackup-shipping-order",
+  "note": "parity with GitHubBackup: shipping order, git-commit and open-pr split, /next-issue",
+  "harness": "3",
+  "mcp": "none",
+  "started": "2026-10-07 16:54",
+  "commit": "65be4ffe",
+  "dirty": "no",
+  "model": "claude-sonnet-5-5",
+  "effort": "medium",
+  "sessions": [
+    {
+      "test": "bench-base",
+      "rep": 1,
+      "session": "78e297eb-a3d7-45df-b21d-c167edcbf19a",
+      "hash": "5b64bc8a",
+      "judged": false
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 1,
+      "session": "c227cecf-0aa9-4f21-a441-f3bf993918be",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 2,
+      "session": "8fea36e2-8305-4dac-a1a5-02e7b010181e",
+      "hash": "71ec4a97",
+      "judged": true
+    },
+    {
+      "test": "quality-vertical-slice",
+      "rep": 3,
+      "session": "928ae207-9de2-4e83-a2d2-048986a7b6e8",
+      "hash": "71ec4a97",
+      "judged": true
+    }
+  ]
+}
