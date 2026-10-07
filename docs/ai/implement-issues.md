@@ -36,6 +36,7 @@ The body is `.ai/prompts/implement-issues.md`, shared by both tools; `.claude/co
 │    │          (red → back to implementation; no red commits)
 │    └─ 💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 git-commit
 │               the first commit creates the branch <first>-<last>-<slug>
+│               the commit includes the tick of the issue's task in docs/tasks/*-plan.md
 │               ◀── "a1b2c3d #191 Title"
 │
 ├─ Final verification (once) ─────── on git diff main...HEAD
@@ -132,6 +133,6 @@ The process waits for the user:
 - on uncommitted changes, a batch pick when no numbers were given, or an unsettled question (preflight and per issue);
 - on the plan review per issue, only with `--review-plans`;
 - on the result confirmation of the whole batch;
-- before each outward action: the push, the pull request, the issue comments and the acceptance ticks — each needs its own "yes", unless `--ship` pre-authorises them. Starting the batch authorises the commits, one per issue.
+- before each outward action: the push, the pull request, the issue comments and the acceptance ticks — each needs its own "yes", unless `--ship` pre-authorises them. Starting the batch authorises the commits, one per issue. The tick of the issue's task in a multi-issue plan travels in its commit.
 
 Debatable decisions are made, recorded in each plan's *Decisions* section and reported together at the end. The batch takes at most 5 issues of complexity S or M.

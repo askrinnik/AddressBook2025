@@ -85,7 +85,7 @@ The body is `.ai/prompts/implement-issue.md`, shared by both tools; `.claude/com
 │
 ├─ 12. Ship
 │    ├─ 💻 git fetch; origin/main moved → git pull --ff-only and repeat 8–9 (🤖 build-runner)
-│    ├─ 💻 ticks the plan checklist
+│    ├─ 💻 ticks the plan checklist and the issue's task in docs/tasks/*-plan.md, if there is one
 │    ├─ 🙋 "yes, commit"
 │    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 git-commit
 │    │                    creates branch 42-<slug>
