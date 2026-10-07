@@ -1,3 +1,4 @@
+using AddressBook.Contracts;
 using AddressBook.Web.Models;
 using Microsoft.AspNetCore.Components;
 using AddressBook.Web.Pages;
@@ -10,9 +11,9 @@ public class CreateContactTests : MudTestContext
     private const string FirstNameRequired = "The First name field is required.";
     private const string LastNameRequired = "The Last name field is required.";
 
-    private const string FirstNameTooLong = "The field First name must be a string with a maximum length of 30.";
-    private const string LastNameTooLong = "The field Last name must be a string with a maximum length of 30.";
-    private const string BirthdayInFutureMessage = "Birthday cannot be in the future";
+    private static readonly string FirstNameTooLong = $"The field First name must be a string with a maximum length of {ContactRules.NameMaxLength}.";
+    private static readonly string LastNameTooLong = $"The field Last name must be a string with a maximum length of {ContactRules.NameMaxLength}.";
+    private const string BirthdayInFutureMessage = ContactRules.BirthdayInFutureMessage;
 
     private ContactFormHarness RenderForm()
     {
@@ -190,12 +191,13 @@ public class CreateContactTests : MudTestContext
     public async Task Submit_BirthdayToday_CreatesContact()
     {
         var form = RenderForm();
+        var model = ContactBuilder.New.BirthdayToday();
         ApiService.ReturnsCreatedId(1);
-        await form.FillAsync(ContactBuilder.New.BirthdayToday());
+        await form.FillAsync(model);
 
         form.Submit();
 
-        await ApiService.Received(1).CreateContact(Arg.Is<CreateContactModel>(m => m.Birthday == DateTime.Today));
+        await ApiService.Received(1).CreateContact(Arg.Is<CreateContactModel>(m => m.Birthday == model.Birthday));
         Assert.Equal("/contacts", CurrentPath);
     }
 
@@ -213,11 +215,27 @@ public class CreateContactTests : MudTestContext
     }
 
     [Fact]
-    public void Render_BirthdayPickerMaxDate_IsToday()
+    public void Render_BirthdayPickerMaxDate_IsUtcToday()
     {
+        UseClock(FixedTimeProvider.LocalDayAheadOfUtc());
+
         var form = RenderForm();
 
-        Assert.Equal(DateTime.Today, form.BirthdayMaxDate);
+        Assert.Equal(FixedTimeProvider.LateUtcEveningUtcDate, form.BirthdayMaxDate);
+    }
+
+    [Fact]
+    public async Task Submit_BirthdayUtcTomorrowButLocalToday_BlocksSubmit()
+    {
+        UseClock(FixedTimeProvider.LocalDayAheadOfUtc());
+        var form = RenderForm();
+        await form.FillAsync(ContactBuilder.New.WithBirthday(FixedTimeProvider.LateUtcEveningLocalDate));
+
+        form.Submit();
+
+        ApiService.DidNotReceiveCreate();
+        Assert.Equal(InitialPath, CurrentPath);
+        Assert.Contains(BirthdayInFutureMessage, form.ValidationMessages);
     }
 
     [Fact]

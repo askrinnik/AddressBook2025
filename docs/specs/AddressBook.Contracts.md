@@ -12,10 +12,11 @@
 - Responsibility:
   - Define MediatR request contracts (`IRequest<TResponse>`)
   - Define shared response and read models (DTOs)
+  - Define the validation rules both sides enforce (`ContactRules`)
 - NuGet dependency:
   - `MediatR.Contracts` (`2.0.1`)
 
-This project contains contracts only. It does not contain handlers, persistence, or transport-specific logic.
+This project contains contracts and the shared validation rules only. It does not contain handlers, persistence, or transport-specific logic.
 
 ## Prerequisites and Build
 
@@ -171,7 +172,35 @@ Source: `Models/GetFilteredContactsResponse.cs`
 public record GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<ContactModel> Rows);
 ```
 
-## 6. Design Decisions
+## 6. Shared Validation Rules
+
+Source: `ContactRules.cs`
+
+`ContactRules` is the single source of the contact rules that the API and the Web client both enforce, so one edit here keeps client and server in step.
+
+```csharp
+public static class ContactRules
+{
+    public const int NameMaxLength = 30;
+    public const string BirthdayInFutureMessage = "Birthday cannot be in the future";
+
+    public static DateOnly TodayUtc(TimeProvider timeProvider);
+    public static bool IsBirthdayNotInFuture(DateOnly? birthday, TimeProvider timeProvider);
+}
+```
+
+| Member | Read by |
+|---|---|
+| `NameMaxLength` | API validators (`MaximumLength`), `ContactConfiguration` (`HasMaxLength`), Web `CreateContactModel` (`[StringLength]`) |
+| `BirthdayInFutureMessage` | API validators (`WithMessage`), Web `NotInFutureAttribute` |
+| `TodayUtc` | Web Create/Edit pages (`MudDatePicker.MaxDate`) |
+| `IsBirthdayNotInFuture` | API validators (`Must`), Web `NotInFutureAttribute` |
+
+- The birthday rule compares against the current **UTC** date, read from the given `TimeProvider`. A `null` birthday is valid. The result does not depend on the time zone of the browser or the server.
+- Only the birthday message is shared. The length messages are the framework defaults (FluentValidation on the API, DataAnnotations on the Web), built from the shared `NameMaxLength`.
+- `TimeProvider` is part of the base class library, so the rules add no package dependency.
+
+## 7. Design Decisions
 
 1. Commands are defined as mutable `class` types.
    - Rationale: Supports model binding and JSON deserialization for request bodies.
@@ -186,11 +215,12 @@ public record GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<Con
 4. `UpdateContactCommand.Id` is populated from route, not body.
    - Rationale: Prevents route/body ID mismatch and enforces URL as the authoritative resource identifier.
 
-## 7. File Structure
+## 8. File Structure
 
 | File | Contract Type | Description |
 |---|---|---|
 | `AddressBook.Contracts.csproj` | Project file | Declares target framework (`net10.0`) and `MediatR.Contracts` dependency. |
+| `ContactRules.cs` | Shared rules (`static class`) | Name length limit, birthday message and the UTC birthday rule shared by the API and the Web client. |
 | `CreateContactCommand.cs` | Command (`class`) | Create-contact request with first/last name and optional birthday. |
 | `UpdateContactCommand.cs` | Command (`class`) | Update-contact request with route-populated `Id`, first/last name, and optional birthday. |
 | `GetFilteredContactsQuery.cs` | Query (`record`) | Query by optional search text, returns filtered rows and total count. |
@@ -202,7 +232,7 @@ public record GetFilteredContactsResponse(int TotalRows, IReadOnlyCollection<Con
 | `Models/DeleteContactByIdResponse.cs` | Response DTO (`record`) | Response indicating whether delete succeeded. |
 | `Models/GetFilteredContactsResponse.cs` | Response DTO (`record`) | Response containing total row count and read-only contact rows collection. |
 
-## 8. Cross-Project Usage
+## 9. Cross-Project Usage
 
 - `AddressBook.Api`
   - Receives command/query contracts from HTTP endpoints and dispatches them via MediatR handlers.

@@ -52,7 +52,8 @@ VSTest-опция `--filter` здесь не используется. Полн�
 
 | Тип | Назначение |
 |---|---|
-| `MudTestContext` | Базовый класс тестов: `AddMudServices()`, `JSInterop` в loose-режиме, `RenderProviders()` для popover/dialog-провайдеров (нужен перед оверлейными виджетами). |
+| `MudTestContext` | Базовый класс тестов: `AddMudServices()`, `JSInterop` в loose-режиме, `TimeProvider.System`, `RenderProviders()` для popover/dialog-провайдеров (нужен перед оверлейными виджетами), `UseClock(...)` — подмена часов до рендера. |
+| `FixedTimeProvider` | `TimeProvider` с фиксированным моментом и локальной зоной; `LocalDayAheadOfUtc()` — 2026-03-10 23:30 UTC в зоне UTC+14, где локальная дата уже 2026-03-11. |
 | `MudBlazorJsInterop` | Заглушки JS-вызовов MudBlazor. |
 | `ApiServiceMock` | Extension-методы для NSubstitute-мока `IAddressBookApiService`: настройка ответов (`ReturnsContacts`, …) и проверки `Received`/`DidNotReceive`. |
 | `FakeHttpMessageHandler` | Управляемый `HttpMessageHandler` для тестов `AddressBookApiService` (без живого HTTP). |
@@ -71,13 +72,15 @@ src/AddressBook.Web.Tests/
 ├── xunit.runner.json
 ├── packages.lock.json
 ├── Infrastructure/    MudTestContext, MudBlazorJsInterop, ApiServiceMock,
-│                      FakeHttpMessageHandler, TestIds, RenderedComponentExtensions, TestCulture
+│                      FakeHttpMessageHandler, FixedTimeProvider, TestIds, RenderedComponentExtensions,
+│                      TestCulture
 ├── Data/              ContactBuilder
 ├── Harnesses/         ContactFormHarness, ContactsTableHarness, DeleteDialogHarness, AppShellHarness
 └── Specs/
     ├── Components/    CustomValidationSummaryTests
     ├── ErrorHandling/ ProblemDetailsExtensionsTests, ProblemDetailsHandlerTests
     ├── Layout/        MainLayoutTests, NavMenuTests, ErrorTests
+    ├── Models/        NotInFutureAttributeTests
     ├── Pages/         HomeTests, ContactsListTests, ContactsDeleteTests, ContactsErrorTests,
     │                  CreateContactTests, CreateContactServerErrorTests,
     │                  EditContactTests, EditContactServerErrorTests,
@@ -85,7 +88,8 @@ src/AddressBook.Web.Tests/
     ├── Services/      AddressBookApiServiceTests
     ├── Infrastructure/ самотесты инфраструктуры: MudTestContextTests, FakeHttpMessageHandlerTests,
     │                  TestIdsTests
-    └── Data/          самотест ContactBuilderTests (два теста: уникальность id и длина имён)
+    └── Data/          самотест ContactBuilderTests (уникальность id, длина имён, даты рождения «сегодня»
+                       и «завтра» по UTC)
 ```
 
 `Specs/Infrastructure/` и `Specs/Data/` — тесты самой обвязки, а не `AddressBook.Web`. Остальную обвязку

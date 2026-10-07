@@ -198,10 +198,16 @@ Both validators implement the same rules:
 Rules:
 
 ```text
-FirstName: NotEmpty, MaximumLength(30)
-LastName: NotEmpty, MaximumLength(30)
-Birthday: LessThanOrEqualTo(today) when HasValue, message "Birthday cannot be in the future"
+FirstName: NotEmpty, MaximumLength(ContactRules.NameMaxLength)   // 30
+LastName:  NotEmpty, MaximumLength(ContactRules.NameMaxLength)   // 30
+Birthday:  Must(ContactRules.IsBirthdayNotInFuture), message ContactRules.BirthdayInFutureMessage
+           ("Birthday cannot be in the future")
 ```
+
+- The limit and the birthday rule come from `ContactRules` in `AddressBook.Contracts` ([Contracts spec, section 6](AddressBook.Contracts.md#6-shared-validation-rules)); the Web client reads the same members, so both sides stay in step.
+- The birthday rule compares against the current **UTC** date: a birthday on the UTC today is accepted (201/204), the next UTC day is rejected (400). An empty birthday is valid. The server's time zone does not matter.
+- Both validators take `TimeProvider` from DI (`TimeProvider.System`, registered with `TryAddSingleton` in `StartupExtensions.ConfigureBuilder`) and read the clock at validation time, so a test host can replace the clock.
+- Near UTC midnight, a browser and the server can disagree for as long as their clocks differ; the server's answer is final.
 
 ### Business Rules (from FRS)
 

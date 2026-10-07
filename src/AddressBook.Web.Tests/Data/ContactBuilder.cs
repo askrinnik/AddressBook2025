@@ -1,3 +1,4 @@
+using AddressBook.Contracts;
 using AddressBook.Contracts.Models;
 using AddressBook.Web.Models;
 using Bogus;
@@ -13,9 +14,6 @@ namespace AddressBook.Web.Tests.Data;
 /// </summary>
 public static class ContactBuilder
 {
-    /// <summary>Max length of first/last name - <c>MaximumLength(30)</c> in the API validators.</summary>
-    public const int MaxNameLength = 30;
-
     private static int _nextId;
 
     private static int NextId() => Interlocked.Increment(ref _nextId);
@@ -23,15 +21,22 @@ public static class ContactBuilder
     private static string Name(Func<Faker, string> pick)
     {
         var name = pick(new Faker());
-        return name.Length > MaxNameLength ? name[..MaxNameLength] : name;
+        return name.Length > ContactRules.NameMaxLength ? name[..ContactRules.NameMaxLength] : name;
     }
 
     private static string NameOfLength(int length) =>
         new Faker().Random.String2(length, "abcdefghijklmnopqrstuvwxyz");
 
-    /// <summary>A date in the past, guaranteed to be earlier than today.</summary>
+    /// <summary>
+    /// The current UTC date as a <see cref="DateTime"/> at midnight - the "today" of the birthday rule on both
+    /// the client and the API, so the boundary data does not depend on the machine's time zone.
+    /// </summary>
+    private static DateTime TodayUtc() =>
+        ContactRules.TodayUtc(TimeProvider.System).ToDateTime(TimeOnly.MinValue);
+
+    /// <summary>A date in the past, guaranteed to be earlier than today (UTC).</summary>
     private static DateTime PastBirthday() =>
-        new Faker().Date.Past(60, DateTime.Today.AddDays(-1)).Date;
+        new Faker().Date.Past(60, TodayUtc().AddDays(-1)).Date;
 
     private static CreateContactModel Base() => new()
     {
@@ -57,22 +62,27 @@ public static class ContactBuilder
 
         public static CreateContactModel WithoutBirthday() => Mutate(m => m.Birthday = null);
 
-        public static CreateContactModel FirstName30Chars() => Mutate(m => m.FirstName = NameOfLength(MaxNameLength));
+        public static CreateContactModel FirstName30Chars() => Mutate(m => m.FirstName = NameOfLength(ContactRules.NameMaxLength));
 
-        public static CreateContactModel FirstName31Chars() => Mutate(m => m.FirstName = NameOfLength(MaxNameLength + 1));
+        public static CreateContactModel FirstName31Chars() => Mutate(m => m.FirstName = NameOfLength(ContactRules.NameMaxLength + 1));
 
-        public static CreateContactModel LastName30Chars() => Mutate(m => m.LastName = NameOfLength(MaxNameLength));
+        public static CreateContactModel LastName30Chars() => Mutate(m => m.LastName = NameOfLength(ContactRules.NameMaxLength));
 
-        public static CreateContactModel LastName31Chars() => Mutate(m => m.LastName = NameOfLength(MaxNameLength + 1));
+        public static CreateContactModel LastName31Chars() => Mutate(m => m.LastName = NameOfLength(ContactRules.NameMaxLength + 1));
 
         /// <summary>Three spaces: not an empty string, but semantically an empty name.</summary>
         public static CreateContactModel WhitespaceFirstName() => Mutate(m => m.FirstName = "   ");
 
         public static CreateContactModel WhitespaceLastName() => Mutate(m => m.LastName = "   ");
 
-        public static CreateContactModel BirthdayInFuture() => Mutate(m => m.Birthday = DateTime.Today.AddDays(1));
+        /// <summary>Birthday on the next UTC day - the first date the birthday rule rejects.</summary>
+        public static CreateContactModel BirthdayInFuture() => Mutate(m => m.Birthday = TodayUtc().AddDays(1));
 
-        public static CreateContactModel BirthdayToday() => Mutate(m => m.Birthday = DateTime.Today);
+        /// <summary>Birthday on the current UTC day - the last date the birthday rule accepts.</summary>
+        public static CreateContactModel BirthdayToday() => Mutate(m => m.Birthday = TodayUtc());
+
+        /// <summary>A valid contact with the given birthday - for tests that pin the clock to a fixed date.</summary>
+        public static CreateContactModel WithBirthday(DateTime birthday) => Mutate(m => m.Birthday = birthday);
     }
 
     /// <summary>Existing contacts (<see cref="ContactModel"/>); <c>id</c> is unique by default.</summary>

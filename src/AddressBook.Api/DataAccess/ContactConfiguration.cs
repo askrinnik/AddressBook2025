@@ -1,4 +1,5 @@
 ﻿using AddressBook.Api.Domain;
+using AddressBook.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,11 +23,11 @@ internal class ContactConfiguration : IEntityTypeConfiguration<Contact>
         value => new(value));
 
     builder.Property(e => e.FirstName)
-      .HasMaxLength(30)
+      .HasMaxLength(ContactRules.NameMaxLength)
       .IsRequired();
 
     builder.Property(e => e.LastName)
-      .HasMaxLength(30)
+      .HasMaxLength(ContactRules.NameMaxLength)
       .IsRequired();
 
     builder.Property(e => e.Birthday)

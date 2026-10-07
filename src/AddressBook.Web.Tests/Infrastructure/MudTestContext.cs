@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Components;
 namespace AddressBook.Web.Tests.Infrastructure;
 
 /// <summary>
-/// Base bUnit context for MudBlazor component tests: MudBlazor services, JSInterop in loose mode
-/// and a substituted <see cref="IAddressBookApiService"/>.
+/// Base bUnit context for MudBlazor component tests: MudBlazor services, JSInterop in loose mode,
+/// a substituted <see cref="IAddressBookApiService"/> and the system <see cref="TimeProvider"/>.
 /// </summary>
 public abstract class MudTestContext : BunitContext
 {
@@ -22,7 +22,15 @@ public abstract class MudTestContext : BunitContext
 
         ApiService = Substitute.For<IAddressBookApiService>();
         Services.AddSingleton(ApiService);
+
+        // The pages and the birthday rule read the clock through TimeProvider, as in Program.cs.
+        Services.AddSingleton(TimeProvider.System);
     }
+
+    /// <summary>
+    /// Replaces the clock with <paramref name="clock"/>. Call before rendering; the last registration wins.
+    /// </summary>
+    protected void UseClock(TimeProvider clock) => Services.AddSingleton(clock);
 
     /// <summary>
     /// Renders the MudBlazor providers (popover/dialog) in this context. Call before rendering a component

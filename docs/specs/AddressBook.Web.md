@@ -116,6 +116,7 @@ builder.Services.AddHttpClient<IAddressBookApiService, AddressBookApiService>(
         client => client.BaseAddress = new(builder.Configuration["API_Prefix"] ?? "http://localhost:5000/api/"))
     .AddHttpMessageHandler<ProblemDetailsHandler>();
 builder.Services.AddMudServices();
+builder.Services.AddSingleton(TimeProvider.System);
 ```
 
 ### DI behavior
@@ -126,6 +127,7 @@ builder.Services.AddMudServices();
 | IAddressBookApiService -> AddressBookApiService | Scoped | Typed API abstraction used by pages |
 | Typed HttpClient<IAddressBookApiService, AddressBookApiService> | Managed by HttpClientFactory | Sets BaseAddress from config and adds ProblemDetailsHandler |
 | Mud services | Service collection extension | Registers MudBlazor runtime services |
+| TimeProvider -> `TimeProvider.System` | Singleton | Clock of the birthday rule (`NotInFutureAttribute`) and of the date picker's `MaxDate`; tests replace it with a fixed clock |
 
 ## 3. API Service Layer
 
@@ -220,15 +222,16 @@ Source: `src/AddressBook.Web/Pages/CreateContact.razor`
   - Catches `ProblemDetailsException`; maps server field errors into `ValidationMessageStore`.
   - Catches generic exceptions and adds general validation error.
 - `CreateContactModel` carries `[Display(Name = "First name")]` and `[Display(Name = "Last name")]`, so the required-field messages read `The First name field is required.` and `The Last name field is required.`. The field labels are set explicitly and match these names; server-error mapping still uses the property names `FirstName` / `LastName`.
-- Client validation follows the API rules (`CreateContactCommandValidator`, `UpdateContactCommandValidator`), so an invalid form never calls the service:
+- Client validation follows the API rules (`CreateContactCommandValidator`, `UpdateContactCommandValidator`), so an invalid form never calls the service. The limit, the birthday message and the birthday rule come from `ContactRules` in `AddressBook.Contracts` ([Contracts spec, section 6](AddressBook.Contracts.md#6-shared-validation-rules)), the same members the API reads:
 
   | Field | Rule | Message |
   |---|---|---|
   | First name, Last name | not empty or whitespace-only (`[Required]`) | `The First name field is required.` / `The Last name field is required.` |
-  | First name, Last name | at most 30 characters (`[StringLength(30)]`) | `The field First name must be a string with a maximum length of 30.` (same form for Last name) |
-  | Birthday | not later than today (`[NotInFuture]`) | `Birthday cannot be in the future` |
+  | First name, Last name | at most 30 characters (`[StringLength(ContactRules.NameMaxLength)]`) | `The field First name must be a string with a maximum length of 30.` (same form for Last name) |
+  | Birthday | not later than the current UTC date (`[NotInFuture]`) | `Birthday cannot be in the future` (`ContactRules.BirthdayInFutureMessage`) |
 
-- The `MudDatePicker` has `MaxDate = DateTime.Today`, so the picker disables future days. `MaxDate` limits the picker only; `[NotInFuture]` still validates a value that arrives another way.
+- The birthday rule compares against the **UTC** date, like the API, not the browser's local date. East of UTC, between local midnight and UTC midnight, the local "today" is therefore refused. `NotInFutureAttribute` reads the clock from the `TimeProvider` that `DataAnnotationsValidator` passes in through the `ValidationContext` service provider; without one it falls back to `TimeProvider.System`.
+- The page injects `TimeProvider` and sets `MudDatePicker.MaxDate` to `ContactRules.TodayUtc(TimeProvider)`, so the picker disables the days after the UTC today. `MaxDate` limits the picker only; `[NotInFuture]` still validates a value that arrives another way. The picker opens on the local month, so on the 1st of a month east of UTC every shown day can be disabled until the user goes back a month.
 - Cancel button navigates to `/contacts`.
 - `_isLoading` disables submit button while API call is in progress.
 
@@ -304,9 +307,9 @@ Used by both create and edit pages.
 
 | Property | Type | Notes |
 |---|---|---|
-| FirstName | string | `[Required]`, `[StringLength(30)]` |
-| LastName | string | `[Required]`, `[StringLength(30)]` |
-| Birthday | DateTime? | `[NotInFuture]` (`Models/NotInFutureAttribute.cs`, null is valid); converted to `DateOnly?` when sending command to API |
+| FirstName | string | `[Required]`, `[StringLength(ContactRules.NameMaxLength)]` (30) |
+| LastName | string | `[Required]`, `[StringLength(ContactRules.NameMaxLength)]` (30) |
+| Birthday | DateTime? | `[NotInFuture]` (`Models/NotInFutureAttribute.cs`: not later than the current UTC date through `ContactRules.IsBirthdayNotInFuture`, null is valid); converted to `DateOnly?` when sending command to API |
 
 ## 7. Layout and Shared UI
 
