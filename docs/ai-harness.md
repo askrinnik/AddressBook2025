@@ -36,148 +36,159 @@ The layout is checked with `pwsh -File .github/skills/_local.sync-ai-customizati
 
 ## The issue workflow: `/implement-issue <n>`
 
-One command takes any issue end to end. The issue's labels select the **lane**: `bug` → Bug lane; tests-only work (typically `testing`) → Test-authoring lane; everything else → Feature lane.
+One command takes any issue end to end. The issue's labels select the **lane**: `bug` → Bug lane; tests-only work (typically `testing`) → Test-authoring lane; everything else → Feature lane (a change to CI workflows, configuration or documentation is Feature, even when labelled `testing`).
 
-The body is `.ai/prompts/implement-issue.md`. The diagram below shows who does what at each step. Legend:
+The body is `.ai/prompts/implement-issue.md`, shared by both tools; `.claude/commands/implement-issue.md` (Claude Code) and `.github/prompts/implement-issue.prompt.md` (Copilot) are thin wrappers around it. The diagram below shows who does what at each step. Legend:
 
-- `<session>` — the main session, on whatever model it was started with;
+- 💻 — the main session, on whatever model it was started with;
 - agents have their model written out: it is set in `.claude/agents/*.md` and does not depend on the session's model (see [Agents and models](#agents-and-models));
 - 🤖 — an agent call (`.claude/agents/`);
 - 🧩 — a skill (`.claude/skills/`);
-- **[You]** — a point where the process waits for the user.
+- 🙋 — a point where the process waits for the user.
 
 ```
 /implement-issue 42
 │
-├─ 0. Branch preparation ─────────── <session>: git status → git switch main → git pull --ff-only
+├─ 0. Branch preparation ─────────── 💻 git status → git switch main → git pull --ff-only
 │                                    (uncommitted changes → stop, ask you; staying on the
 │                                     current branch only when you said so)
-├─ 1. Read the issue ─────────────── <session>: 🧩 github-issue (body, comments, sub-issues)
-│                                    (no number → 🧩 next-issue → [You] pick an issue)
+├─ 1. Read the issue ─────────────── 💻 🧩 github-issue (body, comments, sub-issues)
+│                                    (no number → 🧩 next-issue → 🙋 pick an issue)
 │                                    (closed issue → stop)
-│                                    (open blocker → stop, ask you)
+│                                    (open blocker → stop, 🙋 how to proceed)
 │                                    gh issue edit --add-assignee @me
-├─ 2. Lane ───────────────────────── <session>: label bug → Bug · tests only → Test-authoring
-│                                    · else Feature (labels and text disagree → [You])
+├─ 2. Lane ───────────────────────── 💻 label bug → Bug · tests only → Test-authoring
+│                                    · else Feature (labels and text disagree → 🙋)
 │
 ├─ 3. Understand the problem
-│    ├─ Bug:  <session> ──▶ 🤖 issue-verifier (Sonnet), reproduce mode, + 🧩 debug-issue
+│    ├─ Bug: 💻 ──▶ 🤖 issue-verifier (Sonnet), reproduce mode, + 🧩 debug-issue
 │    │          ◀── repro table (or a failing Playwright API spec)
-│    │          (cannot reproduce → [You])
-│    ├─ Feature / Test-authoring: <session>: 🧩 github-issue → acceptance list
-│    │          (material gaps → [You])
-│    └─ All lanes: <session> ──▶ 🤖 Explore (summary ≤ 30 lines): locate the code
+│    │          (cannot reproduce → 🙋)
+│    ├─ Feature / Test-authoring: 💻 🧩 github-issue → acceptance list
+│    │          (material gaps → 🙋)
+│    └─ All lanes: 💻 ──▶ 🤖 Explore (summary ≤ 30 lines): locate the code
 │
 ├─ 4. Plan ──────────────────────────────────▶ 🤖 issue-planner (Opus, read-only)
 │                                    (large cross-layer change → optional 🤖 architect, Opus)
 │                                    ◀── plan text + complexity S/M/L
-├─ 5–6. Save and review ──────────── <session>: docs/tasks/issue-42-<slug>.md
-│                                    [You] review → edits → review again
-│                                    [You] /compact (ready-made command)
+├─ 5–6. Save and review ──────────── 💻 docs/tasks/issue-42-<slug>.md
+│                                    🙋 review → edits → review again
+│                                    🙋 /compact (ready-made command)
 │
 ├─ 7. Implement
-│    ├─ Bug / Feature: <session> ──▶ 🤖 issue-developer (Sonnet · Opus for L)
-│    ├─ Test-authoring: <session> ──▶ 🤖 playwright-tester (Sonnet) for Playwright specs
-│    │                                🤖 issue-developer (Sonnet) for bUnit
+│    ├─ Bug / Feature: 💻 ──▶ 🤖 issue-developer (Sonnet · Opus for L)
+│    ├─ Test-authoring: 💻 ──▶ 🤖 playwright-tester (Sonnet) for Playwright specs
+│    │                         🤖 issue-developer (Sonnet) for bUnit
 │    │                  tests via 🧩 write-tests · docs updated in the same change
 │    │                  ◀── change summary (no commits)
-│    └─ (tests reveal a broken behaviour in Test-authoring → stop, [You])
+│    └─ (tests reveal a broken behaviour in Test-authoring → stop, 🙋)
 │
 ├─ 8. Build, tests and review
-│    ├─ <session>: stop background servers
-│    ├─ <session> ──1 call──▶ 🤖 build-runner (Haiku), scope full
-│    │                         dotnet build -clp:ErrorsOnly
-│    │                         bUnit · Playwright API · Playwright UI E2E (output to files;
-│    │                         the Playwright suites start API and Web themselves)
-│    │    <session> ◀── verbatim summary lines + first errors
+│    ├─ 💻 stop background servers
+│    ├─ 💻 ──1 call──▶ 🤖 build-runner (Haiku), scope full
+│    │                  dotnet build -clp:ErrorsOnly
+│    │                  bUnit · Playwright API · Playwright UI E2E (output to files;
+│    │                  the Playwright suites start API and Web themselves)
+│    │    💻 ◀── verbatim summary lines + first errors
 │    │    (red → errors to 🤖 issue-developer → 🤖 build-runner again)
-│    ├─ <session>: review of the comments the change adds
+│    ├─ 💻 review of the comments the change adds
 │    ├─ if API / validators / data access / Program.cs / config / CI workflows / packages / tools changed:
-│    │    <session> ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
+│    │    💻 ──▶ 🤖 security-reviewer (Opus) ◀── findings → fixes
 │    └─ (build-runner and the triggered review are skipped only on your explicit word)
 │
 ├─ 9. Verify
-│    ├─ Bug / Feature: <session> ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
-│    │                  real browser: every acceptance item (or the repro), console, network
+│    ├─ Bug / Feature: 💻 ──▶ 🤖 issue-verifier (Sonnet), verify mode, + 🧩 verify-feature
+│    │                  real browser: every acceptance item with behaviour visible in the app
+│    │                  (or the repro), console, network
 │    │                  ◀── evidence table
 │    │                  (skipped only on your explicit word for this issue)
-│    │                  (Test-authoring: no browser walk; the new tests in the build-runner summary
-│    │                   must pass and assert the intended behaviour)
+│    ├─ Feature, item without app behaviour (CI workflow, configuration, documentation):
+│    │    💻 command, test or the PR's CI run (an item only CI can confirm stays open)
+│    ├─ Test-authoring: no browser walk; the new tests in the build-runner summary
+│    │    must pass and assert the intended behaviour
 │    ├─ red or failed item → back to 7 (or 4 if the approach changes), then 8–9 again
-│    └─ [You] /compact
-├─ 10. Confirm the result ────────── <session>: result table (acceptance, or root cause)
-│                                    [You] "result accepted?" → /compact
+│    └─ 🙋 /compact
+├─ 10. Confirm the result ────────── 💻 result table (acceptance, or root cause)
+│                                    🙋 "result accepted?" → /compact
 │                                    (not accepted → back to 7 or 4)
 │
 ├─ 11. Result comment
-│    ├─ [You] "yes, post the comment"
-│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 github-issue
-│    │                           text → gh issue comment --body-file
-│    │    <session> ◀── comment URL
-│    └─ [You] "yes, tick the acceptance boxes" → <session>: Set-AcceptanceChecks.ps1 (- [ ] → - [x])
+│    ├─ 🙋 "yes, post the comment"
+│    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 github-issue
+│    │                    text → gh issue comment --body-file
+│    │    💻 ◀── comment URL
+│    └─ 🙋 "yes, tick the acceptance boxes" → 💻 Set-AcceptanceChecks.ps1 (- [ ] → - [x])
 │
 ├─ 12. Ship
-│    ├─ <session>: git fetch; origin/main moved → git pull --ff-only and repeat 8–9 (🤖 build-runner)
-│    ├─ <session>: ticks the plan checklist
-│    ├─ [You] "yes, commit"
-│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 git-commit
-│    │                           creates branch 42-<slug>
-│    │                           git add <the given list>
-│    │                           writes the text → git commit -F
-│    │                           git log -1 → --amend on a deviation
-│    │    <session> ◀── "a1b2c3d #42 Title"
-│    ├─ [You] "yes, push" → <session>: git push -u origin 42-<slug>
-│    ├─ [You] "yes, open the PR"
-│    │    <session> ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 open-pr
-│    │                           text → gh pr create --body-file
-│    │    <session> ◀── PR URL
-│    └─ <session>: gh pr checks (once, no polling)
+│    ├─ 💻 git fetch; origin/main moved → git pull --ff-only and repeat 8–9 (🤖 build-runner)
+│    ├─ 💻 ticks the plan checklist
+│    ├─ 🙋 "yes, commit"
+│    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 git-commit
+│    │                    creates branch 42-<slug>
+│    │                    git add <the given list>
+│    │                    writes the text → git commit -F
+│    │                    git log -1 → --amend on a deviation
+│    │    💻 ◀── "a1b2c3d #42 Title"
+│    ├─ 🙋 "yes, push" → 💻 git push -u origin 42-<slug>
+│    ├─ 🙋 "yes, open the PR"
+│    │    💻 ──1 call──▶ 🤖 skill-runner (Haiku) + 🧩 open-pr
+│    │                    text → gh pr create --body-file
+│    │    💻 ◀── PR URL
+│    └─ 💻 gh pr checks (once, no polling; a failed check → fix on the same branch after your yes)
 │
-└─ 13. What next ─────────────────── <session>: 🧩 next-issue -AssumeClosed 42
+└─ 13. What next ─────────────────── 💻 🧩 next-issue -AssumeClosed 42
                                      → "merge the PR → new session → /implement-issue N"
 ```
 
-The same flow as a diagram (GitHub renders Mermaid), without `/compact` and the small commands, which are in the tree above. Grey blocks are the main session, blue are agents, green are skills, yellow are waits for the user, red is a return to implementation.
+The same flow as a Mermaid diagram (GitHub renders it), without `/compact` and the small commands, which are in the tree above. Grey blocks are the main session, blue are agents, green are skills, yellow are waits for the user, red is a return to implementation.
 
 ```mermaid
 flowchart TD
-    START(["/implement-issue N"]) --> S0["0. Branch preparation<br/>git switch main · git pull --ff-only"]:::session
-    S0 --> S1["1. Read the issue<br/>🧩 github-issue · assign"]:::skill
+    START(["/implement-issue N"]) --> S0["💻 0. Branch preparation<br/>git switch main · git pull --ff-only"]:::session
+    S0 --> S1["💻 1. Read the issue<br/>🧩 github-issue · assign"]:::skill
     S1 -. "no number" .-> NI0["🧩 next-issue"]:::skill
-    NI0 -.-> U1{{"[You] pick an issue"}}:::user
+    NI0 -.-> U1{{"🙋 pick an issue"}}:::user
     U1 -.-> S1
-    S1 --> S2["2. Lane<br/>Bug · Feature · Test-authoring"]:::session
+    S1 -. "closed" .-> STOP(["stop"])
+    S1 -. "open blocker" .-> UB{{"🙋 how to proceed"}}:::user
+    UB -.-> S1
+    S1 --> S2["💻 2. Lane<br/>Bug · Feature · Test-authoring"]:::session
     subgraph STEP3["3. Understand the problem"]
         A3B["Bug: reproduce<br/>🤖 issue-verifier · Sonnet<br/>🧩 debug-issue"]:::agent
-        S3F["Feature / Test-authoring<br/>🧩 github-issue<br/>acceptance list"]:::skill
+        S3F["💻 Feature / Test-authoring<br/>🧩 github-issue<br/>acceptance list"]:::skill
         A3E["Locate the code<br/>🤖 Explore"]:::agent
         A3B --> A3E
         S3F --> A3E
     end
     S2 -- "Bug" --> A3B
     S2 -- "Feature / Test-authoring" --> S3F
-    A3B -. "cannot reproduce" .-> U3{{"[You] how to proceed"}}:::user
+    S2 -. "labels and text disagree" .-> U2{{"🙋 which lane"}}:::user
+    U2 -.-> S2
+    A3B -. "cannot reproduce" .-> U3{{"🙋 how to proceed"}}:::user
     U3 -.-> A3B
-    S3F -. "material gaps" .-> U3G{{"[You] settle the gaps"}}:::user
+    S3F -. "material gaps" .-> U3G{{"🙋 settle the gaps"}}:::user
     U3G -.-> S3F
     A3E --> A4["4. Plan<br/>🤖 issue-planner · Opus<br/>plan + complexity S/M/L"]:::agent
-    A4 --> S5["5–6. Save the plan<br/>docs/tasks/issue-N-slug.md"]:::session
-    S5 --> U5{{"[You] review the plan"}}:::user
+    A4 --> S5["💻 5–6. Save the plan<br/>docs/tasks/issue-N-slug.md"]:::session
+    S5 --> U5{{"🙋 review the plan"}}:::user
     U5 -- "comments" --> S5
     U5 -- "approved" --> A7["7. Implement<br/>🤖 issue-developer · Sonnet, Opus for L<br/>🤖 playwright-tester · Sonnet, tests-only<br/>🧩 write-tests"]:::agent
     subgraph STEP8["8. Build, tests and review"]
         A8B["Build and test suites<br/>🤖 build-runner · Haiku<br/>build · bUnit · API E2E · UI E2E"]:::agent
-        S8["Review of added comments"]:::session
+        S8["💻 Review of added comments"]:::session
         A8S["Security review<br/>🤖 security-reviewer · Opus"]:::agent
         A8B -- "green" --> S8
-        S8 -. "API · config · CI · packages" .-> A8S
+        S8 -. "API · config · CI · packages · tools" .-> A8S
     end
     A7 --> A8B
     subgraph STEP9["9. Verify"]
         A9["Browser walk (Bug / Feature)<br/>🤖 issue-verifier · Sonnet<br/>🧩 verify-feature"]:::agent
+        S9N["💻 Items without app behaviour<br/>command · test · PR's CI run"]:::session
     end
     S8 --> A9
-    A9 --> U10{{"10. [You] result accepted?"}}:::user
+    S8 -. "no app behaviour" .-> S9N
+    A9 --> U10{{"10. 🙋 result accepted?"}}:::user
+    S9N --> U10
     A8B -- "red" --> FIX
     A8S -. "findings" .-> FIX
     A9 -- "failed item" --> FIX
@@ -185,24 +196,24 @@ flowchart TD
     FIX(["↩ fixes: back to step 7, or 4 if the approach changes"]):::fix
     FIX --> A7
     subgraph STEP11["11. Result comment"]
-        U11C{{"[You] yes, comment"}}:::user
+        U11C{{"🙋 yes, comment"}}:::user
         A11["Issue comment<br/>🤖 skill-runner · Haiku<br/>🧩 github-issue"]:::agent
-        U11T{{"[You] yes, tick the boxes"}}:::user
-        S11T["Acceptance boxes<br/>Set-AcceptanceChecks.ps1<br/>- [ ] → - [x]"]:::session
+        U11T{{"🙋 yes, tick the boxes"}}:::user
+        S11T["💻 Acceptance boxes<br/>Set-AcceptanceChecks.ps1<br/>- [ ] → - [x]"]:::session
         U11C --> A11 --> U11T --> S11T
     end
     U10 -- "yes" --> U11C
     subgraph STEP12["12. Ship"]
-        U12{{"[You] yes, commit"}}:::user
+        U12{{"🙋 yes, commit"}}:::user
         A12["Commit<br/>🤖 skill-runner · Haiku<br/>🧩 git-commit<br/>branch · commit · check"]:::agent
-        U12P{{"[You] yes, push"}}:::user
-        S12P["git push"]:::session
-        U12R{{"[You] yes, open the PR"}}:::user
+        U12P{{"🙋 yes, push"}}:::user
+        S12P["💻 git push"]:::session
+        U12R{{"🙋 yes, open the PR"}}:::user
         A12R["Pull request<br/>🤖 skill-runner · Haiku<br/>🧩 open-pr"]:::agent
         U12 --> A12 --> U12P --> S12P --> U12R --> A12R
     end
     S11T --> U12
-    A12R --> NI13["13. What next<br/>🧩 next-issue -AssumeClosed N"]:::skill
+    A12R --> NI13["💻 13. What next<br/>🧩 next-issue -AssumeClosed N"]:::skill
     NI13 --> END(["merge the PR → new session → /implement-issue"])
 
     classDef session fill:#f3f4f6,stroke:#6b7280,color:#111827
@@ -219,7 +230,7 @@ flowchart TD
 
 The process waits for the user:
 
-- on a pick when no issue number was given, a blocked or closed issue, a lane conflict, an irreproducible bug, or a material gap in the requirement (steps 0–3);
+- on uncommitted changes in the working tree, a pick when no issue number was given, an open blocker, a lane conflict, an irreproducible bug, or a material gap in the requirement (steps 0–3); a closed issue stops the run;
 - on the plan review (steps 5–6);
 - on the result confirmation (step 10);
 - before each outward action: the issue comment, the acceptance boxes, the commit, the push and the pull request (steps 11–12) — each needs its own "yes";
