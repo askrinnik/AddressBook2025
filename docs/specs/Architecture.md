@@ -150,6 +150,7 @@ askrinnik/AddressBook2025/
 │       ├── api-tests.yml            # API E2E (src/ApiTests) on every push + dispatch
 │       ├── ui-tests.yml             # UI E2E (src/UiTests) on every push + dispatch
 │       ├── web-tests.yml            # bUnit tests (src/AddressBook.Web.Tests) on PRs + main (path-filtered) + dispatch
+│       ├── vue-tests.yml            # Vue app lint, build, Vitest + coverage (src/AddressBook.Vue) on PRs + main (path-filtered) + dispatch
 │       └── security.yml             # NuGet/npm vulnerability scan
 ├── .ai/
 │   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
@@ -247,7 +248,9 @@ Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST A
 
 **`web-tests.yml`** — Triggers on pull requests and on pushes to `main` (and manual dispatch), only when `src/AddressBook.Web/**`, `src/AddressBook.Web.Tests/**`, `src/AddressBook.Contracts/**`, `src/Directory.*.props`, `global.json`, `.config/dotnet-tools.json` or the workflow itself change, so a docs-only change does not start it. A newer run cancels an unfinished one on the same ref, except on `main`. The job has `checks: write` so `dorny/test-reporter` can create its check run. Runs the `src/AddressBook.Web.Tests` bUnit suite on `ubuntu-latest`. Needs only .NET 10.0.x: no SQL Server, Node or browser. Runs `dotnet restore --locked-mode`, `dotnet build -c Release`, then `dotnet test --project … --no-build` with the xUnit v3 TRX reporter and the Microsoft CodeCoverage extension (Cobertura). Publishes the TRX files with `dorny/test-reporter` as the "Web component test results" check run (`use-actions-summary: 'false'`; with the action's default the report goes only to the job summary and no check run is created). Uploads `TestResults/` as the `web-tests-results` artifact (30 days, also when tests fail). ReportGenerator (version pinned in `.config/dotnet-tools.json`, installed with `dotnet tool restore`) builds a coverage report for the `AddressBook.Web` assembly: the markdown summary goes to the job summary and the HTML report is uploaded as `web-tests-coverage-report`. The job fails when line coverage is below 85 % or branch coverage is below 70 % (`minimumCoverageThresholds`); the reports are still published. Actions are pinned to commit SHAs.
 
-**`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
+**`vue-tests.yml`** — Triggers on pull requests and on pushes to `main` (and manual dispatch), only when `src/AddressBook.Vue/**` or the workflow itself change. Runs on `ubuntu-latest` with Node LTS only (npm cache keyed on the project's `package-lock.json`): `npm ci`, `npm run lint`, `npm run format:check`, `npm run build` (which type-checks with `vue-tsc`), then `npm run test:coverage` with a JUnit reporter. The Vitest coverage thresholds (lines 85 %, branches 70 %) live in `vitest.config.ts`, so the step fails like a local run. It writes a coverage table to the job summary, publishes the JUnit file as the "Vue component test results" check run (`dorny/test-reporter`, `checks: write`), and uploads the HTML coverage report (`vue-tests-coverage-report`) and the test results (`vue-tests-results`) for 30 days. Read-only token otherwise; actions are pinned to commit SHAs.
+
+**`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet packages and, in a matrix, the npm packages of `src/ApiTests`, `src/UiTests` and `src/AddressBook.Vue`.
 
 > The legacy `playwright.yml` workflow and the reference-only `src/AutoTests` suite it ran were removed once CI moved to running the current API and UI suites entirely inside GitHub Actions.
 

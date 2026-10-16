@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [ApiTests, UiTests]
+        suite: [ApiTests, UiTests, AddressBook.Vue]
     steps:
       - uses: actions/checkout@v5
 

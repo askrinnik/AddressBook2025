@@ -1,0 +1,107 @@
+name: Vue Frontend
+
+# Lints, type-checks, builds and unit-tests the src/AddressBook.Vue app. The Vitest component tests
+# run in jsdom with the API mocked, so the job needs only Node: no .NET, no database, no browser.
+# Fires on pull requests and on pushes to main when the app or this workflow changes, and on demand.
+on:
+  pull_request:
+    paths:
+      - src/AddressBook.Vue/**
+      - .github/workflows/vue-tests.yml
+  push:
+    branches: [main]
+    paths:
+      - src/AddressBook.Vue/**
+      - .github/workflows/vue-tests.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer run replaces an unfinished one on the same ref, except on main, where every merge is tested.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  vue:
+    name: Vue frontend (src/AddressBook.Vue)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      # dorny/test-reporter creates the "Vue component test results" check run.
+      checks: write
+
+    defaults:
+      run:
+        working-directory: src/AddressBook.Vue
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: src/AddressBook.Vue/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build
+        # vue-tsc type-checks the app and the tests before vite builds the bundle.
+        run: npm run build
+
+      - name: Test with coverage
+        # The coverage thresholds (lines 85 %, branches 70 %) live in vitest.config.ts, so a local
+        # `npm run test:coverage` fails exactly as this step does.
+        run: >
+          npm run test:coverage --
+          --reporter=default --reporter=junit --outputFile.junit=test-results/junit.xml
+          --coverage.reporter=text --coverage.reporter=html --coverage.reporter=json-summary
+
+      - name: Write coverage summary
+        if: ${{ !cancelled() && hashFiles('src/AddressBook.Vue/coverage/coverage-summary.json') != '' }}
+        run: |
+          node -e '
+            const total = require("./coverage/coverage-summary.json").total;
+            const rows = ["lines", "branches", "functions", "statements"]
+              .map((m) => `| ${m} | ${total[m].pct} % | ${total[m].covered}/${total[m].total} |`);
+            console.log(["### Vue coverage", "", "| Metric | Coverage | Covered |", "|---|---|---|", ...rows].join("\n"));
+          ' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish test report
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        if: ${{ !cancelled() && hashFiles('src/AddressBook.Vue/test-results/junit.xml') != '' }}
+        with:
+          name: Vue component test results
+          path: src/AddressBook.Vue/test-results/junit.xml
+          reporter: java-junit
+          # With the default (true) the action writes only the job summary and creates no check run.
+          use-actions-summary: 'false'
+          list-suites: failed
+          list-tests: failed
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: vue-tests-coverage-report
+          path: src/AddressBook.Vue/coverage/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: vue-tests-results
+          path: src/AddressBook.Vue/test-results/
+          retention-days: 30
