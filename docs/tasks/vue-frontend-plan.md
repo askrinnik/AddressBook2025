@@ -89,7 +89,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
   Home and Contacts; Home page; not-found view; page titles; a global error banner provided to
   pages through a composable (the counterpart of the cascading `Error` component). Enables the
   shell smoke spec for `vue`. Blocked by: V2
-- [ ] [#216](https://github.com/askrinnik/AddressBook2025/issues/216) **V4 — API client.** TypeScript types mirroring `AddressBook.Contracts`
+- [x] [#216](https://github.com/askrinnik/AddressBook2025/issues/216) **V4 — API client.** TypeScript types mirroring `AddressBook.Contracts`
   (`ContactModel`, `GetFilteredContactsResponse`, create and update commands); a `fetch`
   wrapper with problem-details parsing and fallback; `ProblemDetailsError`; `getErrors()`;
   service functions mirroring `IAddressBookApiService` (percent-encoded `search` only for a
