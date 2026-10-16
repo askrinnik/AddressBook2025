@@ -1,36 +1,39 @@
 import type { Locator, Page } from '@playwright/test';
 import type { CreateContactCommand } from '../api/contacts-api.js';
 import { TestIds } from '../utils/testids.js';
-import { DatePicker } from './date-picker.component.js';
+import type { DatePicker } from './date-picker.component.js';
 
 /*
- * Component object for the contact form shared by CreateContact.razor and EditContact.razor
- * (identical markup; the submit button reads "Create" on create and "Save" on edit, but both
- * carry the single `contact-form-submit` testid, so this one object drives both pages).
+ * Component object for the contact form shared by the create and edit pages (identical markup;
+ * the submit button reads "Create" on create and "Save" on edit, but both carry the single
+ * `contact-form-submit` testid, so this one object drives both pages).
  *
- * The First/Last name `data-testid`s sit on the `<input>`s directly. The Birthday field is a
- * MudDatePicker, delegated to `DatePicker`. Field-level errors render as MudBlazor helper text
- * (`.mud-input-helper-text.mud-input-error`) under each field; the `<ValidationSummary>` list
- * (`.validation-message`) carries model-level / server errors.
+ * This base owns the `data-testid` fields, the buttons and the fill flows. The Birthday field is
+ * a `DatePicker` handed in by the frontend-specific subclass. Where the field-level errors and
+ * the validation summary render depends on the UI library's markup, so the subclass supplies
+ * them too.
  */
-const FIELD_ERROR = '.mud-input-helper-text.mud-input-error';
-
 export type NamedField = 'firstName' | 'lastName' | 'birthday';
 
-const FIELD_TEST_IDS: Record<NamedField, string> = {
+export const FIELD_TEST_IDS: Record<NamedField, string> = {
   firstName: TestIds.contactFormFirstName,
   lastName: TestIds.contactFormLastName,
   // Server field errors for a bad birthday (e.g. a future date) render inline under the
-  // MudDatePicker, not in the <ValidationSummary>, so `errorFor('birthday')` reads them there.
+  // date picker, not in the validation summary, so `errorFor('birthday')` reads them there.
   birthday: TestIds.contactFormBirthday,
 };
 
-export class ContactForm {
-  readonly birthday: DatePicker;
+export abstract class ContactForm {
+  constructor(
+    protected readonly page: Page,
+    readonly birthday: DatePicker,
+  ) {}
 
-  constructor(private readonly page: Page) {
-    this.birthday = new DatePicker(page, TestIds.contactFormBirthday);
-  }
+  /** The model-level / server "general" error messages of the validation summary. */
+  abstract get validationSummary(): Locator;
+
+  /** The validation error shown under a named field, or `''` when the field has no error. */
+  abstract errorFor(field: NamedField): Promise<string>;
 
   get firstName(): Locator {
     return this.page.getByTestId(TestIds.contactFormFirstName);
@@ -46,17 +49,6 @@ export class ContactForm {
 
   get cancelButton(): Locator {
     return this.page.getByTestId(TestIds.contactFormCancel);
-  }
-
-  /**
-   * The `<ValidationSummary>` messages (model-level / server "general" errors). Blazor renders
-   * each as `<li class="validation-message">`; the `<ul class="validation-errors">` wrapper is
-   * NOT matched here because the page passes `class="mt-4"`, which Blazor splats over the
-   * built-in "validation-errors" class on the `<ul>`. Field-level errors use a different class
-   * (`.mud-input-helper-text.mud-input-error`, see FIELD_ERROR), so there is no collision.
-   */
-  get validationSummary(): Locator {
-    return this.page.locator('.validation-message');
   }
 
   async fillFirstName(value: string): Promise<void> {
@@ -93,17 +85,7 @@ export class ContactForm {
     }
   }
 
-  /** The validation error shown under a named field, or `''` when the field has no error. */
-  async errorFor(field: NamedField): Promise<string> {
-    const control = this.page.locator('.mud-input-control', {
-      has: this.page.getByTestId(FIELD_TEST_IDS[field]),
-    });
-    const error = control.locator(FIELD_ERROR);
-    if ((await error.count()) === 0) return '';
-    return (await error.first().innerText()).trim();
-  }
-
-  /** The model-level / server error messages listed in the `<ValidationSummary>`. */
+  /** The model-level / server error messages listed in the validation summary. */
   async summaryErrors(): Promise<string[]> {
     return (await this.validationSummary.allInnerTexts()).map((text) => text.trim());
   }

@@ -2,23 +2,23 @@ import type { Locator, Page } from '@playwright/test';
 import { TestIds } from '../utils/testids.js';
 
 /*
- * Component object for the delete-confirmation dialog, rendered by `MudMessageBox`
- * (Title "Warning", message "Are you sure you want to delete this contact?", Yes/Cancel).
+ * Component object for the delete-confirmation dialog (title "Warning", message "Are you sure
+ * you want to delete this contact?", Yes/Cancel).
  *
- * The destructive "Yes" button carries `data-testid` (U4); "Cancel" keeps its visible text
- * and is located by accessible name. The surface is a MudBlazor dialog (`role="dialog"`).
+ * The destructive "Yes" button carries a `data-testid`; "Cancel" keeps its visible text and is
+ * located by accessible name. The surface has `role="dialog"`. The title element depends on the
+ * UI library's markup, so a frontend-specific subclass supplies it.
  */
 const DELETE_MESSAGE = 'Are you sure you want to delete this contact?';
 
-export class ConfirmDialog {
-  constructor(private readonly page: Page) {}
+export abstract class ConfirmDialog {
+  constructor(protected readonly page: Page) {}
+
+  /** The dialog title. */
+  abstract get title(): Locator;
 
   get dialog(): Locator {
     return this.page.getByRole('dialog');
-  }
-
-  get title(): Locator {
-    return this.dialog.locator('.mud-dialog-title');
   }
 
   get message(): Locator {

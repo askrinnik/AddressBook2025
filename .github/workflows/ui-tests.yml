@@ -1,7 +1,7 @@
 name: UI E2E Tests
 
-# Runs the src/UiTests Playwright suite against a live API + Web, both started by
-# Playwright's own webServer block. Fires on any push (like build.yml) and on demand.
+# Runs the src/UiTests Playwright suite (projects blazor and vue) against a live API, Web and
+# Vue app, all started by Playwright's own webServer block. Fires on any push (like build.yml) and on demand.
 on:
   push:
   workflow_dispatch:
@@ -69,12 +69,17 @@ jobs:
         run: npm ci
         working-directory: src/UiTests
 
+      - name: Install Vue app dependencies
+        # Every run also builds and serves src/AddressBook.Vue through webServer.
+        run: npm ci
+        working-directory: src/AddressBook.Vue
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
         working-directory: src/UiTests
 
       - name: Run UI E2E tests
-        # CI=true (set by GitHub) makes playwright.config start fresh API + Web via webServer.
+        # CI=true (set by GitHub) makes playwright.config start fresh API, Web and Vue via webServer.
         run: npm test
         working-directory: src/UiTests
 

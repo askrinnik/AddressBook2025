@@ -63,13 +63,13 @@ objects of `src/UiTests` know it; the specs stay the same.
 ## 4. Shared E2E suite design
 
 - `playwright.config.ts` defines two projects, `blazor` and `vue`, each with its own `baseURL`;
-  `webServer` starts the API, the Blazor app and the Vue dev server.
+  `webServer` starts the API, the Blazor app and the Vue preview build (`vite preview`).
 - The page and component objects split into a shared part and frontend-specific parts
   (`src/components/blazor/*`, `src/components/vue/*`). A fixture picks the implementation from
   the running project, so specs keep importing `test` / `expect` from `src/fixtures/test-fixtures.js`.
 - The Blazor-only WASM readiness helper (`src/utils/blazor.ts`) becomes a per-frontend
   `waitForAppReady`.
-- The `vue` project starts with an empty `testMatch`; each page task adds the specs of the
+- The `vue` project starts with an app-boot smoke spec in its `testMatch` list; each page task adds the specs of the
   feature it delivers, so the suite stays green at every step. When V7 is done, both projects
   run the same specs.
 
@@ -81,9 +81,9 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
   ESLint and Prettier, `vue-tsc`, `VITE_API_PREFIX` (development value `http://localhost:5000/api/`),
   a fixed dev-server port, history-mode routing that survives a refresh on a deep link, README
   with prerequisites, build and run. Blocked by: —
-- [ ] [#214](https://github.com/askrinnik/AddressBook2025/issues/214) **V2 — Run `src/UiTests` against several frontends.** Projects `blazor` and `vue`,
+- [x] [#214](https://github.com/askrinnik/AddressBook2025/issues/214) **V2 — Run `src/UiTests` against several frontends.** Projects `blazor` and `vue`,
   frontend-specific component objects chosen by fixture, per-frontend `waitForAppReady`, the
-  Vue dev server in `webServer`, empty `testMatch` for `vue`. No spec changes its behaviour;
+  Vue preview build in `webServer`, an app-boot smoke spec for `vue`. No spec changes its behaviour;
   `--project=blazor` stays green. Blocked by: V1
 - [ ] [#215](https://github.com/askrinnik/AddressBook2025/issues/215) **V3 — App shell.** App bar with title, drawer toggle and dark-mode toggle; nav drawer with
   Home and Contacts; Home page; not-found view; page titles; a global error banner provided to

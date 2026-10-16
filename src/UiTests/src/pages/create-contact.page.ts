@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 import type { CreateContactCommand } from '../api/contacts-api.js';
-import { ContactForm } from '../components/contact-form.component.js';
+import type { ContactForm } from '../components/contact-form.component.js';
+import type { Frontend } from '../frontends/index.js';
 import { BasePage } from './base.page.js';
 
 /*
@@ -12,9 +13,9 @@ import { BasePage } from './base.page.js';
 export class CreateContactPage extends BasePage {
   readonly form: ContactForm;
 
-  constructor(page: Page) {
-    super(page);
-    this.form = new ContactForm(page);
+  constructor(page: Page, app: Frontend) {
+    super(page, app);
+    this.form = app.contactForm(page);
   }
 
   async goto(): Promise<void> {

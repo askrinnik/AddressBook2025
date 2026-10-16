@@ -1,7 +1,7 @@
 {
   "name": "addressbook-ui-tests",
   "version": "1.0.0",
-  "description": "Modern UI (E2E) test framework for AddressBook.Web (Playwright + TypeScript)",
+  "description": "UI (E2E) test framework for AddressBook.Web and AddressBook.Vue (Playwright + TypeScript)",
   "type": "module",
   "private": true,
   "scripts": {
@@ -10,8 +10,9 @@
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
     "test:headed": "playwright test --headed",
-    "test:remote": "cross-env BASE_URL=https://happy-river-0d4a91803-preview.westeurope.6.azurestaticapps.net/ playwright test",
+    "test:remote": "cross-env BASE_URL=https://happy-river-0d4a91803-preview.westeurope.6.azurestaticapps.net/ playwright test --project=blazor",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md}\""
   },
   "keywords": [
@@ -19,6 +20,7 @@
     "ui",
     "e2e",
     "blazor",
+    "vue",
     "testing",
     "addressbook"
   ],
