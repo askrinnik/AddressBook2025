@@ -4,6 +4,12 @@ Vue.js frontend for the Address Book. It is a standalone npm project and is not 
 
 Stack: Vue 3.5 (`<script setup>`, TypeScript), Vite 8, Vue Router 5 (history mode), Vuetify 4, ESLint (flat config) and Prettier.
 
+| Document                                                                       | Content                                                                                               |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| [AddressBook.Vue.md](../../docs/specs/AddressBook.Vue.md)                      | Specification: pages, API client, validation, layout, tests, differences from the Blazor frontend     |
+| [vue.instructions.md](../../.github/instructions/vue.instructions.md)          | Coding standard of this project                                                                       |
+| [vue-for-blazor-developers.md](../../docs/guides/vue-for-blazor-developers.md) | Learning guide (in Russian): Vue explained on this project's files, next to their Blazor counterparts |
+
 ## Prerequisites
 
 - Node.js `^20.19.0` or `>=22.12.0`, with npm.

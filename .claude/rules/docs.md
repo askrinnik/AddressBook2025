@@ -6,9 +6,10 @@ paths:
 
 # Documentation
 
-- **Language:** keep the language of the document you edit. New documents under `docs/` are written in English, like `docs/specs/`, `docs/tasks/`, and `docs/ai/`. Identifiers, commands, paths and code stay exactly as in the code.
+- **Language:** keep the language of the document you edit. New documents under `docs/` are written in English, like `docs/specs/`, `docs/tasks/`, and `docs/ai/`. The exception is `docs/guides/`: its learning guides are written in Russian, the language of their reader. Identifiers, commands, paths and code stay exactly as in the code.
 - **Where things go:**
-  - `docs/specs/` — specifications of what is true now: `Architecture.md`, `AddressBook.Api.md`, `AddressBook.Web.md`, `AddressBook.Contracts.md`.
+  - `docs/specs/` — specifications of what is true now: `Architecture.md`, `AddressBook.Api.md`, `AddressBook.Web.md`, `AddressBook.Vue.md`, `AddressBook.Contracts.md`.
+  - `docs/guides/` — learning guides that explain a technology on this project's files, for example `vue-for-blazor-developers.md`. A guide links to the specs for the facts and quotes short excerpts of the code; it is kept in step when a quoted file changes.
   - `docs/tasks/issue-<n>-<slug>.md` — the implementation plan of one issue; `docs/tasks/<topic>-plan.md` — a multi-issue plan (task list and design of a larger effort).
   - `docs/ai/README.md` — how the AI harness is built, for people who maintain or reuse it; `docs/ai/<command>.md` — the step tree and flowchart of one workflow command.
   - A test suite's `README.md` — how to run that suite; its conventions live in `.github/instructions/` and the suite's `CLAUDE.md`.

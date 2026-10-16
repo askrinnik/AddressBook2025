@@ -110,7 +110,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 - [ ] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,
   Vitest with coverage; actions pinned to commit SHAs); `ui-tests.yml` runs both Playwright
   projects; `security.yml` scans the new npm project. Blocked by: V8
-- [ ] [#222](https://github.com/askrinnik/AddressBook2025/issues/222) **V10 — Documentation, harness and learning guide.** `docs/specs/AddressBook.Vue.md`;
+- [x] [#222](https://github.com/askrinnik/AddressBook2025/issues/222) **V10 — Documentation, harness and learning guide.** `docs/specs/AddressBook.Vue.md`;
   `Architecture.md`; `src/UiTests/README.md` and the Playwright conventions (frontend projects);
   a pointer in `CLAUDE.md`; `.github/instructions/vue.instructions.md` with the matching
   `.claude/rules/vue.md`; `docs/ai/README.md`; the learning guide. Blocked by: V7
@@ -120,8 +120,8 @@ V10 adds the cross-cutting documents and the guide.
 
 ## 6. Open points
 
-- **Guide location.** The documentation rules list `docs/specs/`, `docs/tasks/` and `docs/ai/`
-  only. Proposed: `docs/guides/vue-for-blazor-developers.md`. Needs the user's confirmation.
+- **Guide location (settled in V10).** `docs/guides/vue-for-blazor-developers.md`, written in
+  Russian at the user's decision; `.claude/rules/docs.md` names `docs/guides/` and this language exception.
 - **Date picker component (settled in V6).** `v-date-input`, part of Vuetify 4 core: with `update-on` empty it keeps the input read-only, and it supports `max`.
 
 ## 7. Verification

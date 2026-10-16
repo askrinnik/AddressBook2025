@@ -3,6 +3,7 @@ paths:
   - "src/AddressBook.Api/**"
   - "src/AddressBook.Contracts/**"
   - "src/AddressBook.Web/**"
+  - "src/AddressBook.Vue/**"
   - "src/**/appsettings*.json"
   - "src/**/Properties/launchSettings.json"
   - "CLAUDE.md"
@@ -21,8 +22,9 @@ Documentation is updated **in the same change** as the code it describes. The me
 | API endpoint, request/response shape, validation rule, status code, domain or data-access behaviour | `docs/specs/AddressBook.Api.md` |
 | Commands, queries or models in `AddressBook.Contracts` | `docs/specs/AddressBook.Contracts.md` |
 | Web pages, components, the API service, launch profiles or ports | `docs/specs/AddressBook.Web.md` |
+| Vue pages, components, composables, the API client, routes, configuration or ports (`src/AddressBook.Vue`) | `docs/specs/AddressBook.Vue.md` and `src/AddressBook.Vue/README.md`; when a file the guide quotes changes, the excerpt in `docs/guides/vue-for-blazor-developers.md` |
 | Project structure, CI, deployment | `docs/specs/Architecture.md` |
-| How to run or write a test suite | the suite's `README.md` / `CLAUDE.md` and `.github/instructions/playwright-conventions.instructions.md` or `.github/instructions/bunit-conventions.instructions.md` |
+| How to run or write a test suite | the suite's `README.md` / `CLAUDE.md` and `.github/instructions/playwright-conventions.instructions.md` or `.github/instructions/bunit-conventions.instructions.md` (Vitest: `.github/instructions/vue.instructions.md`) |
 | AI harness: `CLAUDE.md`, `.claude/**`, `.github/{agents,skills,prompts,instructions}/**`, `.ai/**`, `.mcp.json` | `docs/ai/README.md`; a change to a workflow command's body (`.ai/prompts/<command>.md`) or the agents it calls also updates `docs/ai/<command>.md` |
 | Work deferred to later | a new GitHub issue (with a "blocked by" relation when it depends on this one) — not a TODO in a document or in code |
 

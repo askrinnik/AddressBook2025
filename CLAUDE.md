@@ -18,6 +18,9 @@ This file is intentionally a **thin hub**: it owns only the few rules that live 
 - **Architecture, project structure, CI, deployment** → [docs/specs/Architecture.md](docs/specs/Architecture.md)
 - **API — build/run, endpoints, CQRS (MediatR) / FluentValidation / RFC 7807, domain, data access** → [docs/specs/AddressBook.Api.md](docs/specs/AddressBook.Api.md)
 - **Web — build/run, launch profiles & ports, Blazor WASM + MudBlazor conventions, API service, pages** → [docs/specs/AddressBook.Web.md](docs/specs/AddressBook.Web.md)
+- **Vue frontend — build/run, configuration, Vuetify components, API client, pages, deliberate differences from Blazor** → [docs/specs/AddressBook.Vue.md](docs/specs/AddressBook.Vue.md); how to run it: [src/AddressBook.Vue/README.md](src/AddressBook.Vue/README.md)
+- **Vue component tests (Vitest) — run & conventions** → [src/AddressBook.Vue/README.md](src/AddressBook.Vue/README.md#tests), [.github/instructions/vue.instructions.md](.github/instructions/vue.instructions.md)
+- **Learning guide: Vue for Blazor developers (in Russian)** → [docs/guides/vue-for-blazor-developers.md](docs/guides/vue-for-blazor-developers.md)
 - **Contracts — commands, queries, models** → [docs/specs/AddressBook.Contracts.md](docs/specs/AddressBook.Contracts.md)
 - **API E2E tests — run & conventions** → [src/ApiTests/README.md](src/ApiTests/README.md)
 - **Web component tests (bUnit) — run & conventions** → [src/AddressBook.Web.Tests/README.md](src/AddressBook.Web.Tests/README.md), [.github/instructions/bunit-conventions.instructions.md](.github/instructions/bunit-conventions.instructions.md)
@@ -45,6 +48,7 @@ The `.github/instructions/*.instructions.md` files are the single source of trut
 | Blazor project-specific (MudBlazor / WASM) | `.github/instructions/blazor.project-specific.instructions.md` |
 | Playwright E2E — API (`src/ApiTests/**`) and UI (`src/UiTests/**`) | `.github/instructions/playwright-conventions.instructions.md` |
 | bUnit component tests (`src/AddressBook.Web.Tests/**`) | `.github/instructions/bunit-conventions.instructions.md` |
+| Vue frontend and its Vitest tests (`src/AddressBook.Vue/**`) | `.github/instructions/vue.instructions.md` |
 
 > The Playwright conventions file covers both the API suites and the UI E2E suite (`src/UiTests`, in its own section). Claude Code also auto-loads `src/UiTests/CLAUDE.md` and `src/AddressBook.Web.Tests/CLAUDE.md` when working in those subtrees.
 
