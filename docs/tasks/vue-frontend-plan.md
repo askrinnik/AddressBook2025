@@ -1,6 +1,6 @@
 # Plan: Vue.js frontend `src/AddressBook.Vue`
 
-> **Status:** in progress; issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
+> **Status:** all tasks done, shipped in [#223](https://github.com/askrinnik/AddressBook2025/pull/223); issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
 > **Target folder:** `src/AddressBook.Vue` (new npm project, not part of `src/AddressBook.slnx`)
 > **Reference frontend:** `src/AddressBook.Web` — Blazor WebAssembly + MudBlazor ([spec](../specs/AddressBook.Web.md))
 > **Progress is tracked by the check boxes in [Task list](#5-task-list).**
@@ -107,7 +107,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 - [x] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the
   shell and the API client, with the API service mocked; coverage thresholds 85 % lines and
   70 % branches, as in `web-tests.yml`. Blocked by: V7
-- [ ] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,
+- [x] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,
   Vitest with coverage; actions pinned to commit SHAs); `ui-tests.yml` runs both Playwright
   projects; `security.yml` scans the new npm project. Blocked by: V8
 - [x] [#222](https://github.com/askrinnik/AddressBook2025/issues/222) **V10 — Documentation, harness and learning guide.** `docs/specs/AddressBook.Vue.md`;

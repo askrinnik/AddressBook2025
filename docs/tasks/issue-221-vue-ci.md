@@ -17,7 +17,7 @@ The Vue frontend's checks run in GitHub Actions: a path-filtered workflow for `s
 - [x] `security.yml` scans the npm packages of `src/AddressBook.Vue`
 - [x] The new workflow pins its actions to commit SHAs and uses a read-only token except `checks: write` for the report; `ui-tests.yml` gets a workflow-level read-only token
 - [x] `docs/specs/Architecture.md` and `.claude/rules/github-actions.md` describe the new workflow and the changes
-- [ ] The pull request's CI run is green for `Vue Frontend`, `UI E2E Tests` and `Security Vulnerability Scan`
+- [x] The pull request's CI run is green for `Vue Frontend`, `UI E2E Tests` and `Security Vulnerability Scan`
 
 ## Affected files
 
