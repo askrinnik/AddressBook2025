@@ -1,6 +1,6 @@
 # Plan: Vue.js frontend `src/AddressBook.Vue`
 
-> **Status:** planned, no task started; issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
+> **Status:** in progress; issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
 > **Target folder:** `src/AddressBook.Vue` (new npm project, not part of `src/AddressBook.slnx`)
 > **Reference frontend:** `src/AddressBook.Web` — Blazor WebAssembly + MudBlazor ([spec](../specs/AddressBook.Web.md))
 > **Progress is tracked by the check boxes in [Task list](#5-task-list).**
@@ -24,7 +24,7 @@ that points to the project's files.
 | Build tool | Vite |
 | Routing | Vue Router |
 | State | No store library; page state lives in components, shared state in composables (`provide`/`inject`) |
-| UI library | Vuetify 3 (Material Design, closest to MudBlazor) |
+| UI library | Vuetify 4 (Material Design, closest to MudBlazor) |
 | Client validation | Vuetify `rules` on the fields, backed by `contactRules.ts` that mirrors `ContactRules` in `AddressBook.Contracts` |
 | Parity | Strict — see [section 3](#3-parity-contract) |
 | E2E tests | The existing suite `src/UiTests` runs against both frontends; only the page and component objects differ per frontend |
@@ -77,7 +77,7 @@ objects of `src/UiTests` know it; the specs stay the same.
 
 Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 
-- [ ] [#213](https://github.com/askrinnik/AddressBook2025/issues/213) **V1 — Scaffold `src/AddressBook.Vue`.** Vite + Vue 3 + TypeScript + Vue Router + Vuetify 3,
+- [x] [#213](https://github.com/askrinnik/AddressBook2025/issues/213) **V1 — Scaffold `src/AddressBook.Vue`.** Vite + Vue 3 + TypeScript + Vue Router + Vuetify 4,
   ESLint and Prettier, `vue-tsc`, `VITE_API_PREFIX` (development value `http://localhost:5000/api/`),
   a fixed dev-server port, history-mode routing that survives a refresh on a deep link, README
   with prerequisites, build and run. Blocked by: —

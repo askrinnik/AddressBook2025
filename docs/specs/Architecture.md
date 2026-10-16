@@ -178,7 +178,8 @@ askrinnik/AddressBook2025/
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
 │   ├── AddressBook.Web.Tests/       # bUnit + xUnit v3 component tests for AddressBook.Web
 │   ├── ApiTests/                    # Playwright TypeScript API E2E tests
-│   └── UiTests/                     # Playwright TypeScript UI E2E tests
+│   ├── UiTests/                     # Playwright TypeScript UI E2E tests
+│   └── AddressBook.Vue/             # Vue.js SPA (Vite, Vuetify), standalone npm project
 └── README.md                        # Minimal: "pet project for address book development"
 ```
 
