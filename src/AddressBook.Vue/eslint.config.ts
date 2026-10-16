@@ -18,6 +18,9 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: { parser: tseslint.parser },
     },
+    // The TypeScript compiler checks undefined names; typescript-eslint turns this rule off for
+    // .ts files only, so without this it flags browser globals such as AbortController here.
+    rules: { 'no-undef': 'off' },
   },
   {
     rules: {

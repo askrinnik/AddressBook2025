@@ -19,6 +19,12 @@ const router = createRouter({
       meta: { title: 'Home' },
     },
     {
+      path: '/contacts',
+      name: 'contacts',
+      component: () => import('@/pages/ContactsPage.vue'),
+      meta: { title: 'Contacts' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/NotFoundPage.vue'),

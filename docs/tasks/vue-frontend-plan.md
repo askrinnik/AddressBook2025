@@ -94,7 +94,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
   wrapper with problem-details parsing and fallback; `ProblemDetailsError`; `getErrors()`;
   service functions mirroring `IAddressBookApiService` (percent-encoded `search` only for a
   non-blank term, new id from the `Location` header, `null` on 404 for get-by-id). Blocked by: V1
-- [ ] [#217](https://github.com/askrinnik/AddressBook2025/issues/217) **V5 — Contacts page.** Server-reloading table, search, sorting, paging with a labelled
+- [x] [#217](https://github.com/askrinnik/AddressBook2025/issues/217) **V5 — Contacts page.** Server-reloading table, search, sorting, paging with a labelled
   rows-per-page select, loading and empty states, inline alert and banner rules, Edit and Delete
   buttons, delete confirmation dialog, 404-on-delete handling. Enables the list, search,
   sort-paginate, delete and shell-navigation specs for `vue`. Blocked by: V3, V4

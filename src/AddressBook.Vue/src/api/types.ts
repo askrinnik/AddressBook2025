@@ -55,3 +55,16 @@ export function fromDateOnly(value: string): Date | null {
     date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
   return isRealDate ? date : null;
 }
+
+/**
+ * Formats a `yyyy-MM-dd` string as `M/D/YYYY` (the en-US short date), reading the parts of the
+ * string so that neither the browser locale nor its time zone affects the result. A value that
+ * is not in `yyyy-MM-dd` form is returned unchanged.
+ */
+export function toShortDateString(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return value;
+
+  const [, year, month, day] = match;
+  return `${Number(month)}/${Number(day)}/${year}`;
+}

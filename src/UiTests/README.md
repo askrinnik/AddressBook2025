@@ -19,7 +19,7 @@ WebAssembly + MudBlazor) и `AddressBook.Vue` (Vue.js + Vuetify) — на **Play
 | Проект   | Фронтенд                              | `baseURL`                                             | Спеки                                                                              |
 | -------- | ------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `blazor` | `AddressBook.Web` (Blazor WASM)       | `BASE_URL`, по умолчанию `https://localhost:7187/`    | все                                                                                |
-| `vue`    | `AddressBook.Vue` (production-сборка) | `VUE_BASE_URL`, по умолчанию `http://localhost:4173/` | список `vueSpecs` в `playwright.config.ts` (сейчас `tests/smoke/app-boot.spec.ts` и `tests/smoke/app-shell.spec.ts`) |
+| `vue`    | `AddressBook.Vue` (production-сборка) | `VUE_BASE_URL`, по умолчанию `http://localhost:4173/` | список `vueSpecs` в `playwright.config.ts` (сейчас `tests/smoke/app-boot.spec.ts`, `tests/smoke/app-shell.spec.ts`, `tests/smoke/app-shell-navigation.spec.ts`, `tests/contacts/list-search.spec.ts`, `tests/contacts/sort-paginate.spec.ts` и `tests/contacts/delete.spec.ts`) |
 
 Спеки и page-объекты общие; фронтенд-специфичные component-объекты выбирает фикстура `app`
 по опции проекта `frontend` (см. [Архитектура](#архитектура)).
@@ -55,8 +55,9 @@ WebAssembly + MudBlazor) и `AddressBook.Vue` (Vue.js + Vuetify) — на **Play
   (диалог удаления), `contact-form`, `app-shell` (AppBar/drawer/тема). Общий абстрактный базовый
   класс в `src/components/*.component.ts` владеет всем, что доступно через `data-testid`, роли
   и aria-label; разметку MudBlazor знают классы в `src/components/blazor/`, разметку Vuetify —
-  классы в `src/components/vue/` (`VueAppShell` реализован, остальные пока заглушки, которые
-  бросают ошибку «… is not implemented for the vue frontend»). Спеки импортируют только общие классы.
+  классы в `src/components/vue/` (`VueAppShell`, `VueContactsTable` и `VueConfirmDialog`
+  реализованы; `VueContactForm` и `VueDatePicker` пока заглушки, которые бросают ошибку
+  «… is not implemented for the vue frontend»). Спеки импортируют только общие классы.
 - **Фронтенд как фикстура.** Каждый проект задаёт опцию `frontend` (`blazor` или `vue`);
   фикстура `app` отдаёт объект `Frontend` ([`src/frontends/`](src/frontends/)) с
   `waitForAppReady(page)` и фабриками component-объектов. Готовность Blazor — заголовок
@@ -91,7 +92,7 @@ src/UiTests/
     components/ # общие базовые классы: app-shell, contacts-table, contact-form, date-picker,
                 #   confirm-dialog
       blazor/   # реализации на разметке MudBlazor
-      vue/      # реализации на разметке Vuetify (app-shell; остальное — заглушки) + not-implemented.ts
+      vue/      # реализации на разметке Vuetify (app-shell, contacts-table, confirm-dialog; остальное — заглушки) + not-implemented.ts
     frontends/  # frontend.ts (интерфейс Frontend), blazor.ts, vue.ts, index.ts
     pages/      # base, home, contacts, create-contact, edit-contact
     fixtures/   # test-fixtures.ts — test.extend: опция frontend + app + страницы + компоненты
