@@ -101,7 +101,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 - [x] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
   UTC maximum date; server field-error mapping; general error; submit disabled while saving;
   Cancel. Enables the create, validation and a11y specs for `vue`. Blocked by: V5
-- [ ] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
+- [x] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
   `Back to Contacts`, save. Enables the edit, edit-not-found and crud-lifecycle specs for `vue`.
   Blocked by: V6
 - [ ] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the

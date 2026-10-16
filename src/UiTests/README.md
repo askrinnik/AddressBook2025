@@ -19,7 +19,7 @@ WebAssembly + MudBlazor) и `AddressBook.Vue` (Vue.js + Vuetify) — на **Play
 | Проект   | Фронтенд                              | `baseURL`                                             | Спеки                                                                              |
 | -------- | ------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `blazor` | `AddressBook.Web` (Blazor WASM)       | `BASE_URL`, по умолчанию `https://localhost:7187/`    | все                                                                                |
-| `vue`    | `AddressBook.Vue` (production-сборка) | `VUE_BASE_URL`, по умолчанию `http://localhost:4173/` | список `vueSpecs` в `playwright.config.ts` (сейчас `tests/smoke/app-boot.spec.ts`, `tests/smoke/app-shell.spec.ts`, `tests/smoke/app-shell-navigation.spec.ts`, `tests/contacts/list-search.spec.ts`, `tests/contacts/sort-paginate.spec.ts`, `tests/contacts/delete.spec.ts`, `tests/contacts/create.spec.ts`, `tests/contacts/validation.spec.ts`, `tests/a11y/accessibility.spec.ts` и `tests/utils/assertions.spec.ts`) |
+| `vue`    | `AddressBook.Vue` (production-сборка) | `VUE_BASE_URL`, по умолчанию `http://localhost:4173/` | все |
 
 Спеки и page-объекты общие; фронтенд-специфичные component-объекты выбирает фикстура `app`
 по опции проекта `frontend` (см. [Архитектура](#архитектура)).
@@ -280,8 +280,7 @@ gh workflow run ui-tests.yml
 - **Даты.** Проверяйте против `yyyy-MM-dd`-значения API, а не против culture-форматированной
   ячейки таблицы.
 - **Фронтенды.** Спеки импортируют только общие page- и component-объекты, никогда не
-  `src/components/blazor/*` или `src/components/vue/*`. Спека попадает в проект `vue`, когда её
-  Vue-объекты реализованы: добавьте её в `vueSpecs` в `playwright.config.ts`.
+  `src/components/blazor/*` или `src/components/vue/*`. Оба проекта, `blazor` и `vue`, запускают одни и те же спеки.
 - Полные правила — в [`playwright-conventions.instructions.md`](../../.github/instructions/playwright-conventions.instructions.md)
   (раздел **UI E2E tests (`src/UiTests`)**) и в [`CLAUDE.md`](CLAUDE.md).
 

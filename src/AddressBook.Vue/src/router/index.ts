@@ -31,6 +31,14 @@ const router = createRouter({
       component: () => import('@/pages/CreateContactPage.vue'),
     },
     {
+      // Only an integer id matches; anything else falls through to the not-found route.
+      path: '/edit-contact/:id(\\d+)',
+      name: 'edit-contact',
+      component: () => import('@/pages/EditContactPage.vue'),
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: { title: 'Edit Contact' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/NotFoundPage.vue'),

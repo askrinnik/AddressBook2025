@@ -16,8 +16,7 @@ Non-negotiables when adding/changing specs here:
 - Import `test` / `expect` from `src/fixtures/test-fixtures.js`; declare needed fixtures in the test
   signature — never `new` up page/component objects in a spec.
 - Specs import only the shared page and component objects — never `src/components/blazor/*` or
-  `src/components/vue/*`; the `app` fixture supplies the frontend's implementation. A spec joins
-  the `vue` project through the `vueSpecs` list in `playwright.config.ts`.
+  `src/components/vue/*`; the `app` fixture supplies the frontend's implementation. Both projects run every spec.
 - Build data only via `ContactFactory`; for search-isolated contacts use
   `ContactFactory.tokenized(token, overrides?)` — do not add per-spec builders.
 - Seed/clean over REST via `contactsApi` (auto-cleaned). A **UI-created** contact is untracked —

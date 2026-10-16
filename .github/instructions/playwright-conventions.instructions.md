@@ -54,7 +54,7 @@ through the real UI. It does **not** use the API-suite patterns above (`ApiClien
 
 - Two Playwright projects: `blazor` (`baseURL` = `BASE_URL`, default `https://localhost:7187/`,
   runs every spec) and `vue` (`baseURL` = `VUE_BASE_URL`, default `http://localhost:4173/`, runs
-  only the `vueSpecs` list in `playwright.config.ts`). Each project sets the typed `frontend`
+  every spec too). Each project sets the typed `frontend`
   option.
 - The `app` fixture resolves `frontend` to a `Frontend` (`src/frontends/`): its
   `waitForAppReady(page)` is the only readiness signal, and its factories build the component
@@ -62,7 +62,7 @@ through the real UI. It does **not** use the API-suite patterns above (`ApiClien
 - `src/components/*.component.ts` are abstract shared bases (testids, roles, aria-labels, flows);
   UI-library markup lives only in `src/components/blazor/*` (MudBlazor) and
   `src/components/vue/*` (Vuetify). Specs and pages never import a `blazor/` or `vue/` object.
-- A spec joins `vueSpecs` once every Vue member it reaches is implemented.
+- Both projects run every spec, so a new spec needs the member implemented in both `blazor/` and `vue/`.
 - `webServer` starts the API, the Blazor app and the Vue production build (`vite preview`) on every
   run, whatever `--project` selects, so `src/AddressBook.Vue` needs `npm ci`.
 
