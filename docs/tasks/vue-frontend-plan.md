@@ -85,10 +85,10 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
   frontend-specific component objects chosen by fixture, per-frontend `waitForAppReady`, the
   Vue preview build in `webServer`, an app-boot smoke spec for `vue`. No spec changes its behaviour;
   `--project=blazor` stays green. Blocked by: V1
-- [ ] [#215](https://github.com/askrinnik/AddressBook2025/issues/215) **V3 — App shell.** App bar with title, drawer toggle and dark-mode toggle; nav drawer with
+- [x] [#215](https://github.com/askrinnik/AddressBook2025/issues/215) **V3 — App shell.** App bar with title, drawer toggle and dark-mode toggle; nav drawer with
   Home and Contacts; Home page; not-found view; page titles; a global error banner provided to
   pages through a composable (the counterpart of the cascading `Error` component). Enables the
-  smoke and a11y specs for `vue`. Blocked by: V2
+  shell smoke spec for `vue`. Blocked by: V2
 - [ ] [#216](https://github.com/askrinnik/AddressBook2025/issues/216) **V4 — API client.** TypeScript types mirroring `AddressBook.Contracts`
   (`ContactModel`, `GetFilteredContactsResponse`, create and update commands); a `fetch`
   wrapper with problem-details parsing and fallback; `ProblemDetailsError`; `getErrors()`;
@@ -97,10 +97,10 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 - [ ] [#217](https://github.com/askrinnik/AddressBook2025/issues/217) **V5 — Contacts page.** Server-reloading table, search, sorting, paging with a labelled
   rows-per-page select, loading and empty states, inline alert and banner rules, Edit and Delete
   buttons, delete confirmation dialog, 404-on-delete handling. Enables the list, search,
-  sort-paginate and delete specs for `vue`. Blocked by: V3, V4
+  sort-paginate, delete and shell-navigation specs for `vue`. Blocked by: V3, V4
 - [ ] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
   UTC maximum date; server field-error mapping; general error; submit disabled while saving;
-  Cancel. Enables the create and validation specs for `vue`. Blocked by: V5
+  Cancel. Enables the create, validation and a11y specs for `vue`. Blocked by: V5
 - [ ] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
   `Back to Contacts`, save. Enables the edit, edit-not-found and crud-lifecycle specs for `vue`.
   Blocked by: V6

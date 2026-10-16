@@ -1,0 +1,3 @@
+<template>
+  <p role="alert">Sorry, there's nothing at this address.</p>
+</template>

@@ -28,6 +28,19 @@ npm ci
 
 Any route, including a refresh on a deep link such as `/contacts`, serves the app.
 
+## Structure
+
+| Path                        | Content                                                                                |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `src/App.vue`               | Root: provides the global error banner and hosts the layout and the router view.       |
+| `src/layouts/`              | `MainLayout.vue`: app bar, clipped drawer, theme toggle, banner and page slot.         |
+| `src/components/`           | `NavMenu.vue` (Home, Contacts) and `ErrorBanner.vue`.                                  |
+| `src/composables/`          | `useErrorBanner.ts`: `processError`, `processProblem` and `clear` of the error banner. |
+| `src/pages/`                | `HomePage.vue` and `NotFoundPage.vue`.                                                 |
+| `src/router/`               | Routes; `meta.title` sets the document title (`AddressBook` when a route has none).    |
+| `src/api/`                  | `problemDetails.ts`: the RFC 7807 type.                                                |
+| `src/plugins`, `src/styles` | Vuetify setup (light theme by default) and the global stylesheet.                      |
+
 ## Configuration
 
 | Variable          | Default                      | Purpose              |

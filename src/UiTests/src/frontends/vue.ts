@@ -6,16 +6,17 @@ import { VueContactsTable } from '../components/vue/contacts-table.component.js'
 import type { Frontend } from './frontend.js';
 
 /*
- * Vue readiness: Vuetify's `<v-app>` renders the `.v-application` root once the app has mounted,
- * so its visibility marks a booted app on every route.
+ * Vue readiness: the "Contact Book" title in the app bar, rendered by the layout on every route
+ * once the app has mounted.
  */
-const APP_ROOT = '.v-application';
+const APP_BAR = '.v-app-bar';
+const APP_BAR_TITLE = 'Contact Book';
 
 /** The Vue.js + Vuetify frontend (`AddressBook.Vue`). */
 export const vue: Frontend = {
   name: 'vue',
   async waitForAppReady(page: Page): Promise<void> {
-    await page.locator(APP_ROOT).waitFor({ state: 'visible' });
+    await page.locator(APP_BAR).getByText(APP_BAR_TITLE).waitFor({ state: 'visible' });
   },
   appShell: (page) => new VueAppShell(page),
   contactsTable: (page) => new VueContactsTable(page),

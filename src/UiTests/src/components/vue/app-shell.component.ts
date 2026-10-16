@@ -1,21 +1,26 @@
 import type { Locator } from '@playwright/test';
 import { AppShell } from '../app-shell.component.js';
-import { notImplemented } from './not-implemented.js';
 
 /*
- * The application shell of the Vue frontend (Vuetify). The members that depend on Vuetify
- * markup are not covered yet and throw when used.
+ * The application shell of the Vue frontend (MainLayout + NavMenu).
+ *
+ * Vuetify exposes no ARIA state for the drawer, so "drawer open" is the `v-navigation-drawer--active`
+ * class on the `#nav-drawer` element.
  */
+const DRAWER_OPEN_CLASS = 'v-navigation-drawer--active';
+
 export class VueAppShell extends AppShell {
   get appBarTitle(): Locator {
-    return notImplemented('VueAppShell', 'appBarTitle');
+    return this.page.locator('.v-app-bar').getByText('Contact Book');
   }
 
   get drawer(): Locator {
-    return notImplemented('VueAppShell', 'drawer');
+    return this.page.locator('#nav-drawer');
   }
 
+  /** True while the navigation drawer is open (`v-navigation-drawer--active` on `#nav-drawer`). */
   async isDrawerOpen(): Promise<boolean> {
-    return notImplemented('VueAppShell', 'isDrawerOpen');
+    const classes = (await this.drawer.getAttribute('class')) ?? '';
+    return classes.split(/\s+/).includes(DRAWER_OPEN_CLASS);
   }
 }

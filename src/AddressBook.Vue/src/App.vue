@@ -1,7 +1,14 @@
+<script setup lang="ts">
+import { provideErrorBanner } from '@/composables/useErrorBanner';
+import MainLayout from '@/layouts/MainLayout.vue';
+
+provideErrorBanner();
+</script>
+
 <template>
   <v-app>
-    <v-main>
+    <MainLayout>
       <router-view />
-    </v-main>
+    </MainLayout>
   </v-app>
 </template>
