@@ -104,7 +104,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 - [x] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
   `Back to Contacts`, save. Enables the edit, edit-not-found and crud-lifecycle specs for `vue`.
   Blocked by: V6
-- [ ] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the
+- [x] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the
   shell and the API client, with the API service mocked; coverage thresholds 85 % lines and
   70 % branches, as in `web-tests.yml`. Blocked by: V7
 - [ ] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,

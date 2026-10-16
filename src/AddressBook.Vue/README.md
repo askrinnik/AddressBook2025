@@ -24,6 +24,7 @@ npm ci
 | `npm run preview`                         | Serves the build on `http://localhost:4173`; fails if the port is taken.          |
 | `npm run type-check`                      | `vue-tsc --build`.                                                                |
 | `npm run lint`                            | ESLint.                                                                           |
+| `npm test`                                | Runs the tests once (see [Tests](#tests)).                                        |
 | `npm run format` / `npm run format:check` | Prettier write / check.                                                           |
 
 Any route, including a refresh on a deep link such as `/contacts`, serves the app.
@@ -42,6 +43,18 @@ Any route, including a refresh on a deep link such as `/contacts`, serves the ap
 | `src/router/`               | Routes; `meta.title` sets the document title (`AddressBook` when a route has none).                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `src/api/`                  | `types.ts`: contract types and date helpers (`toShortDateString` formats `M/D/YYYY`); `problemDetails.ts`: RFC 7807 parsing, `getErrors`, `ProblemDetailsError`; `http.ts`: `request()` with the problem-details pipeline; `contactsApi.ts`: the five service functions.                                                                                                                                                                                                                                  |
 | `src/plugins`, `src/styles` | Vuetify setup (light theme by default, with a medium-emphasis opacity that gives field labels AA contrast) and the global stylesheet.                                                                                                                                                                                                                                                                                                                                                                     |
+
+## Tests
+
+Component and unit tests run on Vitest, `@vue/test-utils` and jsdom. They need no browser and no running API: the API module is mocked, and the API client runs against a stubbed `fetch`. This is the counterpart of `src/AddressBook.Web.Tests`.
+
+| Command                 | What it does                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `npm test`              | Runs all tests once.                                                                                         |
+| `npm run test:watch`    | Re-runs the tests on every change.                                                                           |
+| `npm run test:coverage` | Runs the tests with V8 coverage; fails below 85 % lines or 70 % branches. The HTML report is in `coverage/`. |
+
+Tests live in `tests/`, in the folder layout of `src/`, as `*.spec.ts`. `tests/setup.ts` adds the browser APIs jsdom lacks and Vuetify needs (`ResizeObserver`, `IntersectionObserver`, `matchMedia`, `visualViewport`). `tests/helpers/` has `mountWithApp()`, which mounts a component with Vuetify, a memory-history router and the error banner, and the `Response` factories for `fetch` stubs. Components are mounted with the real Vuetify, so tests read the rendered markup. Time-dependent rules use fake timers with a fixed system time.
 
 ## Configuration
 
