@@ -105,8 +105,8 @@ Claude Code asks each user once to approve the project servers in `.mcp.json`.
 
 `.claude/settings.json` is shared through git:
 
-- **allow** — build, tests, running the API and the Web app, `git` and `gh` reads, the shipping commands (`git add`/`commit`/`push`, `gh pr create`, `gh issue comment`/`edit`), the `_local.*` scripts, and the documentation MCP servers. Commit, push and PR stay gated by instruction: the assistant does them only when the user asks (`CLAUDE.md`). The same holds for `Set-AcceptanceChecks.ps1`: it runs without a system prompt like every `_local.*` script, but it edits the issue body and so runs only after the user's "yes";
-- **ask** — merging, PR comments and edits, creating or closing issues, GitHub API writes and `gh api repos/…` calls, `dotnet ef database`;
+- **allow** — build, tests, running the API and the Web app, `git` and `gh` reads, the shipping commands (`git add`/`commit`/`push`, `gh pr create`, `gh issue create`/`comment`/`edit`), adding a "blocked by" relation and listing issues through `gh api`, the `_local.*` scripts, and the documentation MCP servers. Commit, push, PR and issue creation stay gated by instruction: the assistant does them only when the user asks (`CLAUDE.md`). The same holds for `Set-AcceptanceChecks.ps1`: it runs without a system prompt like every `_local.*` script, but it edits the issue body and so runs only after the user's "yes";
+- **ask** — merging, PR comments and edits, closing issues, `gh api` calls with `-X DELETE`/`PATCH`/`PUT`, with `--method`, or with `-X` after the path, `dotnet ef database`. Other `gh api repos/…` calls match no rule, so Claude Code asks for them as for any command outside `allow`;
 - **deny** — force-push, `reset --hard`, `git clean`, `rm -rf`, and reading `.env` or local `appsettings.*.local.json` secrets.
 
 It also turns off the automatic commit and PR attribution (commit messages follow the `git-commit` skill) and enables the `.mcp.json` servers. Personal overrides go to `.claude/settings.local.json`, which git ignores.
