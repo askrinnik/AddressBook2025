@@ -12,8 +12,8 @@ const apiReadinessURL = new URL('Contacts', env.apiURL).toString();
 const vueProjectDir = fileURLToPath(new URL('../AddressBook.Vue/', import.meta.url));
 
 /*
- * The specs the `vue` project runs. A spec joins this list once the Vue component objects it
- * uses are implemented; until then the Vue stubs throw. `blazor` runs every spec.
+ * The specs the `vue` project runs. A spec joins this list once the Vue pages and component
+ * objects it uses exist. `blazor` runs every spec.
  */
 const vueSpecs = [
   'smoke/app-boot.spec.ts',
@@ -22,6 +22,10 @@ const vueSpecs = [
   'contacts/list-search.spec.ts',
   'contacts/sort-paginate.spec.ts',
   'contacts/delete.spec.ts',
+  'contacts/create.spec.ts',
+  'contacts/validation.spec.ts',
+  'a11y/accessibility.spec.ts',
+  'utils/assertions.spec.ts',
 ];
 
 export default defineConfig<UiOptions>({

@@ -25,6 +25,12 @@ const router = createRouter({
       meta: { title: 'Contacts' },
     },
     {
+      // No title of its own, so the document title is the default, as in the Blazor frontend.
+      path: '/create-contact',
+      name: 'create-contact',
+      component: () => import('@/pages/CreateContactPage.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/pages/NotFoundPage.vue'),

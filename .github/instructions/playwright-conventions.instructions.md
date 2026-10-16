@@ -61,8 +61,7 @@ through the real UI. It does **not** use the API-suite patterns above (`ApiClien
   objects. Page objects take the `Frontend` and stay shared.
 - `src/components/*.component.ts` are abstract shared bases (testids, roles, aria-labels, flows);
   UI-library markup lives only in `src/components/blazor/*` (MudBlazor) and
-  `src/components/vue/*` (Vuetify). A Vue member that is not covered yet throws through
-  `notImplemented`. Specs and pages never import a `blazor/` or `vue/` object.
+  `src/components/vue/*` (Vuetify). Specs and pages never import a `blazor/` or `vue/` object.
 - A spec joins `vueSpecs` once every Vue member it reaches is implemented.
 - `webServer` starts the API, the Blazor app and the Vue production build (`vite preview`) on every
   run, whatever `--project` selects, so `src/AddressBook.Vue` needs `npm ci`.

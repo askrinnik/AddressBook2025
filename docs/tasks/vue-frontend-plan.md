@@ -98,7 +98,7 @@ Each task is one GitHub issue; "Blocked by" becomes the issue relation.
   rows-per-page select, loading and empty states, inline alert and banner rules, Edit and Delete
   buttons, delete confirmation dialog, 404-on-delete handling. Enables the list, search,
   sort-paginate, delete and shell-navigation specs for `vue`. Blocked by: V3, V4
-- [ ] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
+- [x] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
   UTC maximum date; server field-error mapping; general error; submit disabled while saving;
   Cancel. Enables the create, validation and a11y specs for `vue`. Blocked by: V5
 - [ ] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
@@ -122,9 +122,7 @@ V10 adds the cross-cutting documents and the guide.
 
 - **Guide location.** The documentation rules list `docs/specs/`, `docs/tasks/` and `docs/ai/`
   only. Proposed: `docs/guides/vue-for-blazor-developers.md`. Needs the user's confirmation.
-- **Date picker component.** `v-date-input` or `v-text-field` + `v-menu` + `v-date-picker`; chosen
-  in V6 after checking the current Vuetify documentation, by which one keeps the input read-only
-  and supports a maximum date.
+- **Date picker component (settled in V6).** `v-date-input`, part of Vuetify 4 core: with `update-on` empty it keeps the input read-only, and it supports `max`.
 
 ## 7. Verification
 
