@@ -11,6 +11,10 @@
     <!-- Every project restores against a committed packages.lock.json, so a version change is visible
          as a diff in that file rather than silently floating on the next restore. -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- The SDK packs (WebAssembly, ILLink) come from nuget.org on every machine. A Windows SDK also
+         ships local copies in its library-packs folder whose content hash differs from the nuget.org
+         package, so a lock file written from them fails hash validation in CI, and the reverse. -->
+    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
   </PropertyGroup>
 
 </Project>
