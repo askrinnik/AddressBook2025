@@ -1,6 +1,6 @@
 # Plan: Vue.js frontend `src/AddressBook.Vue`
 
-> **Status:** planned, no task started; issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
+> **Status:** all tasks done, shipped in [#223](https://github.com/askrinnik/AddressBook2025/pull/223); issues [#213](https://github.com/askrinnik/AddressBook2025/issues/213)–[#222](https://github.com/askrinnik/AddressBook2025/issues/222)
 > **Target folder:** `src/AddressBook.Vue` (new npm project, not part of `src/AddressBook.slnx`)
 > **Reference frontend:** `src/AddressBook.Web` — Blazor WebAssembly + MudBlazor ([spec](../specs/AddressBook.Web.md))
 > **Progress is tracked by the check boxes in [Task list](#5-task-list).**
@@ -24,7 +24,7 @@ that points to the project's files.
 | Build tool | Vite |
 | Routing | Vue Router |
 | State | No store library; page state lives in components, shared state in composables (`provide`/`inject`) |
-| UI library | Vuetify 3 (Material Design, closest to MudBlazor) |
+| UI library | Vuetify 4 (Material Design, closest to MudBlazor) |
 | Client validation | Vuetify `rules` on the fields, backed by `contactRules.ts` that mirrors `ContactRules` in `AddressBook.Contracts` |
 | Parity | Strict — see [section 3](#3-parity-contract) |
 | E2E tests | The existing suite `src/UiTests` runs against both frontends; only the page and component objects differ per frontend |
@@ -63,13 +63,13 @@ objects of `src/UiTests` know it; the specs stay the same.
 ## 4. Shared E2E suite design
 
 - `playwright.config.ts` defines two projects, `blazor` and `vue`, each with its own `baseURL`;
-  `webServer` starts the API, the Blazor app and the Vue dev server.
+  `webServer` starts the API, the Blazor app and the Vue preview build (`vite preview`).
 - The page and component objects split into a shared part and frontend-specific parts
   (`src/components/blazor/*`, `src/components/vue/*`). A fixture picks the implementation from
   the running project, so specs keep importing `test` / `expect` from `src/fixtures/test-fixtures.js`.
 - The Blazor-only WASM readiness helper (`src/utils/blazor.ts`) becomes a per-frontend
   `waitForAppReady`.
-- The `vue` project starts with an empty `testMatch`; each page task adds the specs of the
+- The `vue` project starts with an app-boot smoke spec in its `testMatch` list; each page task adds the specs of the
   feature it delivers, so the suite stays green at every step. When V7 is done, both projects
   run the same specs.
 
@@ -77,40 +77,40 @@ objects of `src/UiTests` know it; the specs stay the same.
 
 Each task is one GitHub issue; "Blocked by" becomes the issue relation.
 
-- [ ] [#213](https://github.com/askrinnik/AddressBook2025/issues/213) **V1 — Scaffold `src/AddressBook.Vue`.** Vite + Vue 3 + TypeScript + Vue Router + Vuetify 3,
+- [x] [#213](https://github.com/askrinnik/AddressBook2025/issues/213) **V1 — Scaffold `src/AddressBook.Vue`.** Vite + Vue 3 + TypeScript + Vue Router + Vuetify 4,
   ESLint and Prettier, `vue-tsc`, `VITE_API_PREFIX` (development value `http://localhost:5000/api/`),
   a fixed dev-server port, history-mode routing that survives a refresh on a deep link, README
   with prerequisites, build and run. Blocked by: —
-- [ ] [#214](https://github.com/askrinnik/AddressBook2025/issues/214) **V2 — Run `src/UiTests` against several frontends.** Projects `blazor` and `vue`,
+- [x] [#214](https://github.com/askrinnik/AddressBook2025/issues/214) **V2 — Run `src/UiTests` against several frontends.** Projects `blazor` and `vue`,
   frontend-specific component objects chosen by fixture, per-frontend `waitForAppReady`, the
-  Vue dev server in `webServer`, empty `testMatch` for `vue`. No spec changes its behaviour;
+  Vue preview build in `webServer`, an app-boot smoke spec for `vue`. No spec changes its behaviour;
   `--project=blazor` stays green. Blocked by: V1
-- [ ] [#215](https://github.com/askrinnik/AddressBook2025/issues/215) **V3 — App shell.** App bar with title, drawer toggle and dark-mode toggle; nav drawer with
+- [x] [#215](https://github.com/askrinnik/AddressBook2025/issues/215) **V3 — App shell.** App bar with title, drawer toggle and dark-mode toggle; nav drawer with
   Home and Contacts; Home page; not-found view; page titles; a global error banner provided to
   pages through a composable (the counterpart of the cascading `Error` component). Enables the
-  smoke and a11y specs for `vue`. Blocked by: V2
-- [ ] [#216](https://github.com/askrinnik/AddressBook2025/issues/216) **V4 — API client.** TypeScript types mirroring `AddressBook.Contracts`
+  shell smoke spec for `vue`. Blocked by: V2
+- [x] [#216](https://github.com/askrinnik/AddressBook2025/issues/216) **V4 — API client.** TypeScript types mirroring `AddressBook.Contracts`
   (`ContactModel`, `GetFilteredContactsResponse`, create and update commands); a `fetch`
   wrapper with problem-details parsing and fallback; `ProblemDetailsError`; `getErrors()`;
   service functions mirroring `IAddressBookApiService` (percent-encoded `search` only for a
   non-blank term, new id from the `Location` header, `null` on 404 for get-by-id). Blocked by: V1
-- [ ] [#217](https://github.com/askrinnik/AddressBook2025/issues/217) **V5 — Contacts page.** Server-reloading table, search, sorting, paging with a labelled
+- [x] [#217](https://github.com/askrinnik/AddressBook2025/issues/217) **V5 — Contacts page.** Server-reloading table, search, sorting, paging with a labelled
   rows-per-page select, loading and empty states, inline alert and banner rules, Edit and Delete
   buttons, delete confirmation dialog, 404-on-delete handling. Enables the list, search,
-  sort-paginate and delete specs for `vue`. Blocked by: V3, V4
-- [ ] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
+  sort-paginate, delete and shell-navigation specs for `vue`. Blocked by: V3, V4
+- [x] [#218](https://github.com/askrinnik/AddressBook2025/issues/218) **V6 — Contact form and Create page.** `contactRules.ts`; read-only Birthday picker with the
   UTC maximum date; server field-error mapping; general error; submit disabled while saving;
-  Cancel. Enables the create and validation specs for `vue`. Blocked by: V5
-- [ ] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
+  Cancel. Enables the create, validation and a11y specs for `vue`. Blocked by: V5
+- [x] [#219](https://github.com/askrinnik/AddressBook2025/issues/219) **V7 — Edit page.** Loading progress, not-found warning, load-error alert,
   `Back to Contacts`, save. Enables the edit, edit-not-found and crud-lifecycle specs for `vue`.
   Blocked by: V6
-- [ ] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the
+- [x] [#220](https://github.com/askrinnik/AddressBook2025/issues/220) **V8 — Component tests.** Vitest + `@vue/test-utils` + jsdom for the pages, the form, the
   shell and the API client, with the API service mocked; coverage thresholds 85 % lines and
   70 % branches, as in `web-tests.yml`. Blocked by: V7
-- [ ] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,
+- [x] [#221](https://github.com/askrinnik/AddressBook2025/issues/221) **V9 — CI.** A path-filtered workflow for `src/AddressBook.Vue` (lint, type-check, build,
   Vitest with coverage; actions pinned to commit SHAs); `ui-tests.yml` runs both Playwright
   projects; `security.yml` scans the new npm project. Blocked by: V8
-- [ ] [#222](https://github.com/askrinnik/AddressBook2025/issues/222) **V10 — Documentation, harness and learning guide.** `docs/specs/AddressBook.Vue.md`;
+- [x] [#222](https://github.com/askrinnik/AddressBook2025/issues/222) **V10 — Documentation, harness and learning guide.** `docs/specs/AddressBook.Vue.md`;
   `Architecture.md`; `src/UiTests/README.md` and the Playwright conventions (frontend projects);
   a pointer in `CLAUDE.md`; `.github/instructions/vue.instructions.md` with the matching
   `.claude/rules/vue.md`; `docs/ai/README.md`; the learning guide. Blocked by: V7
@@ -120,11 +120,9 @@ V10 adds the cross-cutting documents and the guide.
 
 ## 6. Open points
 
-- **Guide location.** The documentation rules list `docs/specs/`, `docs/tasks/` and `docs/ai/`
-  only. Proposed: `docs/guides/vue-for-blazor-developers.md`. Needs the user's confirmation.
-- **Date picker component.** `v-date-input` or `v-text-field` + `v-menu` + `v-date-picker`; chosen
-  in V6 after checking the current Vuetify documentation, by which one keeps the input read-only
-  and supports a maximum date.
+- **Guide location (settled in V10).** `docs/guides/vue-for-blazor-developers.md`, written in
+  Russian at the user's decision; `.claude/rules/docs.md` names `docs/guides/` and this language exception.
+- **Date picker component (settled in V6).** `v-date-input`, part of Vuetify 4 core: with `update-on` empty it keeps the input read-only, and it supports `max`.
 
 ## 7. Verification
 

@@ -7,7 +7,6 @@ import { ContactsPage } from '../../src/pages/contacts.page.js';
 import { CreateContactPage } from '../../src/pages/create-contact.page.js';
 import { EditContactPage } from '../../src/pages/edit-contact.page.js';
 import { HomePage } from '../../src/pages/home.page.js';
-import { waitForBlazorReady } from '../../src/utils/blazor.js';
 
 test.describe('test fixtures — injection smoke', () => {
   test('data fixture is the ContactFactory and builds valid contacts', ({ data }) => {
@@ -32,10 +31,10 @@ test.describe('test fixtures — injection smoke', () => {
   });
 });
 
-test.describe('test fixtures — Blazor readiness', () => {
-  test('waitForBlazorReady resolves once the shell is rendered', async ({ page, appShell }) => {
+test.describe('test fixtures — app readiness', () => {
+  test('waitForAppReady resolves once the shell is rendered', async ({ page, app, appShell }) => {
     await page.goto('/');
-    await waitForBlazorReady(page);
+    await app.waitForAppReady(page);
     await expect(appShell.appBarTitle).toBeVisible();
   });
 });

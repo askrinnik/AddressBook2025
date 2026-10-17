@@ -1,23 +1,36 @@
 import { test as base, expect, request, type APIRequestContext } from '@playwright/test';
 import { ContactsApi, type CreateContactCommand } from '../api/contacts-api.js';
-import { AppShell } from '../components/app-shell.component.js';
+import type { AppShell } from '../components/app-shell.component.js';
 import { env } from '../config/env.js';
 import { ContactFactory } from '../data/contact.factory.js';
+import { frontends, type Frontend, type FrontendName } from '../frontends/index.js';
 import { ContactsPage } from '../pages/contacts.page.js';
 import { CreateContactPage } from '../pages/create-contact.page.js';
 import { EditContactPage } from '../pages/edit-contact.page.js';
 import { HomePage } from '../pages/home.page.js';
 
 /*
- * The UI-test `test.extend`: it injects the U8 page objects, the U7 `AppShell` component, the
- * U5 `contactsApi` (hybrid REST seed/cleanup), and the U6 `data` factory, and auto-cleans every
- * contact created through `contactsApi` in teardown. Specs declare only the fixtures they use.
+ * The UI-test `test.extend`: it injects the page objects, the `AppShell` component, the `app`
+ * frontend, the `contactsApi` (hybrid REST seed/cleanup), and the `data` factory, and auto-cleans
+ * every contact created through `contactsApi` in teardown. Specs declare only the fixtures they use.
  *
- * The Playwright `request` fixture is bound to `baseURL = env.baseURL` (the Web app), so it is
+ * The `frontend` option (set per Playwright project) selects the frontend under test; the `app`
+ * fixture resolves it to the `Frontend` that supplies readiness and the frontend-specific
+ * component objects, so specs and page objects stay shared. Fixtures are lazy: a test builds
+ * only the objects it declares.
+ *
+ * The Playwright `request` fixture is bound to the project's `baseURL` (the frontend), so it is
  * NOT reused for API seeding — the `contactsApi` fixture builds its own `APIRequestContext`
- * against `env.apiURL` instead. This is the wiring the U5 `ContactsApi` left to "the fixture".
+ * against `env.apiURL` instead.
  */
+export interface UiOptions {
+  /** The frontend under test; each Playwright project sets it. */
+  frontend: FrontendName;
+}
+
 export interface UiFixtures {
+  /** The frontend under test: readiness and the frontend-specific component objects. */
+  app: Frontend;
   homePage: HomePage;
   contactsPage: ContactsPage;
   createContactPage: CreateContactPage;
@@ -45,30 +58,36 @@ class TrackedContactsApi extends ContactsApi {
   }
 }
 
-export const test = base.extend<UiFixtures>({
+export const test = base.extend<UiOptions & UiFixtures>({
+  frontend: ['blazor', { option: true }],
+
+  app: async ({ frontend }, use) => {
+    await use(frontends[frontend]);
+  },
+
   // eslint-disable-next-line no-empty-pattern
   data: async ({}, use) => {
     await use(ContactFactory);
   },
 
-  homePage: async ({ page }, use) => {
-    await use(new HomePage(page));
+  homePage: async ({ page, app }, use) => {
+    await use(new HomePage(page, app));
   },
 
-  contactsPage: async ({ page }, use) => {
-    await use(new ContactsPage(page));
+  contactsPage: async ({ page, app }, use) => {
+    await use(new ContactsPage(page, app));
   },
 
-  createContactPage: async ({ page }, use) => {
-    await use(new CreateContactPage(page));
+  createContactPage: async ({ page, app }, use) => {
+    await use(new CreateContactPage(page, app));
   },
 
-  editContactPage: async ({ page }, use) => {
-    await use(new EditContactPage(page));
+  editContactPage: async ({ page, app }, use) => {
+    await use(new EditContactPage(page, app));
   },
 
-  appShell: async ({ page }, use) => {
-    await use(new AppShell(page));
+  appShell: async ({ page, app }, use) => {
+    await use(app.appShell(page));
   },
 
   // eslint-disable-next-line no-empty-pattern

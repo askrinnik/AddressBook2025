@@ -1,10 +1,13 @@
 name: UI E2E Tests
 
-# Runs the src/UiTests Playwright suite against a live API + Web, both started by
-# Playwright's own webServer block. Fires on any push (like build.yml) and on demand.
+# Runs the src/UiTests Playwright suite (projects blazor and vue) against a live API, Web and
+# Vue app, all started by Playwright's own webServer block. Fires on any push (like build.yml) and on demand.
 on:
   push:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   ui-e2e:
@@ -23,14 +26,6 @@ jobs:
           MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
         ports:
           - 1433:1433
-
-    env:
-      # Override the API connection string (env beats appsettings.Development.json). Non-empty
-      # Database:User/Password make StartupExtensions switch to SQL auth; DefaultConnection already
-      # carries Database=AddressBook + TrustServerCertificate=True. Migrations run on API startup.
-      Database__Server: "localhost,1433"
-      Database__User: "sa"
-      Database__Password: ${{ secrets.MSSQL_SA_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v5
@@ -69,14 +64,27 @@ jobs:
         run: npm ci
         working-directory: src/UiTests
 
+      - name: Install Vue app dependencies
+        # Every run also builds and serves src/AddressBook.Vue through webServer.
+        run: npm ci
+        working-directory: src/AddressBook.Vue
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
         working-directory: src/UiTests
 
       - name: Run UI E2E tests
-        # CI=true (set by GitHub) makes playwright.config start fresh API + Web via webServer.
+        # CI=true (set by GitHub) makes playwright.config start fresh API, Web and Vue via webServer.
         run: npm test
         working-directory: src/UiTests
+        env:
+          # Override the API connection string (env beats appsettings.Development.json). Non-empty
+          # Database:User/Password make StartupExtensions switch to SQL auth; DefaultConnection already
+          # carries Database=AddressBook + TrustServerCertificate=True. Migrations run on API startup.
+          # Only this step starts the API, so only this step sees the password.
+          Database__Server: "localhost,1433"
+          Database__User: "sa"
+          Database__Password: ${{ secrets.MSSQL_SA_PASSWORD }}
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v7

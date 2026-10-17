@@ -9,6 +9,9 @@ on:
     # Run every Monday at 08:00 UTC to catch newly disclosed CVEs
     - cron: '0 8 * * 1'
 
+permissions:
+  contents: read
+
 jobs:
   dotnet-vulnerability-scan:
     name: .NET NuGet Vulnerabilities
@@ -40,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [ApiTests, UiTests]
+        suite: [ApiTests, UiTests, AddressBook.Vue]
     steps:
       - uses: actions/checkout@v5
 

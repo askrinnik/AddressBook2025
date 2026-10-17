@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { fileURLToPath } from 'node:url';
 import { env } from './src/config/env.js';
+import type { UiOptions } from './src/fixtures/test-fixtures.js';
 
 // CI-ness is a runner concern, not app config, so it stays a direct process.env read.
 const isCI = !!process.env.CI;
@@ -7,7 +9,9 @@ const isCI = !!process.env.CI;
 // webServer readiness needs a URL that answers 200; the contacts list endpoint does.
 const apiReadinessURL = new URL('Contacts', env.apiURL).toString();
 
-export default defineConfig({
+const vueProjectDir = fileURLToPath(new URL('../AddressBook.Vue/', import.meta.url));
+
+export default defineConfig<UiOptions>({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: isCI,
@@ -20,7 +24,6 @@ export default defineConfig({
     timeout: env.expectTimeout,
   },
   use: {
-    baseURL: env.baseURL,
     headless: env.headless,
     ignoreHTTPSErrors: true,
     actionTimeout: env.actionTimeout,
@@ -32,8 +35,12 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'blazor',
+      use: { ...devices['Desktop Chrome'], baseURL: env.baseURL, frontend: 'blazor' },
+    },
+    {
+      name: 'vue',
+      use: { ...devices['Desktop Chrome'], baseURL: env.vueBaseURL, frontend: 'vue' },
     },
     /*
      * Optional cross-browser projects. Enable and run
@@ -45,9 +52,14 @@ export default defineConfig({
   ],
 
   /*
-   * Start both servers before the tests; reuse already-running instances locally.
-   * The API starts first — the Web dev config (wwwroot/appsettings.Development.json)
-   * points API_Prefix at http://localhost:5000/api/.
+   * Start the API and both frontends before the tests; reuse already-running instances locally.
+   * Playwright starts every entry whatever `--project` selects. The API starts first — the Blazor
+   * dev config (wwwroot/appsettings.Development.json) and the Vue build's fallback both point the
+   * API prefix at http://localhost:5000/api/.
+   *
+   * Vue is served as a production build by `vite preview`, not by the dev server: the dev server
+   * answers 504 "Outdated Optimize Dep" on a first load while it re-optimises Vuetify's lazily
+   * imported components. `vite preview` also serves the SPA fallback for deep links.
    */
   webServer: [
     {
@@ -61,6 +73,13 @@ export default defineConfig({
       url: env.baseURL,
       reuseExistingServer: !isCI,
       ignoreHTTPSErrors: true,
+      timeout: 120_000,
+    },
+    {
+      command: 'npm run build && npm run preview',
+      cwd: vueProjectDir,
+      url: env.vueBaseURL,
+      reuseExistingServer: !isCI,
       timeout: 120_000,
     },
   ],

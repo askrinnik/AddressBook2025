@@ -2,25 +2,32 @@ import type { Locator, Page } from '@playwright/test';
 import { TestIds, contactDeleteButton, contactEditButton, contactRow } from '../utils/testids.js';
 
 /*
- * Component object for the contacts `MudTable` (server-reload) and its toolbar.
+ * Component object for the contacts table (server-reload) and its toolbar.
  *
- * Encapsulated MudBlazor specifics (no stable role/testid is exposed for these):
- *   - sort labels are `<span class="mud-table-sort-label">` carrying the column text;
- *   - the pager buttons carry aria-labels ("Next page" / "Previous page" / …);
- *   - the rows-per-page control is a `MudSelect`, not a native <select>;
- *   - server reload shows a "Loading..." row that must clear before the data is stable.
+ * This base owns the `data-testid` locators, the row and column reads, the pager buttons (both
+ * frontends give them the aria-labels "Next page" / "Previous page") and the "Loading..." wait.
+ * The sort labels, the rows-per-page control and the pager caption depend on the UI library's
+ * markup, so a frontend-specific subclass supplies them.
  *
- * Per-row controls reuse the U4 id-suffixed `data-testid`s, so each row is addressable on the
- * shared database and under parallel runs. The `contact-row-{id}` testid sits on the row's
- * first cell; the enclosing `<tr>` is derived from it.
+ * Per-row controls use id-suffixed `data-testid`s, so each row is addressable on the shared
+ * database and under parallel runs. The `contact-row-{id}` testid sits on the row's first cell;
+ * the enclosing `<tr>` is derived from it.
  */
-const SORT_LABEL = '.mud-table-sort-label';
 const LOADING_TEXT = 'Loading...';
 // Matched exactly so that stray characters around the empty-state label (such as quotes) fail the check.
 const NO_RECORDS_TEXT = 'No matching records found';
 
-export class ContactsTable {
-  constructor(private readonly page: Page) {}
+export abstract class ContactsTable {
+  constructor(protected readonly page: Page) {}
+
+  /** The pager caption locator (`X-Y of Z`). */
+  abstract get paginationInfo(): Locator;
+
+  /** Choose a rows-per-page option from the pager. */
+  abstract setRowsPerPage(rows: number): Promise<void>;
+
+  /** The clickable sort label of a column, located by its header text. */
+  protected abstract sortLabel(columnText: string): Locator;
 
   get root(): Locator {
     return this.page.getByTestId(TestIds.contactsTable);
@@ -118,14 +125,6 @@ export class ContactsTable {
     await this.waitForLoaded();
   }
 
-  /** Choose a rows-per-page option from the pager's `MudSelect`. */
-  async setRowsPerPage(rows: number): Promise<void> {
-    await this.root.locator('.mud-table-pagination-select').click();
-    // The options render in a page-level popover list.
-    await this.page.locator('.mud-list-item', { hasText: exact(String(rows)) }).click();
-    await this.waitForLoaded();
-  }
-
   /** Wait for the server-reload "Loading..." row to clear (no-op if it never showed). */
   async waitForLoaded(): Promise<void> {
     await this.root.getByText(LOADING_TEXT).waitFor({ state: 'hidden' });
@@ -146,11 +145,6 @@ export class ContactsTable {
     return cells.map((text) => text.trim());
   }
 
-  /** The pager caption locator (`X-Y of Z`). */
-  get paginationInfo(): Locator {
-    return this.root.locator('.mud-table-page-number-information');
-  }
-
   /** The pager caption text (`X-Y of Z`), trimmed. */
   async pageRangeText(): Promise<string> {
     return (await this.paginationInfo.innerText()).trim();
@@ -166,16 +160,7 @@ export class ContactsTable {
     return Number(match[1]);
   }
 
-  private sortLabel(columnText: string): Locator {
-    return this.root.locator(SORT_LABEL, { hasText: columnText });
-  }
-
   private pagerButton(ariaLabel: string): Locator {
     return this.root.getByRole('button', { name: ariaLabel });
   }
-}
-
-/** Anchored regex so `hasText` matches exactly ("10" must not match "100"). */
-function exact(text: string): RegExp {
-  return new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
 }

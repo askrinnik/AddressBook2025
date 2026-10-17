@@ -1,9 +1,9 @@
 import { expect, test } from '../../src/fixtures/test-fixtures.js';
 
 /*
- * Smoke coverage for the application shell (MainLayout + NavMenu): the app boots, the two nav
- * links move between Home and Contacts, the drawer and theme toggles flip their state, and each
- * route sets its own page title.
+ * Smoke coverage for the application shell (MainLayout + NavMenu) that needs no Contacts page: the
+ * app boots, the drawer and theme toggles flip their state, Home and an unknown route set their
+ * page titles. The tests that open the Contacts page are in app-shell-navigation.spec.ts.
  *
  * The shell is static (no per-contact data), so these tests seed nothing — the U5 contactsApi /
  * Create→Verify→Delete isolation does not apply here. Every check is web-first: locator matchers
@@ -22,30 +22,6 @@ test.describe('smoke — app shell', () => {
     await homePage.goto();
 
     await expect(page).toHaveTitle('Home');
-  });
-
-  test('Contacts has the "Contacts" page title', async ({ page, contactsPage }) => {
-    await contactsPage.goto();
-
-    await expect(page).toHaveTitle('Contacts');
-  });
-
-  test('navigates Home → Contacts via the nav link', async ({ page, homePage, appShell }) => {
-    await homePage.goto();
-
-    await appShell.gotoContacts();
-
-    await expect(page).toHaveURL(/\/contacts$/);
-    await expect(page).toHaveTitle('Contacts');
-  });
-
-  test('navigates Contacts → Home via the nav link', async ({ page, contactsPage, homePage, appShell }) => {
-    await contactsPage.goto();
-
-    await appShell.gotoHome();
-
-    await expect(page).toHaveURL(/\/$/);
-    await expect(homePage.heading).toBeVisible();
   });
 
   test('toggles the navigation drawer', async ({ homePage, appShell }) => {
@@ -77,5 +53,13 @@ test.describe('smoke — app shell', () => {
 
     await appShell.toggleTheme();
     await expect.poll(() => appShell.isDarkMode()).toBe(false);
+  });
+
+  test('an unknown route shows the not-found view inside the layout', async ({ page, appShell }) => {
+    await page.goto('/no-such-page');
+
+    await expect(appShell.appBarTitle).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveText("Sorry, there's nothing at this address.");
+    await expect(page).toHaveTitle('Not found');
   });
 });

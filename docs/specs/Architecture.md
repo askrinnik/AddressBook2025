@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-`AddressBook2025` is a full-stack, cloud-hosted pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application is deployed on **Microsoft Azure** (App Service for the API, Azure Static Web Apps for the Blazor UI, Azure SQL for data). Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
+`AddressBook2025` is a full-stack, cloud-hosted pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application is deployed on **Microsoft Azure** (App Service for the API, Azure Static Web Apps for the Blazor UI, Azure SQL for data). Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. A second frontend, **Vue.js** (Vue 3, TypeScript, Vuetify) in `src/AddressBook.Vue`, offers the same UI against the same API; it has its own **Vitest** component tests, shares the UI E2E suite with the Blazor frontend, and runs locally and in CI only (it is not deployed). The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
 
 ---
 
@@ -86,6 +86,19 @@ graph TB
         MudBlazor["MudBlazor 9.8.0\nMaterial UI Components"]
     end
 
+    subgraph "src/AddressBook.Vue"
+        direction TB
+        VuePages["Pages
+(ContactsPage.vue, CreateContactPage.vue,
+EditContactPage.vue)"]
+        VueApi["contactsApi.ts
+(service functions)"]
+        VueRequest["request() in http.ts
+(fetch + problem details)"]
+        Vuetify["Vuetify 4
+Material UI Components"]
+    end
+
     subgraph "src/AddressBook.Api"
         direction TB
         Controller["ContactsController\n/api/contacts"]
@@ -106,6 +119,11 @@ graph TB
         WebTests["bUnit + xUnit v3\nComponent Tests"]
     end
 
+    subgraph "src/AddressBook.Vue/tests"
+        VueTests["Vitest + Vue Test Utils
+Component Tests (jsdom)"]
+    end
+
     subgraph "src/ApiTests"
         ApiE2E["Playwright TypeScript\nAPI E2E Tests"]
     end
@@ -118,6 +136,9 @@ graph TB
     Pages --> ApiSvc
     ApiSvc --> ErrHandling
     ErrHandling --> API
+    VuePages --> VueApi
+    VueApi --> VueRequest
+    VueRequest --> API
     Controller --> Handlers
     Handlers --> Validator
     Handlers --> Repository
@@ -127,9 +148,15 @@ graph TB
     Controller -.->|"uses contracts"| Queries
     Handlers -.->|"uses contracts"| Models
     ApiSvc -.->|"uses contracts"| Models
+    VueApi -.->|"mirrors contracts
+(types.ts)"| Models
     WebTests -->|"renders in memory"| Pages
+    VueTests -->|"mounts in jsdom"| VuePages
     ApiE2E -->|"tests live API"| API
-    UiE2E -->|"drives UI"| UI
+    UiE2E -->|"drives UI
+(project blazor)"| UI
+    UiE2E -->|"drives UI
+(project vue)"| VuePages
     UiE2E -.->|"seeds/cleans via API"| API
 ```
 
@@ -150,6 +177,7 @@ askrinnik/AddressBook2025/
 │       ├── api-tests.yml            # API E2E (src/ApiTests) on every push + dispatch
 │       ├── ui-tests.yml             # UI E2E (src/UiTests) on every push + dispatch
 │       ├── web-tests.yml            # bUnit tests (src/AddressBook.Web.Tests) on PRs + main (path-filtered) + dispatch
+│       ├── vue-tests.yml            # Vue app lint, build, Vitest + coverage (src/AddressBook.Vue) on PRs + main (path-filtered) + dispatch
 │       └── security.yml             # NuGet/npm vulnerability scan
 ├── .ai/
 │   ├── customizations.policy.json   # Cross-tool skills/prompts sync policy
@@ -166,7 +194,9 @@ askrinnik/AddressBook2025/
 │   │   ├── AddressBook.Api.md
 │   │   ├── AddressBook.Contracts.md
 │   │   ├── AddressBook.Web.md
+│   │   ├── AddressBook.Vue.md
 │   │   └── Architecture.md
+│   ├── guides/                      # Learning guides (vue-for-blazor-developers.md, in Russian)
 │   └── tasks/                       # Implementation plans (e.g. ui-tests-framework-plan.md)
 ├── src/
 │   ├── AddressBook.slnx              # VS 2022 solution file
@@ -178,7 +208,8 @@ askrinnik/AddressBook2025/
 │   ├── AddressBook.Web/             # Blazor WebAssembly SPA (code-behind: Contacts.razor.cs)
 │   ├── AddressBook.Web.Tests/       # bUnit + xUnit v3 component tests for AddressBook.Web
 │   ├── ApiTests/                    # Playwright TypeScript API E2E tests
-│   └── UiTests/                     # Playwright TypeScript UI E2E tests
+│   ├── UiTests/                     # Playwright TypeScript UI E2E tests
+│   └── AddressBook.Vue/             # Vue.js SPA (Vite, Vuetify), standalone npm project; Vitest tests in tests/
 └── README.md                        # Minimal: "pet project for address book development"
 ```
 
@@ -188,7 +219,7 @@ askrinnik/AddressBook2025/
 
 ### 1. `AddressBook.Contracts` — Shared Contracts Library
 
-Thin shared library defining MediatR request/response types and DTOs, referenced by both the API and Web projects. Contains 5 commands/queries and 5 response/model records.
+Thin shared library defining MediatR request/response types and DTOs, referenced by both the API and Web projects (the Vue frontend mirrors its types in TypeScript). Contains 5 commands/queries and 5 response/model records.
 
 → Full specification: [`AddressBook.Contracts.md`](./AddressBook.Contracts.md)
 
@@ -220,7 +251,15 @@ MudBlazor 9.8.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandl
 
 ---
 
-### 4. `AddressBook.Web.Tests` — bUnit Component Tests
+### 4. `AddressBook.Vue` — Vue.js Frontend
+
+The second frontend, functionally identical to `AddressBook.Web`: Vue 3.5 with `<script setup lang="ts">`, Vite 8, Vue Router 5 (history mode) and Vuetify 4. It is a standalone npm project, not part of `src/AddressBook.slnx`. Pages call the service functions of `src/api/contactsApi.ts`; `request()` in `src/api/http.ts` turns every non-success response into a `ProblemDetailsError`, the counterpart of `ProblemDetailsHandler`. The global error banner is a composable shared through `provide` / `inject`, the counterpart of the cascading `Error` component. The API base URL is `VITE_API_PREFIX` (fallback `http://localhost:5000/api/`); the dev server runs on port 5173, `vite preview` on 4173. Its Vitest + `@vue/test-utils` component tests in `src/AddressBook.Vue/tests` run in jsdom with the API mocked and are the counterpart of `AddressBook.Web.Tests`. It is not deployed.
+
+→ Full specification: [`AddressBook.Vue.md`](./AddressBook.Vue.md); run: [`src/AddressBook.Vue/README.md`](../../src/AddressBook.Vue/README.md); coding standard: [`vue.instructions.md`](../../.github/instructions/vue.instructions.md); learning guide (Russian): [`vue-for-blazor-developers.md`](../guides/vue-for-blazor-developers.md)
+
+---
+
+### 5. `AddressBook.Web.Tests` — bUnit Component Tests
 
 Component and page tests for `AddressBook.Web` on bUnit + xUnit v3. They render the real Blazor components in memory, without a browser; `IAddressBookApiService`, `NavigationManager` and JSInterop are substituted, so the suite needs no SQL Server and no running API. They run with `dotnet test --project src/AddressBook.Web.Tests` (Microsoft.Testing.Platform, enabled in `global.json`). The `web-tests.yml` workflow runs them in CI, adds the TRX results to the run summary (`dorny/test-reporter`) and uploads TRX and Cobertura coverage artifacts.
 
@@ -228,31 +267,33 @@ Component and page tests for `AddressBook.Web` on bUnit + xUnit v3. They render 
 
 ---
 
-### 5. `ApiTests` & `UiTests` — Playwright/TypeScript E2E Tests
+### 6. `ApiTests` & `UiTests` — Playwright/TypeScript E2E Tests
 
-Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST API (the five `Contacts` endpoints, negatives, boundaries, and contract schemas). `src/UiTests` is a hybrid UI E2E suite for the Blazor WASM frontend — it drives the real browser and seeds/cleans data fast over the API. Both start the app themselves via Playwright's `webServer` and run in CI (see below).
+Two independent Playwright + TypeScript suites. `src/ApiTests` covers the REST API (the five `Contacts` endpoints, negatives, boundaries, and contract schemas). `src/UiTests` is a hybrid UI E2E suite for both frontends — it drives the real browser and seeds/cleans data fast over the API. It runs as two Playwright projects: `blazor` against `AddressBook.Web` (`BASE_URL`, default `https://localhost:7187/`) and `vue` against the production build of `AddressBook.Vue` served by `vite preview` (`VUE_BASE_URL`, default `http://localhost:4173/`); the specs and page objects are shared, and a fixture supplies the frontend-specific component objects. Both start the app themselves via Playwright's `webServer` and run in CI (see below).
 
 → Full specifications: [`src/ApiTests/README.md`](../../src/ApiTests/README.md), [`src/UiTests/README.md`](../../src/UiTests/README.md)
 
 ---
 
-### 6. CI/CD
+### 7. CI/CD
 
 **`build.yml`** — Triggers on every push; runs `dotnet restore --locked-mode` + `dotnet build --configuration Release` on `ubuntu-latest` with .NET 10.0.x. Read-only token (`contents: read`); actions are pinned to commit SHAs.[^6]
 
 **`api-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/ApiTests` API E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, then `npm ci` + `npm test` — Playwright's `webServer` block starts the API (port 5000) itself, pointed at the container via `Database__*` env overrides. No browser install (the tests use `APIRequestContext`). Publishes the HTML report as an artifact (30 days); traces on failure.
 
-**`ui-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/UiTests` UI E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, generates an HTTPS dev cert, then `npm ci` + `npx playwright install --with-deps` + `npm test` — Playwright's `webServer` block starts the API (port 5000) and Web (`https://localhost:7187`) itself, with the API pointed at the container via `Database__*` env overrides. Publishes the HTML report as an artifact (30 days); traces/videos on failure.
+**`ui-tests.yml`** — Triggers on every push (and manual dispatch); runs the `src/UiTests` UI E2E suite on `ubuntu-latest`. Brings up a SQL Server 2022 service container, sets up .NET 10 and Node LTS, generates an HTTPS dev cert, then `npm ci` in `src/UiTests` and in `src/AddressBook.Vue` + `npx playwright install --with-deps` + `npm test`, which runs both projects (`blazor` and `vue`) — Playwright's `webServer` block starts the API (port 5000), Web (`https://localhost:7187`) and the Vue preview build (`http://localhost:4173`) itself, with the API pointed at the container via `Database__*` env overrides. Publishes the HTML report as an artifact (30 days); traces/videos on failure.
 
 **`web-tests.yml`** — Triggers on pull requests and on pushes to `main` (and manual dispatch), only when `src/AddressBook.Web/**`, `src/AddressBook.Web.Tests/**`, `src/AddressBook.Contracts/**`, `src/Directory.*.props`, `global.json`, `.config/dotnet-tools.json` or the workflow itself change, so a docs-only change does not start it. A newer run cancels an unfinished one on the same ref, except on `main`. The job has `checks: write` so `dorny/test-reporter` can create its check run. Runs the `src/AddressBook.Web.Tests` bUnit suite on `ubuntu-latest`. Needs only .NET 10.0.x: no SQL Server, Node or browser. Runs `dotnet restore --locked-mode`, `dotnet build -c Release`, then `dotnet test --project … --no-build` with the xUnit v3 TRX reporter and the Microsoft CodeCoverage extension (Cobertura). Publishes the TRX files with `dorny/test-reporter` as the "Web component test results" check run (`use-actions-summary: 'false'`; with the action's default the report goes only to the job summary and no check run is created). Uploads `TestResults/` as the `web-tests-results` artifact (30 days, also when tests fail). ReportGenerator (version pinned in `.config/dotnet-tools.json`, installed with `dotnet tool restore`) builds a coverage report for the `AddressBook.Web` assembly: the markdown summary goes to the job summary and the HTML report is uploaded as `web-tests-coverage-report`. The job fails when line coverage is below 85 % or branch coverage is below 70 % (`minimumCoverageThresholds`); the reports are still published. Actions are pinned to commit SHAs.
 
-**`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet and npm packages.
+**`vue-tests.yml`** — Triggers on pull requests and on pushes to `main` (and manual dispatch), only when `src/AddressBook.Vue/**` or the workflow itself change. Runs on `ubuntu-latest` with Node LTS only (npm cache keyed on the project's `package-lock.json`): `npm ci`, `npm run lint`, `npm run format:check`, `npm run build` (which type-checks with `vue-tsc`), then `npm run test:coverage` with a JUnit reporter. The Vitest coverage thresholds (lines 85 %, branches 70 %) live in `vitest.config.ts`, so the step fails like a local run. It writes a coverage table to the job summary, publishes the JUnit file as the "Vue component test results" check run (`dorny/test-reporter`, `checks: write`), and uploads the HTML coverage report (`vue-tests-coverage-report`) and the test results (`vue-tests-results`) for 30 days. Read-only token otherwise; actions are pinned to commit SHAs.
+
+**`security.yml`** — Triggers on push/PR to `main` and a weekly schedule; scans for vulnerable NuGet packages and, in a matrix, the npm packages of `src/ApiTests`, `src/UiTests` and `src/AddressBook.Vue`.
 
 > The legacy `playwright.yml` workflow and the reference-only `src/AutoTests` suite it ran were removed once CI moved to running the current API and UI suites entirely inside GitHub Actions.
 
 ---
 
-### 7. AI Tooling Integration (Copilot + Claude Code)
+### 8. AI Tooling Integration (Copilot + Claude Code)
 
 The project demonstrates heavy Copilot coding agent use:[^8]
 
@@ -275,7 +316,7 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 ---
 
-### 8. Documentation (`docs/`)
+### 9. Documentation (`docs/`)
 
 #### `docs/Old/` — Legacy documents
 
@@ -295,10 +336,17 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 | `AddressBook.Contracts.md` | Commands, queries, models — full type signatures |
 | `AddressBook.Api.md` | Domain, handlers, validation, data access, middleware, CORS, DB schema, build/run |
 | `AddressBook.Web.md` | Pages, API service, error handling, MudBlazor components, layout, build/run |
+| `AddressBook.Vue.md` | Vue pages, API client, problem-details pipeline, validation rules, Vuetify components, layout, tests, differences from Blazor, build/run |
+
+#### `docs/guides/` — Learning guides
+
+| Document | Language | Content |
+|---|---|---|
+| `vue-for-blazor-developers.md` | Russian | Vue concepts explained on this project's files, each next to its Blazor counterpart; reading order, run, debug and test |
 
 ---
 
-### 9. Database Schema
+### 10. Database Schema
 
 3 tables (`Contacts`, `Phones`, `PhoneOperators`) with seed data. See the [Api specification](./AddressBook.Api.md#database-schema) for the full schema.
 
@@ -345,6 +393,8 @@ sequenceDiagram
     BlazorWASM-->>Browser: Update UI
 ```
 
+The Vue frontend follows the same flow: a page calls a function of `contactsApi.ts`, `request()` takes the place of `AddressBookApiService` and `ProblemDetailsHandler`, and a failure arrives as `ProblemDetailsError`.
+
 ---
 
 ## Deployment Architecture
@@ -371,6 +421,7 @@ graph LR
 
 - **API cold start:** The App Service may need a warm-up request before the UI is usable (initial request after idle triggers startup).
 - **Blazor WASM client-side routing:** The Web UI includes `staticwebapp.config.json` in `wwwroot` to instruct Azure Static Web Apps to return `index.html` for all navigation requests (except static assets). This enables direct navigation and page refresh on routes like `/contacts` or `/create-contact`.
+- **Vue frontend:** not deployed. It runs locally (`npm run dev`) and, for the UI E2E suite, as a production build served by `vite preview`.
 - **Local run with DB credentials:** Use `dotnet run --Database:Password=<PASSWORD>` to override the database password via CLI. See also `Database:Server` and `Database:User` overrides in [AddressBook.Api.md](./AddressBook.Api.md).
 
 ---
@@ -386,7 +437,7 @@ graph LR
 | **`DeleteContactByIdQuery` naming** | Named a "Query" but performs a delete mutation — acknowledged naming inconsistency in the codebase.[^12] |
 | **`CreateContactCommand` / `UpdateContactCommand` are classes** | Unlike all other contracts which are `record` types, these two mutable commands are `class` — unusual for commands but consistent with each other.[^1] |
 | **Shared build settings under `src/`** | `Directory.Packages.props` holds every NuGet version once (Central Package Management + transitive pinning; `PackageReference`s carry no `Version`; `Pinned="true"` + a comment marks a package that must not move — MediatR 12.x, the last Apache-2.0 line). `Directory.Build.props` turns on `EnforceCodeStyleInBuild`, `GenerateDocumentationFile` (CS1591 opted out per project except the API) and `RestorePackagesWithLockFile` — each project commits a `packages.lock.json`, and CI restores with `--locked-mode`. A single `src/.editorconfig` replaces the former per-project copies. |
-| **Client-side pagination** | `GetFilteredContactsResponse` includes `TotalRows`, but sorting/paging is done client-side in `Contacts.razor` (not server-side). `TotalRows` is wired to MudTable's `TotalItems`.[^5] |
+| **Client-side pagination** | `GetFilteredContactsResponse` includes `TotalRows`, but sorting/paging is done client-side in `Contacts.razor` and in `ContactsPage.vue` (not server-side). `TotalRows` is wired to MudTable's `TotalItems`.[^5] |
 
 ---
 
@@ -436,6 +487,7 @@ Detailed per-project specifications are maintained in `docs/specs/`:
 | [`AddressBook.Contracts.md`](./AddressBook.Contracts.md) | All commands, queries, models — full type signatures and design decisions |
 | [`AddressBook.Api.md`](./AddressBook.Api.md) | Domain model, repository interfaces, CQRS handlers, validation, data access, middleware pipeline, CORS, DB schema, build/run |
 | [`AddressBook.Web.md`](./AddressBook.Web.md) | Blazor pages, API service, error handling subsystem, MudBlazor component usage, layout, build/run |
+| [`AddressBook.Vue.md`](./AddressBook.Vue.md) | Vue pages, API client and problem-details pipeline, validation rules, Vuetify component usage, layout, tests, deliberate differences from Blazor, build/run |
 
 These spec documents provide implementation-level detail complementing the architectural overview in this file.
 

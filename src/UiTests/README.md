@@ -1,7 +1,8 @@
 # AddressBook UI Tests (`src/UiTests`)
 
-Современный фреймворк UI/E2E-автотестов для `AddressBook.Web` (Blazor WebAssembly + MudBlazor)
-на **Playwright + TypeScript**. Покрывает пользовательские сценарии всех страниц (`/`,
+Современный фреймворк UI/E2E-автотестов для двух фронтендов — `AddressBook.Web` (Blazor
+WebAssembly + MudBlazor) и `AddressBook.Vue` (Vue.js + Vuetify) — на **Playwright + TypeScript**.
+Покрывает пользовательские сценарии всех страниц (`/`,
 `/contacts`, `/create-contact`, `/edit-contact/{id}`): навигацию и оболочку приложения, поиск,
 сортировку, пагинацию, CRUD через UI, клиентскую и серверную валидацию, диалог удаления и
 (опционально) a11y-проверки.
@@ -13,20 +14,32 @@
 > Существующий набор `src/ApiTests` не затрагивается — это независимый, заново спроектированный
 > фреймворк.
 
+Набор запускается как два Playwright-проекта:
+
+| Проект   | Фронтенд                              | `baseURL`                                             | Спеки                                                                              |
+| -------- | ------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `blazor` | `AddressBook.Web` (Blazor WASM)       | `BASE_URL`, по умолчанию `https://localhost:7187/`    | все                                                                                |
+| `vue`    | `AddressBook.Vue` (production-сборка) | `VUE_BASE_URL`, по умолчанию `http://localhost:4173/` | все |
+
+Спеки и page-объекты общие; фронтенд-специфичные component-объекты выбирает фикстура `app`
+по опции проекта `frontend` (см. [Архитектура](#архитектура)).
+
 ## Требования
 
 - **Node.js** 20+ (LTS) и npm.
 - **.NET 10 SDK** — Playwright сам поднимает и API, и Web командами `dotnet run`
-  (см. [Как поднимаются API и Web](#как-поднимаются-api-и-web)).
+  (см. [Как поднимаются API и фронтенды](#как-поднимаются-api-и-фронтенды)).
+- **Зависимости Vue-проекта** — один раз `npm ci` в `src/AddressBook.Vue`: каждый прогон
+  собирает и поднимает Vue-приложение, какой бы `--project` ни был выбран.
 - **Доступный SQL Server** — для `AddressBook.Api`. База общая (не in-memory), миграции
   применяются автоматически при старте API. Тесты self-contained (уникальный run-token +
   teardown), поэтому прогон на общей БД безопасен.
 - **Браузерные движки Playwright** — ставятся один раз через `npx playwright install`
-  (по умолчанию используется только `chromium`).
+  (оба проекта используют `chromium`).
 
 > **Живые API + Web обязательны.** Это UI-тесты в реальном браузере: страница `/contacts`
 > грузит данные из API, и без запущенного `AddressBook.Api` таблица показывает ошибку
-> «An unhandled error has occurred». Оба сервера поднимаются автоматически (`webServer`) либо
+> «An unhandled error has occurred». Все серверы поднимаются автоматически (`webServer`) либо
 > вручную — см. ниже.
 
 ## Архитектура
@@ -37,10 +50,16 @@
   через `test.extend`-фикстуры ([`src/fixtures/test-fixtures.ts`](src/fixtures/test-fixtures.ts));
   тест объявляет нужные фикстуры в сигнатуре и не создаёт объекты вручную. Локаторы ленивые
   (`getByRole(...)`), без хранения «сырых» селекторов.
-- **Component objects для MudBlazor.** Отдельные обёртки для нетривиальных виджетов:
+- **Component objects для двух фронтендов.** Отдельные обёртки для нетривиальных виджетов:
   `contacts-table` (server-reload), `date-picker` (popover-календарь), `confirm-dialog`
-  (`MudMessageBox` удаления), `contact-form`, `app-shell` (AppBar/drawer/тема). Хрупкость
-  Material-разметки изолирована в одном месте.
+  (диалог удаления), `contact-form`, `app-shell` (AppBar/drawer/тема). Общий абстрактный базовый
+  класс в `src/components/*.component.ts` владеет всем, что доступно через `data-testid`, роли
+  и aria-label; разметку MudBlazor знают классы в `src/components/blazor/`, разметку Vuetify —
+  классы в `src/components/vue/`. Спеки импортируют только общие классы.
+- **Фронтенд как фикстура.** Каждый проект задаёт опцию `frontend` (`blazor` или `vue`);
+  фикстура `app` отдаёт объект `Frontend` ([`src/frontends/`](src/frontends/)) с
+  `waitForAppReady(page)` и фабриками component-объектов. Готовность Blazor — заголовок
+  «Contact Book» в `.mud-appbar`, Vue — тот же заголовок «Contact Book» в `.v-app-bar`.
 - **Гибридная подготовка данных через API.** Фикстура `contactsApi`
   ([`src/api/contacts-api.ts`](src/api/contacts-api.ts)) использует Playwright `APIRequestContext`
   для create/delete контактов напрямую в API — быстро и без UI. Созданные через фикстуру
@@ -68,12 +87,19 @@ src/UiTests/
     config/     # env.ts — zod-валидация переменных окружения + dotenv
     api/        # contacts-api.ts — seed/cleanup контактов через APIRequestContext
     data/       # contact.factory.ts (билдеры на faker) + tokens.ts (run-token)
-    components/ # app-shell, contacts-table, contact-form, date-picker, confirm-dialog
+    components/ # общие базовые классы: app-shell, contacts-table, contact-form, date-picker,
+                #   confirm-dialog
+      blazor/   # реализации на разметке MudBlazor
+      vue/      # реализации на разметке Vuetify
+    frontends/  # frontend.ts (интерфейс Frontend), blazor.ts, vue.ts, index.ts
     pages/      # base, home, contacts, create-contact, edit-contact
-    fixtures/   # test-fixtures.ts — test.extend: страницы + компоненты + contactsApi + data
-    utils/      # testids.ts, assertions.ts (доменные проверки), blazor.ts (готовность WASM)
+    fixtures/   # test-fixtures.ts — test.extend: опция frontend + app + страницы + компоненты
+                #   + contactsApi + data
+    utils/      # testids.ts, assertions.ts (доменные проверки)
   tests/
-    smoke/      # app-shell — загрузка, навигация Home/Contacts, тема, drawer
+    smoke/      # app-boot — загрузка на / и по прямой ссылке /contacts;
+                #   app-shell — загрузка, тема, drawer, страница «не найдено»;
+                #   app-shell-navigation — заголовки и навигация Home/Contacts (нужна страница Contacts)
     contacts/   # list-search, sort-paginate, create, edit, edit-not-found, delete,
                 #   validation, crud-lifecycle
     a11y/       # accessibility — @axe-core/playwright (опц.)
@@ -93,7 +119,8 @@ cp .env.example .env.local
 
 | Переменная           | По умолчанию                 | Назначение                                                                                                                                                        |
 | -------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BASE_URL`           | `https://localhost:7187/`    | Адрес Web-приложения под тестом (Blazor WASM, профиль `https`). **Обязателен завершающий `/`.**                                                                   |
+| `BASE_URL`           | `https://localhost:7187/`    | `baseURL` проекта `blazor` (Blazor WASM, профиль `https`). **Обязателен завершающий `/`.**                                                                        |
+| `VUE_BASE_URL`       | `http://localhost:4173/`     | `baseURL` проекта `vue` (production-сборка `AddressBook.Vue` под `vite preview`). **Обязателен завершающий `/`.**                                                 |
 | `API_URL`            | `http://localhost:5000/api/` | API для гибридного seed/cleanup и readiness-проба для `webServer`. **Обязателен завершающий `/`** — иначе `new URL('Contacts', API_URL)` отбросит сегмент `/api`. |
 | `HEADLESS`           | `true`                       | Браузер без окна (`true`) или с окном (`false`).                                                                                                                  |
 | `EXPECT_TIMEOUT`     | `10000`                      | Таймаут `expect()`, мс.                                                                                                                                           |
@@ -108,24 +135,26 @@ cp .env.example .env.local
 ## Быстрый старт
 
 ```bash
-npm install                 # зависимости
-npx playwright install      # браузерные движки Playwright (одноразово)
-cp .env.example .env.local  # локальная конфигурация (опционально — есть дефолты)
-npm test                    # прогон — Playwright сам поднимет API и Web
+npm install                         # зависимости
+npm ci --prefix ../AddressBook.Vue  # зависимости Vue-приложения (одноразово)
+npx playwright install              # браузерные движки Playwright (одноразово)
+cp .env.example .env.local          # локальная конфигурация (опционально — есть дефолты)
+npm test                            # прогон обоих проектов — Playwright сам поднимет серверы
 ```
 
 ## Команды
 
-| Скрипт                | Назначение                                                         |
-| --------------------- | ------------------------------------------------------------------ |
-| `npm test`            | Запуск всех UI-тестов (`playwright test`).                         |
-| `npm run test:report` | Прогон + открыть HTML-отчёт.                                       |
-| `npm run test:ui`     | Playwright UI-режим (интерактивный прогон/отладка).                |
-| `npm run test:debug`  | Пошаговая отладка (Playwright Inspector).                          |
-| `npm run test:headed` | Прогон в видимом окне браузера.                                    |
-| `npm run test:remote` | Прогон против развёрнутого Web-приложения (Azure Static Web Apps). |
-| `npm run lint`        | ESLint (flat config).                                              |
-| `npm run format`      | Prettier (форматирование).                                         |
+| Скрипт                | Назначение                                                                          |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| `npm test`            | Запуск всех UI-тестов обоих проектов (`playwright test`).                           |
+| `npm run test:report` | Прогон + открыть HTML-отчёт.                                                        |
+| `npm run test:ui`     | Playwright UI-режим (интерактивный прогон/отладка).                                 |
+| `npm run test:debug`  | Пошаговая отладка (Playwright Inspector).                                           |
+| `npm run test:headed` | Прогон в видимом окне браузера.                                                     |
+| `npm run test:remote` | Прогон проекта `blazor` против развёрнутого Web-приложения (Azure Static Web Apps). |
+| `npm run lint`        | ESLint (flat config).                                                               |
+| `npm run type-check`  | Проверка типов TypeScript (`tsc --noEmit`).                                         |
+| `npm run format`      | Prettier (форматирование).                                                          |
 
 Запуск отдельного файла или подмножества по имени:
 
@@ -133,18 +162,26 @@ npm test                    # прогон — Playwright сам подниме�
 npx playwright test tests/contacts/delete.spec.ts
 npx playwright test -g "keeps the contact"
 npx playwright test tests/smoke              # только smoke-набор
+npx playwright test --project=blazor         # только Blazor-фронтенд
+npx playwright test --project=vue            # только Vue-фронтенд
 ```
 
-## Как поднимаются API и Web
+## Как поднимаются API и фронтенды
 
-UI-тестам нужны работающие `AddressBook.Api` **и** `AddressBook.Web`. Управляет этим массив
-`webServer` в [`playwright.config.ts`](playwright.config.ts):
+UI-тестам нужны работающие `AddressBook.Api`, `AddressBook.Web` **и** `AddressBook.Vue`. Управляет
+этим массив `webServer` в [`playwright.config.ts`](playwright.config.ts); Playwright поднимает все
+его записи при любом `--project`:
 
 - Первым стартует API: `dotnet run --project ../AddressBook.Api`. Готовность определяется по
   эндпоинту `Contacts` (readiness-URL на базе `API_URL`).
 - Затем стартует Web: `dotnet run --project ../AddressBook.Web --launch-profile https`
   (профиль `https` → `https://localhost:7187/`). Dev-конфиг Web указывает `API_Prefix` на
   `http://localhost:5000/api/`.
+- Затем Vue: `npm run build && npm run preview` в `../AddressBook.Vue` — production-сборка под
+  `vite preview` на `http://localhost:4173/` (`VUE_BASE_URL`). Сборка по умолчанию обращается к
+  API по `http://localhost:5000/api/`, а `vite preview` отдаёт SPA-fallback для прямых ссылок.
+  Dev-сервер Vite не используется: при первой загрузке он отвечает 504 «Outdated Optimize Dep»,
+  пока переоптимизирует лениво импортируемые компоненты Vuetify, и тесты становятся нестабильными.
 - `ignoreHTTPSErrors: true` — для самоподписанного TLS на `localhost:7187`.
 - Локально `reuseExistingServer: true` — если серверы уже запущены, Playwright их переиспользует;
   в CI (`process.env.CI`) всегда стартуют свежие экземпляры.
@@ -154,16 +191,20 @@ UI-тестам нужны работающие `AddressBook.Api` **и** `Addres
 ```bash
 dotnet run --project ../AddressBook.Api                          # терминал 1
 dotnet run --project ../AddressBook.Web --launch-profile https   # терминал 2
-npm test                                                          # терминал 3
+npm run build --prefix ../AddressBook.Vue                         # терминал 3: сборка Vue,
+npm run preview --prefix ../AddressBook.Vue                       #   затем preview-сервер
+npm test                                                          # терминал 4
 ```
 
-Против удалённого окружения (локально API/Web поднимать не нужно):
+Против удалённого окружения (только проект `blazor`):
 
 ```bash
 npm run test:remote
 ```
 
-> `test:remote` переопределяет только `BASE_URL` (Azure-хостинг Web-приложения). Гибридный
+> `test:remote` переопределяет только `BASE_URL` (Azure-хостинг Web-приложения) и запускает
+> `--project=blazor`. `webServer` при этом всё равно поднимает локальные серверы (или
+> переиспользует уже запущенные). Гибридный
 > seed/cleanup по-прежнему обращается к `API_URL`, поэтому для полностью удалённого прогона
 > задайте и `API_URL` на соответствующий backend (например, в `.env.local`).
 
@@ -179,7 +220,7 @@ npm run test:remote
   - `screenshot` — только при падении.
   - `video` — сохраняется при падении.
 - **Диагностика запуска серверов** — `DEBUG=pw:webserver npx playwright test` покажет вывод
-  `dotnet run` при старте API/Web.
+  `dotnet run` и сборки Vue при старте серверов.
 - **Параллелизм и повторы** (см. [`playwright.config.ts`](playwright.config.ts)): локально
   `workers: 4`, `retries: 1`; в CI `workers: 1`, `retries: 2`. Один локальный retry
   «залечивает» редкий промах холодного старта Blazor WASM (см. [#138](https://github.com/askrinnik/AddressBook2025/issues/138)).
@@ -193,8 +234,9 @@ npm run test:remote
 
 - поднимает **SQL Server 2022** как services-контейнер;
 - ставит **.NET 10 SDK** и **Node LTS**, генерирует HTTPS dev-cert (`dotnet dev-certs https`);
-- `npm ci` → `npx playwright install --with-deps` → `npm test` в `src/UiTests`. В CI
-  (`process.env.CI`) `webServer` сам поднимает API (порт 5000) и Web (`https://localhost:7187`);
+- `npm ci` в `src/UiTests` и в `src/AddressBook.Vue` → `npx playwright install --with-deps` →
+  `npm test` в `src/UiTests` (оба проекта, `blazor` и `vue`). В CI (`process.env.CI`) `webServer`
+  сам поднимает API (порт 5000), Web (`https://localhost:7187`) и Vue (`http://localhost:4173`);
   API направлен на контейнер через env-оверрайды `Database__Server` / `Database__User` /
   `Database__Password`;
 - публикует HTML-репорт как artifact `playwright-report` (30 дней); при падении — трейсы/видео
@@ -237,6 +279,8 @@ gh workflow run ui-tests.yml
   → CSS в крайнем случае.
 - **Даты.** Проверяйте против `yyyy-MM-dd`-значения API, а не против culture-форматированной
   ячейки таблицы.
+- **Фронтенды.** Спеки импортируют только общие page- и component-объекты, никогда не
+  `src/components/blazor/*` или `src/components/vue/*`. Оба проекта, `blazor` и `vue`, запускают одни и те же спеки.
 - Полные правила — в [`playwright-conventions.instructions.md`](../../.github/instructions/playwright-conventions.instructions.md)
   (раздел **UI E2E tests (`src/UiTests`)**) и в [`CLAUDE.md`](CLAUDE.md).
 

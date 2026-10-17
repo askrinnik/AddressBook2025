@@ -45,9 +45,26 @@ applyTo: "src/ApiTests/**, src/UiTests/**"
 
 # UI E2E tests (`src/UiTests`)
 
-A separate, hybrid-E2E suite for `AddressBook.Web` (Blazor WASM + MudBlazor): data is seeded/cleaned
-fast over the REST API, assertions run through the real UI. It does **not** use the API-suite
-patterns above (`ApiClient` singleton, `tests/dtos/`, `expect.soft`).
+A separate, hybrid-E2E suite for both frontends, `AddressBook.Web` (Blazor WASM + MudBlazor) and
+`AddressBook.Vue` (Vue + Vuetify): data is seeded/cleaned fast over the REST API, assertions run
+through the real UI. It does **not** use the API-suite patterns above (`ApiClient` singleton,
+`tests/dtos/`, `expect.soft`).
+
+## Frontends
+
+- Two Playwright projects: `blazor` (`baseURL` = `BASE_URL`, default `https://localhost:7187/`,
+  runs every spec) and `vue` (`baseURL` = `VUE_BASE_URL`, default `http://localhost:4173/`, runs
+  every spec too). Each project sets the typed `frontend`
+  option.
+- The `app` fixture resolves `frontend` to a `Frontend` (`src/frontends/`): its
+  `waitForAppReady(page)` is the only readiness signal, and its factories build the component
+  objects. Page objects take the `Frontend` and stay shared.
+- `src/components/*.component.ts` are abstract shared bases (testids, roles, aria-labels, flows);
+  UI-library markup lives only in `src/components/blazor/*` (MudBlazor) and
+  `src/components/vue/*` (Vuetify). Specs and pages never import a `blazor/` or `vue/` object.
+- Both projects run every spec, so a new spec needs the member implemented in both `blazor/` and `vue/`.
+- `webServer` starts the API, the Blazor app and the Vue production build (`vite preview`) on every
+  run, whatever `--project` selects, so `src/AddressBook.Vue` needs `npm ci`.
 
 ## Fixtures & structure
 
@@ -55,8 +72,9 @@ patterns above (`ApiClient` singleton, `tests/dtos/`, `expect.soft`).
   directly. A spec declares only the fixtures it needs in the test signature
   (`{ contactsPage, contactsApi, data }`) — never `new` up page/component objects in the test.
 - Fixture-composed Page Object Model: thin **page objects** (`src/pages/`) and **component objects**
-  (`src/components/`) with lazy locators. MudBlazor-specific markup fragility (table, date-picker,
-  pager, confirm dialog) is encapsulated **only** inside its component object, never in a spec.
+  (`src/components/`) with lazy locators. UI-library markup fragility (table, date-picker, pager,
+  confirm dialog) is encapsulated **only** inside its frontend-specific component object, never in
+  a spec.
 - Group with `test.describe('contacts — <feature>', …)`; name tests by observable behaviour.
 
 ## Test data & isolation (shared SQL Server DB)
@@ -75,7 +93,7 @@ patterns above (`ApiClient` singleton, `tests/dtos/`, `expect.soft`).
 ## Assertions & locators
 
 - **Web-first only:** auto-waiting `expect(locator)` / `expect.poll`; **never** `waitForTimeout`.
-  Let the table component's `waitForLoaded()` settle the MudTable server-reload ("Loading…").
+  Let the table component's `waitForLoaded()` settle the table's server-reload ("Loading…").
 - Locator priority: `getByRole` / `getByLabel` → `getByTestId` (constants in `src/utils/testids.ts`,
   mirroring the Razor `data-testid`s) → CSS only as a last resort.
 - Assert dates against the **API** value (`yyyy-MM-dd`), not the culture-formatted table cell.

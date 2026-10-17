@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
-import { ConfirmDialog } from '../components/confirm-dialog.component.js';
-import { ContactsTable } from '../components/contacts-table.component.js';
+import type { ConfirmDialog } from '../components/confirm-dialog.component.js';
+import type { ContactsTable } from '../components/contacts-table.component.js';
+import type { Frontend } from '../frontends/index.js';
 import { BasePage } from './base.page.js';
 
 /*
@@ -14,10 +15,10 @@ export class ContactsPage extends BasePage {
   readonly table: ContactsTable;
   readonly deleteDialog: ConfirmDialog;
 
-  constructor(page: Page) {
-    super(page);
-    this.table = new ContactsTable(page);
-    this.deleteDialog = new ConfirmDialog(page);
+  constructor(page: Page, app: Frontend) {
+    super(page, app);
+    this.table = app.contactsTable(page);
+    this.deleteDialog = app.confirmDialog(page);
   }
 
   async goto(): Promise<void> {

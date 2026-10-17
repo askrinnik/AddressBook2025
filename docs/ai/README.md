@@ -27,7 +27,8 @@ CLAUDE.md                              single instruction hub, read by Claude Co
   rules/*.md                           path-scoped rules: pointers to .github/instructions
   settings.json                        shared permissions, attribution off, MCP servers enabled
 docs/
-  specs/                               specifications (API, Contracts, Web, Architecture)
+  specs/                               specifications (API, Contracts, Web, Vue, Architecture)
+  guides/                              learning guides (vue-for-blazor-developers.md, in Russian)
   tasks/                               one plan per issue: issue-<n>-<slug>.md
   ai/                                  the harness hub (README.md) and one document per workflow command
 ```
@@ -67,7 +68,7 @@ The main session keeps every gate: plan review, both confirmations, the user's g
 
 ## Rules (`.claude/rules/`)
 
-Claude Code loads a rule when it works with a file matching the rule's `paths:`. Five rules are thin pointers that tell the assistant to read a `.github/instructions/*` file before editing, so the standard stays in one place and loads only when needed (an `@`-import would be expanded at session start — the first benchmark showed ~3k tokens in every session): `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`, `bunit.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. Three rules carry their own content: `update-docs-on-code-change.md` (which document each kind of change updates), `docs.md` (where documents go, plan format, style) and `github-actions.md` (workflow security and CI conventions). Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
+Claude Code loads a rule when it works with a file matching the rule's `paths:`. Six rules are thin pointers that tell the assistant to read a `.github/instructions/*` file before editing, so the standard stays in one place and loads only when needed (an `@`-import would be expanded at session start — the first benchmark showed ~3k tokens in every session): `api-architecture.md`, `csharp.md`, `blazor.md`, `playwright.md`, `bunit.md`, `vue.md`. Their `paths:` mirror the instruction's `applyTo` — change both together. Three rules carry their own content: `update-docs-on-code-change.md` (which document each kind of change updates), `docs.md` (where documents go, the language of `docs/guides/`, plan format, style) and `github-actions.md` (workflow security and CI conventions). Directory-scoped `CLAUDE.md` files (`src/UiTests`, `src/AddressBook.Web.Tests`) add project-specific non-negotiables.
 
 ## Skills
 
@@ -95,7 +96,7 @@ Generic skills (`aspnet-core`, `ef-core`, `security-owasp`, `update-docs`, `code
 | Server | Used for |
 |---|---|
 | `microsoft-learn` | Official .NET, ASP.NET Core, EF Core and Azure documentation and code samples (`microsoft-docs` skill, `issue-planner`, `issue-developer`) |
-| `context7` | Documentation of third-party libraries: MudBlazor, FluentValidation, MediatR, bUnit, Playwright |
+| `context7` | Documentation of third-party libraries: MudBlazor, FluentValidation, MediatR, bUnit, Playwright, Vue, Vue Router, Vuetify, Vitest |
 | `nuget` | Package versions, vulnerabilities and release information (`nuget-package-update`); runs through `dnx`, which needs the .NET 10 SDK |
 | `github` | Issues and pull requests — in the Copilot config only; Claude Code uses `gh` or the user's own GitHub MCP server |
 

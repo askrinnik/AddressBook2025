@@ -1,7 +1,8 @@
-import { expect, request, test, type APIRequestContext } from '@playwright/test';
+import { request, type APIRequestContext } from '@playwright/test';
 import { ContactsApi } from '../../src/api/contacts-api.js';
 import { env } from '../../src/config/env.js';
 import { ContactFactory } from '../../src/data/contact.factory.js';
+import { expect, test } from '../../src/fixtures/test-fixtures.js';
 import { EditContactPage } from '../../src/pages/edit-contact.page.js';
 
 /*
@@ -10,8 +11,8 @@ import { EditContactPage } from '../../src/pages/edit-contact.page.js';
  * AddressBook.Web (ProblemDetailsHandler threw on 404, so GetContactByIdAsync's null path was
  * dead code). A positive check keeps the not-found assertion from passing vacuously.
  *
- * (This is the first committed src/UiTests spec; it news up the U8 page object directly and
- * seeds via the U5 ContactsApi — the U9 test.extend fixtures are a separate task.)
+ * The spec builds the page object directly from the `app` fixture (the frontend under test) and
+ * seeds through its own `ContactsApi` context.
  */
 
 // An id far above any seeded/auto-increment value, so the API reliably returns 404.
@@ -29,8 +30,8 @@ test.afterAll(async () => {
   await api.dispose();
 });
 
-test('shows "Contact not found." for a non-existent id', async ({ page }) => {
-  const edit = new EditContactPage(page);
+test('shows "Contact not found." for a non-existent id', async ({ page, app }) => {
+  const edit = new EditContactPage(page, app);
   await edit.goto(MISSING_ID);
 
   expect(await edit.isNotFound()).toBe(true);
@@ -41,11 +42,11 @@ test('shows "Contact not found." for a non-existent id', async ({ page }) => {
   await expect(page).toHaveURL(/\/contacts$/);
 });
 
-test('shows the pre-filled form for an existing id (not the not-found alert)', async ({ page }) => {
+test('shows the pre-filled form for an existing id (not the not-found alert)', async ({ page, app }) => {
   const command = ContactFactory.validContact();
   const id = await contacts.createContact(command);
   try {
-    const edit = new EditContactPage(page);
+    const edit = new EditContactPage(page, app);
     await edit.goto(id);
 
     expect(await edit.isNotFound()).toBe(false);

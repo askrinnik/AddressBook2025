@@ -15,12 +15,18 @@ dotenv.config({ path: path.resolve(packageRoot, '.env.local') });
 const trailingSlash = (value: string): boolean => value.endsWith('/');
 
 const envSchema = z.object({
-  // Web app under test (Blazor WASM, https launch profile).
+  // Blazor frontend under test (Blazor WASM, https launch profile); `blazor` project baseURL.
   BASE_URL: z
     .string()
     .url()
     .refine(trailingSlash, 'BASE_URL must end with a trailing slash')
     .default('https://localhost:7187/'),
+  // Vue frontend under test (production build served by `vite preview`); `vue` project baseURL.
+  VUE_BASE_URL: z
+    .string()
+    .url()
+    .refine(trailingSlash, 'VUE_BASE_URL must end with a trailing slash')
+    .default('http://localhost:4173/'),
   // API used for hybrid seed/cleanup and as the webServer readiness probe.
   API_URL: z
     .string()
@@ -49,6 +55,7 @@ if (!parsed.success) {
 
 export interface Env {
   baseURL: string;
+  vueBaseURL: string;
   apiURL: string;
   headless: boolean;
   expectTimeout: number;
@@ -58,6 +65,7 @@ export interface Env {
 
 export const env: Env = {
   baseURL: parsed.data.BASE_URL,
+  vueBaseURL: parsed.data.VUE_BASE_URL,
   apiURL: parsed.data.API_URL,
   headless: parsed.data.HEADLESS === 'true',
   expectTimeout: parsed.data.EXPECT_TIMEOUT,
