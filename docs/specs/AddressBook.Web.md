@@ -11,7 +11,7 @@ AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook2
 | API access | Typed HttpClient via DI |
 | HTTP error pipeline | ProblemDetailsHandler delegating handler |
 | API base URL config | `API_Prefix` (fallback: `http://localhost:5000/api/`) |
-| Deployment target | Azure Static Web Apps |
+| Deployment target | None; the app runs locally and in CI only |
 
 The project references AddressBook.Contracts for request/response and model types used by the API client.
 
@@ -84,11 +84,11 @@ The API base URL is configured in `wwwroot/appsettings.json`:
 
 ```json
 {
-  "API_Prefix": "https://addressbook-api-h5gmdghdcyfaf6gu.westeurope-01.azurewebsites.net/api/"
+  "API_Prefix": "http://localhost:5000/api/"
 }
 ```
 
-For local development with the API running on `http://localhost:5000`, override in `wwwroot/appsettings.Development.json` or change the value to `http://localhost:5000/api/`. The fallback default in `Program.cs` is `http://localhost:5000/api/`.
+`wwwroot/appsettings.Development.json` sets the same value. The fallback default in `Program.cs` is also `http://localhost:5000/api/`.
 
 ### Dependencies
 
@@ -98,12 +98,6 @@ For local development with the API running on `http://localhost:5000`, override 
 | Microsoft.AspNetCore.Components.WebAssembly.DevServer | 10.0.11 |
 | Microsoft.Extensions.Http | 10.0.11 |
 | MudBlazor | 9.8.0 |
-
-### Azure deployment
-
-Deployed as Azure Static Web App. The `staticwebapp.config.json` in `wwwroot` ensures client-side routing works on refresh/deep links.
-
-Production URL: `https://happy-river-0d4a91803-preview.westeurope.6.azurestaticapps.net/`
 
 ## 2. Startup and Dependency Injection
 
@@ -361,13 +355,12 @@ Note: current create/edit pages use built-in `ValidationSummary`; this custom co
 | `_Imports.razor` | Shared using/import directives for components |
 | `Program.cs` | Host bootstrap and DI registrations |
 
-## 10. Azure Static Web Apps Routing
+## 10. Navigation Fallback File
 
 Source: `src/AddressBook.Web/wwwroot/staticwebapp.config.json`
 
-- Defines `navigationFallback.rewrite = "/index.html"`.
-- Excludes framework/content/static assets from rewrite.
-- Ensures Blazor client-side routes (for example `/contacts`, `/create-contact`, `/edit-contact/{id}`) work on browser refresh and direct deep links.
+- Defines `navigationFallback.rewrite = "/index.html"` and excludes framework/content/static assets from the rewrite, so that a static host returns `index.html` for client-side routes such as `/contacts`, `/create-contact` and `/edit-contact/{id}`.
+- The file is left from an earlier hosting setup; no current run reads it. The local dev server already serves `index.html` for client-side routes.
 
 ## 11. Configuration
 

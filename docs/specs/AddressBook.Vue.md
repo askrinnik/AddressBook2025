@@ -426,7 +426,6 @@ Other differences follow from the stack:
 | Contact form | One `ContactForm.vue` used by both pages | The markup is repeated in `CreateContact.razor` and `EditContact.razor` |
 | API base URL | Fixed at build time (`VITE_API_PREFIX`) | Read at run time (`API_Prefix` in `appsettings.json`) |
 | Load-error log | `console.error` | `ILogger` |
-| Deployment | None | Azure Static Web Apps |
 
 ## 11. File Structure Reference
 

@@ -54,7 +54,7 @@ Override credentials via configuration keys (CLI args, env vars, or appsettings)
 
 | Key | Purpose |
 |---|---|
-| `Database:Server` | SQL Server host (e.g., `sanyascr.database.windows.net`) |
+| `Database:Server` | SQL Server host (e.g., `localhost,1433`) |
 | `Database:User` | SQL auth username (disables Windows Auth) |
 | `Database:Password` | SQL auth password |
 

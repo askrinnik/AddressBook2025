@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-`AddressBook2025` is a full-stack, cloud-hosted pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application is deployed on **Microsoft Azure** (App Service for the API, Azure Static Web Apps for the Blazor UI, Azure SQL for data). Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. A second frontend, **Vue.js** (Vue 3, TypeScript, Vuetify) in `src/AddressBook.Vue`, offers the same UI against the same API; it has its own **Vitest** component tests, shares the UI E2E suite with the Blazor frontend, and runs locally and in CI only (it is not deployed). The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
+`AddressBook2025` is a full-stack pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application has no hosted deployment: it runs locally against SQL Server, and CI runs it in GitHub Actions against a SQL Server container. Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. A second frontend, **Vue.js** (Vue 3, TypeScript, Vuetify) in `src/AddressBook.Vue`, offers the same UI against the same API; it has its own **Vitest** component tests and shares the UI E2E suite with the Blazor frontend. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
 
 ---
 
@@ -72,10 +72,10 @@
 
 ```mermaid
 graph TB
-    subgraph "Azure Cloud"
-        UI["Blazor WebAssembly\n(Azure Static Web Apps)\nWest Europe"]
-        API["ASP.NET Core Web API\n(Azure App Service)\nWest Europe"]
-        DB[("Azure SQL Server\nsanyascr.database.windows.net")]
+    subgraph "Runtime (local or CI)"
+        UI["Blazor WebAssembly\n(static files)"]
+        API["ASP.NET Core Web API\nhttp://localhost:5000"]
+        DB[("SQL Server\nDB: AddressBook")]
     end
 
     subgraph "src/AddressBook.Web"
@@ -210,7 +210,8 @@ askrinnik/AddressBook2025/
 │   ├── ApiTests/                    # Playwright TypeScript API E2E tests
 │   ├── UiTests/                     # Playwright TypeScript UI E2E tests
 │   └── AddressBook.Vue/             # Vue.js SPA (Vite, Vuetify), standalone npm project; Vitest tests in tests/
-└── README.md                        # Minimal: "pet project for address book development"
+├── LICENSE                          # MIT License
+└── README.md                        # Project overview: features, stack, build, run, tests, CI
 ```
 
 ---
@@ -245,7 +246,7 @@ CQRS + MediatR backend with FluentValidation, EF Core 10 / SQL Server, strongly-
 
 ### 3. `AddressBook.Web` — Blazor WebAssembly Frontend
 
-MudBlazor 9.8.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home). Deployed as Azure Static Web App.
+MudBlazor 9.8.0 Material Design UI with typed `HttpClient`, `ProblemDetailsHandler` error pipeline, and 4 pages: `/contacts` (table with search/sort/edit/delete), `/create-contact`, `/edit-contact/{id}`, `/` (home).
 
 → Full specification: [`AddressBook.Web.md`](./AddressBook.Web.md)
 
@@ -318,17 +319,6 @@ The project demonstrates heavy Copilot coding agent use:[^8]
 
 ### 9. Documentation (`docs/`)
 
-#### `docs/Old/` — Legacy documents
-
-| Document | Language | Content |
-|---|---|---|
-| `01_Software_project_docs.md` | Russian | ChatGPT-generated pre-dev checklist (BRD, FRS, NFR, SAD, SRS, Test Plan) |
-| `02_BRD.md` | English | Business Requirements — CRUD contacts, search/filter, web-based, no mobile/CRM integrations |
-| `03_FRS.md` | English | Functional Spec — 3 entities (Contact, Phone, PhoneOperator), CRUD, field constraints (max 30 chars), future: emails/categories |
-| `Azure_environment.md` | English | Azure deployment URLs, SQL server name, how to warm up the service |
-| `How_to_run_from_console.md` | English | BAT script: `git pull` → `dotnet build` → `dotnet run --Database:Password=<PASSWORD>` |
-| `Test plan.md` | Mixed | QA test plan document |
-
 #### `docs/specs/` — Per-project technical specifications
 
 | Document | Covers |
@@ -365,7 +355,7 @@ sequenceDiagram
     participant Handler as CQRS Handler
     participant Validator as FluentValidation
     participant Repo as AddressBookRepository
-    participant DB as SQL Server (Azure)
+    participant DB as SQL Server
 
     Browser->>BlazorWASM: User action (search / create / update / delete)
     BlazorWASM->>ApiSvc: GetFilteredContactsAsync / GetContactByIdAsync / CreateContact / UpdateContact / DeleteContact
@@ -397,32 +387,40 @@ The Vue frontend follows the same flow: a page calls a function of `contactsApi.
 
 ---
 
-## Deployment Architecture
+## Runtime and CI Architecture
+
+The application has no hosted deployment. Developers run the API, the frontends and SQL Server locally; GitHub Actions runs them for the test suites.
 
 ```mermaid
 graph LR
-    Dev["Developer / Vira"] -->|"git push"| GH["GitHub\naskrinnik/AddressBook2025"]
-    GH -->|"build.yml\n(every push)"| CI["GitHub Actions\ndotnet build"]
-    GH -->|"playwright.yml\n(push to main)"| E2E["Playwright Tests\nvs. live Azure API"]
-    GH -->|"Dependabot\n(npm)"| GH
-    GH -->|"Copilot SWE Agent\n(auto PRs)"| GH
+    Dev["Developer"] -->|"git push / pull request"| GH["GitHub\naskrinnik/AddressBook2025"]
 
-    subgraph Azure["Microsoft Azure (West Europe)"]
-        AppSvc["App Service\nASP.NET Core API\naddressbook-api-h5gm..."]
-        SWA["Static Web App\nBlazor WASM\nhappy-river-0d4a..."]
-        SQL["Azure SQL Server\nsanyascr.database.windows.net\nDB: AddressBook"]
+    subgraph Actions["GitHub Actions (ubuntu-latest)"]
+        Build["build.yml\ndotnet build (Release)"]
+        ApiE2E["api-tests.yml\nsrc/ApiTests"]
+        UiE2E["ui-tests.yml\nsrc/UiTests (blazor + vue)"]
+        WebTests["web-tests.yml\nbUnit + coverage gate"]
+        VueTests["vue-tests.yml\nlint, build, Vitest + coverage gate"]
+        Security["security.yml\nNuGet + npm audit"]
+        Sql[("SQL Server 2022\nservice container")]
     end
 
-    AppSvc --> SQL
-    SWA -->|"HTTP + CORS"| AppSvc
+    GH --> Build
+    GH --> ApiE2E
+    GH --> UiE2E
+    GH --> WebTests
+    GH --> VueTests
+    GH --> Security
+    ApiE2E -->|"starts API"| Sql
+    UiE2E -->|"starts API, Web, Vue preview"| Sql
 ```
 
-### Deployment Operational Notes
+### Runtime Notes
 
-- **API cold start:** The App Service may need a warm-up request before the UI is usable (initial request after idle triggers startup).
-- **Blazor WASM client-side routing:** The Web UI includes `staticwebapp.config.json` in `wwwroot` to instruct Azure Static Web Apps to return `index.html` for all navigation requests (except static assets). This enables direct navigation and page refresh on routes like `/contacts` or `/create-contact`.
-- **Vue frontend:** not deployed. It runs locally (`npm run dev`) and, for the UI E2E suite, as a production build served by `vite preview`.
-- **Local run with DB credentials:** Use `dotnet run --Database:Password=<PASSWORD>` to override the database password via CLI. See also `Database:Server` and `Database:User` overrides in [AddressBook.Api.md](./AddressBook.Api.md).
+- **Local run:** the API listens on `http://localhost:5000`, the Blazor app on `https://localhost:7187` (`https` profile), the Vue dev server on `http://localhost:5173`. The project's [README](../../README.md#getting-started) lists the steps.
+- **Database credentials:** use `dotnet run --Database:Password=<PASSWORD>` to override the database password via CLI. See also `Database:Server` and `Database:User` overrides in [AddressBook.Api.md](./AddressBook.Api.md).
+- **Vue frontend in the UI E2E suite:** a production build served by `vite preview` on `http://localhost:4173`.
+- **`staticwebapp.config.json`:** the Blazor app's `wwwroot` still carries this navigation-fallback file from an earlier hosting setup; no current run reads it.
 
 ---
 
@@ -470,7 +468,6 @@ graph LR
 |---|---|---|
 | Tech stack (.NET 10, Blazor WASM, MudBlazor, EF Core, SQL Server) | **High** | `*.csproj` files, commit messages |
 | Architecture (CQRS + MediatR, clean layering) | **High** | Complete source code fetched |
-| Azure deployment URLs | **High** | `docs/Azure_environment.md`, `api-client.ts` |
 | No authentication (single-tenant) | **High** | `StartupExtensions.cs` commented-out auth, `OwnerId.Default()` |
 | Phone management not yet in API | **High** | No Phone endpoints in `ContactsController`; entities exist in domain |
 | Future plans (email, categories, multi-tenancy) | **Medium** | Inferred from FRS "Future Enhancements" + `OwnerId` design |
