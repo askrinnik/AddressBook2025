@@ -84,7 +84,7 @@ After the comment, and after the user's go-ahead, tick the verified items of the
 pwsh -NoProfile -File .github/skills/_local.github-issue/scripts/Set-AcceptanceChecks.ps1 -Issue <issue> -Items 1,2,4
 ```
 
-- The acceptance section is the first `## Критерии приёмки`, `## Acceptance criteria` or `## Acceptance` heading; a note in parentheses after the heading is allowed.
+- The acceptance section is the first `Критерии приёмки`, `Acceptance criteria` or `Acceptance` heading of level `##` or `###` (an issue form writes `###`); a note in parentheses after the heading is allowed. The section ends at the next heading of the same or a higher level.
 - `-Items` are the positions of the verified checkboxes within that section, 1-based, in document order, as one comma-separated value.
 - The script changes only those `- [ ]` marks and refuses to write if anything else in the body would differ; it never unticks.
 - Its output lists every checkbox with `ticked now`, `already ticked` or `left unticked` — name the unticked ones to the user. `-DryRun` shows the result without editing.

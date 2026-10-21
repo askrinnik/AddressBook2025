@@ -3,10 +3,11 @@
 	Ticks verified acceptance criteria in the body of a GitHub issue.
 
 .DESCRIPTION
-	Reads the issue body, finds the acceptance section — the first "## Критерии приёмки",
-	"## Acceptance criteria" or "## Acceptance" heading, optionally followed by a note in parentheses — and
+	Reads the issue body, finds the acceptance section — the first "Критерии приёмки", "Acceptance criteria"
+	or "Acceptance" heading of level 2 or 3, optionally followed by a note in parentheses — and
 	turns "- [ ]" into "- [x]" for the checkbox items given by their position in that section (1-based, in
-	document order, nested items included). Nothing else in the body changes: before writing, the script compares the old and the new
+	document order, nested items included). Level 3 is the heading an issue form (".github/ISSUE_TEMPLATE/*.yml")
+	writes; the section ends at the next heading of the same or a higher level. Nothing else in the body changes: before writing, the script compares the old and the new
 	body line by line and refuses to write if any other line differs. Items that are already ticked stay
 	ticked; the script never unticks anything.
 
@@ -60,18 +61,20 @@ $body = [string]$data.body
 $newline = if ($body.Contains("`r`n")) { "`r`n" } else { "`n" }
 $lines = $body -split '\r?\n'
 
-$sectionPattern = '^##\s+(Критерии\s+при[её]мки|Acceptance(\s+criteria)?)(\s*\(.*\))?\s*$'
+$sectionPattern = '^(#{2,3})\s+(Критерии\s+при[её]мки|Acceptance(\s+criteria)?)(\s*\(.*\))?\s*$'
 $checkboxPattern = '^(\s*[-*+]\s+\[)([ xX])(\]\s.*)$'
 
 $start = -1
 for ($i = 0; $i -lt $lines.Count; $i++) {
-	if ($lines[$i] -match $sectionPattern) { $start = $i; break }
+	if ($lines[$i] -match $sectionPattern) { $start = $i; $level = $Matches[1].Length; break }
 }
-if ($start -lt 0) { throw "Issue #$Issue has no '## Критерии приёмки', '## Acceptance criteria' or '## Acceptance' section." }
+if ($start -lt 0) { throw "Issue #$Issue has no 'Критерии приёмки', 'Acceptance criteria' or 'Acceptance' section with a '##' or '###' heading." }
 
+# The section ends at the next heading of the same or a higher level; deeper headings stay inside it.
+$sectionEndPattern = "^#{1,$level}\s"
 $end = $lines.Count
 for ($i = $start + 1; $i -lt $lines.Count; $i++) {
-	if ($lines[$i] -match '^##\s') { $end = $i; break }
+	if ($lines[$i] -match $sectionEndPattern) { $end = $i; break }
 }
 
 $boxes = [System.Collections.Generic.List[int]]::new()
