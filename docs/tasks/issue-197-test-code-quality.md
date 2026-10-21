@@ -1,6 +1,6 @@
 # Issue #197 — Test code quality: async/await, harness navigation, fixed culture, namespace
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/197
+- Issue: https://github.com/askrinnik/AddressBook/issues/197
 - Title: Blazor Tests B29: Качество тестового кода: async/await, harness-навигация, фиксированная культура, namespace
 - Lane: Test-authoring
 - Complexity: L

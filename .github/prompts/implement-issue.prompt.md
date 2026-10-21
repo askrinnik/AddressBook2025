@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: 'Take a GitHub issue for AddressBook2025 end-to-end — bug, feature or test-authoring lane chosen by its labels — with a plan-review checkpoint and a result-verification checkpoint.'
+description: 'Take a GitHub issue for AddressBook end-to-end — bug, feature or test-authoring lane chosen by its labels — with a plan-review checkpoint and a result-verification checkpoint.'
 ---
 
 Take the GitHub issue given as the command argument end to end — a bug, a feature or a test-authoring task: pick the lane, plan, get plan approval, implement, verify, get result approval, record the result comment, and offer to ship it as a pull request.

@@ -1,4 +1,4 @@
-# AI harness of AddressBook2025
+# AI harness of AddressBook
 
 How the AI-assistant environment of this repository is built: what it consists of, how the workflows are organised, why each stage uses the model it does, and how to keep it healthy. The harness serves two tools — **Claude Code** and **GitHub Copilot** — from one set of shared files. Its workflow, agents, rules, skills and benchmark were adapted from the GitHubBackup repository's harness (issue #184).
 

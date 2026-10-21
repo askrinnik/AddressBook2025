@@ -1,6 +1,6 @@
 # Implementation plan — Issue #94: UI Tests U3: `config/env.ts` (zod + dotenv)
 
-- **Issue:** [#94](https://github.com/askrinnik/AddressBook2025/issues/94) — *UI Tests U3: config/env.ts (zod + dotenv)*
+- **Issue:** [#94](https://github.com/askrinnik/AddressBook/issues/94) — *UI Tests U3: config/env.ts (zod + dotenv)*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 1 (U3)
 - **Depends on:** U1 (#92) scaffold, U2 (#93) `playwright.config.ts` — both merged
 - **Type:** test infrastructure (no production code, no specs yet)

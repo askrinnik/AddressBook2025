@@ -1,6 +1,6 @@
 # Plan: Issue #190 — Contacts: unhandled contact delete error
 
-> **Issue:** [#190](https://github.com/askrinnik/AddressBook2025/issues/190) — «Blazor Tests B22: Contacts: необработанная ошибка удаления контакта»
+> **Issue:** [#190](https://github.com/askrinnik/AddressBook/issues/190) — «Blazor Tests B22: Contacts: необработанная ошибка удаления контакта»
 > **Lane:** Bug · **Complexity:** S
 
 ## 1. Bug and root cause

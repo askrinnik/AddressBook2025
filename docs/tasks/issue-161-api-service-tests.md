@@ -1,6 +1,6 @@
 # Plan: Issue #161 — Blazor Tests B17: AddressBookApiServiceTests
 
-> **Issue:** [#161](https://github.com/askrinnik/AddressBook2025/issues/161) — Phase 2
+> **Issue:** [#161](https://github.com/askrinnik/AddressBook/issues/161) — Phase 2
 > **Lane:** test-authoring (bUnit project, plain xUnit — no component rendering), extended during plan review with a fix of the search-term escaping (see Decisions).
 > **Complexity:** S
 

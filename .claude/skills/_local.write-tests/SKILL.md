@@ -1,6 +1,6 @@
 ---
 name: write-tests
-description: Add focused tests for a behaviour or a bug fix in the correct AddressBook2025 test layer — Playwright API tests (src/ApiTests), bUnit component tests (src/AddressBook.Web.Tests) or Playwright UI E2E tests (src/UiTests). Use when asked to write, add or extend tests, or to cover a fix with a regression test.
+description: Add focused tests for a behaviour or a bug fix in the correct AddressBook test layer — Playwright API tests (src/ApiTests), bUnit component tests (src/AddressBook.Web.Tests) or Playwright UI E2E tests (src/UiTests). Use when asked to write, add or extend tests, or to cover a fix with a regression test.
 ---
 
 # Write Tests

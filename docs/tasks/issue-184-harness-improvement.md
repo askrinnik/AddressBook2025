@@ -1,6 +1,6 @@
 # Plan: Issue #184 — Harness Improvement
 
-> **Issue:** [#184](https://github.com/askrinnik/AddressBook2025/issues/184)
+> **Issue:** [#184](https://github.com/askrinnik/AddressBook/issues/184)
 > **Scope of this plan:** Phase 1 — merge `fix-bug-issue` into a single lane-based `implement-issue` command. Phase 2 — delegate the workflow stages to subagents with per-stage models.
 > **Mode:** harness/docs only; no production code changes.
 

@@ -1,4 +1,4 @@
-# CLAUDE.md — AddressBook2025
+# CLAUDE.md — AddressBook
 
 Project guidance for both **Claude Code** and **GitHub Copilot** — both tools read this file.
 

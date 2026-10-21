@@ -1,6 +1,6 @@
 # Issue #199 — Blazor Tests B31: ContactsListTests: навигация по страницам через MudTablePager
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/199
+- Issue: https://github.com/askrinnik/AddressBook/issues/199
 - Lane: Test-authoring (tests only, no production code)
 - Complexity: S
 

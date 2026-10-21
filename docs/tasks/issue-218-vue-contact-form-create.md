@@ -1,6 +1,6 @@
 # Issue #218 — Vue V6: Contact form and Create page of the Vue frontend
 
-> **Issue:** [#218](https://github.com/askrinnik/AddressBook2025/issues/218)
+> **Issue:** [#218](https://github.com/askrinnik/AddressBook/issues/218)
 > **Lane:** Feature
 > **Complexity:** L
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V6

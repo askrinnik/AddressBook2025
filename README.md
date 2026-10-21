@@ -1,13 +1,13 @@
-# AddressBook2025
+# AddressBook
 
 A full-stack address book: an ASP.NET Core Web API with two interchangeable single-page frontends — Blazor WebAssembly and Vue 3 — covered by component tests and Playwright end-to-end suites, built with an AI-assisted development workflow.
 
-[![Build](https://github.com/askrinnik/AddressBook2025/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/build.yml)
-[![API E2E Tests](https://github.com/askrinnik/AddressBook2025/actions/workflows/api-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/api-tests.yml)
-[![UI E2E Tests](https://github.com/askrinnik/AddressBook2025/actions/workflows/ui-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/ui-tests.yml)
-[![Web Component Tests](https://github.com/askrinnik/AddressBook2025/actions/workflows/web-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/web-tests.yml)
-[![Vue Frontend](https://github.com/askrinnik/AddressBook2025/actions/workflows/vue-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/vue-tests.yml)
-[![Security Vulnerability Scan](https://github.com/askrinnik/AddressBook2025/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook2025/actions/workflows/security.yml)
+[![Build](https://github.com/askrinnik/AddressBook/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/build.yml)
+[![API E2E Tests](https://github.com/askrinnik/AddressBook/actions/workflows/api-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/api-tests.yml)
+[![UI E2E Tests](https://github.com/askrinnik/AddressBook/actions/workflows/ui-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/ui-tests.yml)
+[![Web Component Tests](https://github.com/askrinnik/AddressBook/actions/workflows/web-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/web-tests.yml)
+[![Vue Frontend](https://github.com/askrinnik/AddressBook/actions/workflows/vue-tests.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/vue-tests.yml)
+[![Security Vulnerability Scan](https://github.com/askrinnik/AddressBook/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/askrinnik/AddressBook/actions/workflows/security.yml)
 
 [![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14-239120)](https://learn.microsoft.com/dotnet/csharp/)
@@ -19,10 +19,10 @@ A full-stack address book: an ASP.NET Core Web API with two interchangeable sing
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-EF%20Core%2010-CC2927)](https://learn.microsoft.com/ef/core/)
 [![Playwright](https://img.shields.io/badge/tested%20with-Playwright-2EAD33)](https://playwright.dev/)
 
-[![License: MIT](https://img.shields.io/github/license/askrinnik/AddressBook2025)](LICENSE)
-[![Last commit](https://img.shields.io/github/last-commit/askrinnik/AddressBook2025/main)](https://github.com/askrinnik/AddressBook2025/commits/main)
-[![Open issues](https://img.shields.io/github/issues/askrinnik/AddressBook2025)](https://github.com/askrinnik/AddressBook2025/issues)
-[![Pull requests](https://img.shields.io/github/issues-pr/askrinnik/AddressBook2025)](https://github.com/askrinnik/AddressBook2025/pulls)
+[![License: MIT](https://img.shields.io/github/license/askrinnik/AddressBook)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/askrinnik/AddressBook/main)](https://github.com/askrinnik/AddressBook/commits/main)
+[![Open issues](https://img.shields.io/github/issues/askrinnik/AddressBook)](https://github.com/askrinnik/AddressBook/issues)
+[![Pull requests](https://img.shields.io/github/issues-pr/askrinnik/AddressBook)](https://github.com/askrinnik/AddressBook/pulls)
 
 ## Contents
 
@@ -92,7 +92,7 @@ Shared build settings live under `src/`: Central Package Management in [`Directo
 ## Repository structure
 
 ```text
-AddressBook2025/
+AddressBook/
 ├── src/
 │   ├── AddressBook.slnx           # .NET solution (API, Contracts, Web, Web.Tests)
 │   ├── AddressBook.Api/           # ASP.NET Core Web API

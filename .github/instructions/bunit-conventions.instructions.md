@@ -1,5 +1,5 @@
 ---
-description: "bUnit component test conventions for AddressBook2025. Use when writing, modifying, or reviewing the Blazor component tests in src/AddressBook.Web.Tests."
+description: "bUnit component test conventions for AddressBook. Use when writing, modifying, or reviewing the Blazor component tests in src/AddressBook.Web.Tests."
 applyTo: "src/AddressBook.Web.Tests/**"
 ---
 # bUnit Component Test Conventions

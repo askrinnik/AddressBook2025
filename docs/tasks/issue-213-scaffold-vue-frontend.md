@@ -1,6 +1,6 @@
 # Issue #213 — Vue V1: Scaffold the Vue.js frontend src/AddressBook.Vue
 
-> **Issue:** [#213](https://github.com/askrinnik/AddressBook2025/issues/213)
+> **Issue:** [#213](https://github.com/askrinnik/AddressBook/issues/213)
 > **Lane:** Feature
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V1

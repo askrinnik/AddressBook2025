@@ -1,6 +1,6 @@
 # Issue #135 (bug) — App-bar "more options" icon button has no action (dead control)
 
-**Issue:** [#135](https://github.com/askrinnik/AddressBook2025/issues/135) — labelled `bug`, `ui`.
+**Issue:** [#135](https://github.com/askrinnik/AddressBook/issues/135) — labelled `bug`, `ui`.
 **Origin:** spotted while fixing #132 (PR #134).
 
 ## Reproduced failure

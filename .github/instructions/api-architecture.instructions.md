@@ -1,5 +1,5 @@
 ---
-description: "ASP.NET Core Web API architecture patterns for AddressBook2025. Use when adding endpoints, handlers, validators, repository methods, or modifying the middleware pipeline."
+description: "ASP.NET Core Web API architecture patterns for AddressBook. Use when adding endpoints, handlers, validators, repository methods, or modifying the middleware pipeline."
 applyTo: "src/AddressBook.Api/**"
 ---
 # API Architecture Patterns

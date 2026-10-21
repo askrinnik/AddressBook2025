@@ -1,7 +1,7 @@
 # План: Issue #147 — Blazor Tests B3: `TestIds.cs` — константы data-testid
 
-> **Issue:** [#147](https://github.com/askrinnik/AddressBook2025/issues/147) — «Blazor Tests B3: TestIds.cs — константы data-testid» (Фаза 1)
-> **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**; B1/B2 ([#145](https://github.com/askrinnik/AddressBook2025/issues/145), [#146](https://github.com/askrinnik/AddressBook2025/issues/146)) уже в `main`.
+> **Issue:** [#147](https://github.com/askrinnik/AddressBook/issues/147) — «Blazor Tests B3: TestIds.cs — константы data-testid» (Фаза 1)
+> **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**; B1/B2 ([#145](https://github.com/askrinnik/AddressBook/issues/145), [#146](https://github.com/askrinnik/AddressBook/issues/146)) уже в `main`.
 > **Авторитетный дизайн:** [`docs/tasks/blazor-component-tests-framework-plan.md`](blazor-component-tests-framework-plan.md) (раздел B3).
 
 ## 1. Требование

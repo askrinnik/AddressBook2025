@@ -164,7 +164,7 @@ npm run test:remote
 Или через GitHub CLI (значение спросит интерактивно, не попадёт в историю оболочки):
 
 ```bash
-gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook2025
+gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook
 ```
 
 Запуск вручную:

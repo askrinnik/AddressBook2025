@@ -1,6 +1,6 @@
 # Issue #219 — Vue V7: Edit page of the Vue frontend
 
-> **Issue:** [#219](https://github.com/askrinnik/AddressBook2025/issues/219)
+> **Issue:** [#219](https://github.com/askrinnik/AddressBook/issues/219)
 > **Lane:** Feature
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V7

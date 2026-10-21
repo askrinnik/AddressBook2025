@@ -1,6 +1,6 @@
 # Issue #164 — Blazor Tests B20: CI workflow web-tests.yml
 
-- Issue: [#164](https://github.com/askrinnik/AddressBook2025/issues/164)
+- Issue: [#164](https://github.com/askrinnik/AddressBook/issues/164)
 - Lane: Feature (CI configuration only, no production code)
 - Complexity: M
 - Status: plan awaiting review. The issue is marked optional and needs confirmation (see Decisions).

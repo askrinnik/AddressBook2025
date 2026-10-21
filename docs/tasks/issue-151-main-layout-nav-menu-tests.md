@@ -1,6 +1,6 @@
 # План: Issue #151 — Blazor Tests B7: MainLayoutTests + NavMenuTests
 
-> **Issue:** [#151](https://github.com/askrinnik/AddressBook2025/issues/151) — «Blazor Tests B7: MainLayoutTests + NavMenuTests» (Фаза 2)
+> **Issue:** [#151](https://github.com/askrinnik/AddressBook/issues/151) — «Blazor Tests B7: MainLayoutTests + NavMenuTests» (Фаза 2)
 > **Режим работы:** test-authoring — **production-код (`AddressBook.Web`) не трогаем**, новые `data-testid` не добавляем.
 
 ## 1. Требование

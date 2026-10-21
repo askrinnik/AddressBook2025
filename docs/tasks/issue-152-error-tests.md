@@ -1,6 +1,6 @@
 # План: Issue #152 — Blazor Tests B8: ErrorTests
 
-> **Issue:** [#152](https://github.com/askrinnik/AddressBook2025/issues/152) — «Blazor Tests B8: ErrorTests» (Фаза 2)
+> **Issue:** [#152](https://github.com/askrinnik/AddressBook/issues/152) — «Blazor Tests B8: ErrorTests» (Фаза 2)
 > **Режим работы:** test-authoring — **production-код (`AddressBook.Web`) не трогаем**, новые `data-testid` не добавляем.
 
 ## 1. Требование

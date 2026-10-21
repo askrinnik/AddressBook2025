@@ -1,6 +1,6 @@
 # Plan: Issue #158 — Blazor Tests B14: CreateContactServerErrorTests
 
-> **Issue:** [#158](https://github.com/askrinnik/AddressBook2025/issues/158) — «Blazor Tests B14: CreateContactServerErrorTests» (Phase 2)
+> **Issue:** [#158](https://github.com/askrinnik/AddressBook/issues/158) — «Blazor Tests B14: CreateContactServerErrorTests» (Phase 2)
 > **Mode:** test-authoring plus one production fix found while testing (`GetErrors()` crash, see §3).
 
 ## 1. Requirement

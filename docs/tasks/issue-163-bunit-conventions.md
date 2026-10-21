@@ -1,6 +1,6 @@
 # Issue #163 — Blazor Tests B19: bunit-conventions instruction + doc updates
 
-- Issue: [#163](https://github.com/askrinnik/AddressBook2025/issues/163)
+- Issue: [#163](https://github.com/askrinnik/AddressBook/issues/163)
 - Lane: Feature (docs and configuration only, no production or test code)
 - Complexity: M
 

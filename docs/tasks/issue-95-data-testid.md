@@ -1,6 +1,6 @@
 # Implementation plan — Issue #95: UI Tests U4: add `data-testid` to AddressBook.Web + `utils/testids.ts`
 
-- **Issue:** [#95](https://github.com/askrinnik/AddressBook2025/issues/95) — *UI Tests U4: добавить data-testid в AddressBook.Web + utils/testids.ts*
+- **Issue:** [#95](https://github.com/askrinnik/AddressBook/issues/95) — *UI Tests U4: добавить data-testid в AddressBook.Web + utils/testids.ts*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 1 (U4, enabler)
 - **Depends on:** U1–U3 (merged)
 - **Type:** enabler — **first task touching production code** (Blazor markup) + a test-side constants module

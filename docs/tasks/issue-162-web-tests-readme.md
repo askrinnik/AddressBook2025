@@ -1,6 +1,6 @@
 # Issue #162 — Blazor Tests B18: README + CLAUDE.md for src/AddressBook.Web.Tests
 
-- Issue: [#162](https://github.com/askrinnik/AddressBook2025/issues/162)
+- Issue: [#162](https://github.com/askrinnik/AddressBook/issues/162)
 - Lane: Feature (docs only, no production code)
 - Complexity: S
 

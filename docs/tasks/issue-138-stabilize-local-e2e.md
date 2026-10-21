@@ -1,6 +1,6 @@
 # Issue #138 (testing) — UI E2E suite flakes locally under full-parallel cold start
 
-**Issue:** [#138](https://github.com/askrinnik/AddressBook2025/issues/138) — labelled `testing`.
+**Issue:** [#138](https://github.com/askrinnik/AddressBook/issues/138) — labelled `testing`.
 **Origin:** observed while verifying #135 (PR #137).
 
 ## Reproduced failure

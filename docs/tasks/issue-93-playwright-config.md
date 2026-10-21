@@ -1,6 +1,6 @@
 # Implementation plan — Issue #93: UI Tests U2: `playwright.config.ts` + browsers + webServer (API+Web)
 
-- **Issue:** [#93](https://github.com/askrinnik/AddressBook2025/issues/93) — *UI Tests U2: playwright.config.ts + браузеры + webServer (API+Web)*
+- **Issue:** [#93](https://github.com/askrinnik/AddressBook/issues/93) — *UI Tests U2: playwright.config.ts + браузеры + webServer (API+Web)*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 0 (U2)
 - **Depends on:** U1 (#92, merged) — the `src/UiTests` scaffold
 - **Type:** tooling / test-runner wiring (no production code, no specs yet)

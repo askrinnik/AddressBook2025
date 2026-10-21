@@ -1,6 +1,6 @@
 # Plan: Issue #226 — Sync the specs with the README and the current CI, drop the Azure deployment
 
-> **Issue:** [#226](https://github.com/askrinnik/AddressBook2025/issues/226) — Sync the specs with the README and the current CI, drop the Azure deployment
+> **Issue:** [#226](https://github.com/askrinnik/AddressBook/issues/226) — Sync the specs with the README and the current CI, drop the Azure deployment
 > **Lane:** Feature (documentation only) · **Complexity:** S
 
 ## Requirement

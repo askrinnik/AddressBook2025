@@ -1,6 +1,6 @@
 # Issue #200 — Blazor Tests B32: trim harness meta-tests and remove unused helpers
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/200
+- Issue: https://github.com/askrinnik/AddressBook/issues/200
 - Lane: Test-authoring (tests only, `src/AddressBook.Web.Tests`; no production code)
 - Complexity: M
 

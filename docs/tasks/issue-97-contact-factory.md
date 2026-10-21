@@ -1,6 +1,6 @@
 # Implementation plan — Issue #97: UI Tests U6: `data/contact.factory.ts` + `tokens.ts`
 
-- **Issue:** [#97](https://github.com/askrinnik/AddressBook2025/issues/97) — *UI Tests U6: data/contact.factory.ts + tokens.ts*
+- **Issue:** [#97](https://github.com/askrinnik/AddressBook/issues/97) — *UI Tests U6: data/contact.factory.ts + tokens.ts*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 1 (U6)
 - **Depends on:** U1–U5 (merged); reuses the `CreateContactCommand` type from U5's `api/contacts-api.ts`
 - **Type:** test infrastructure (no production code, no permanent specs)

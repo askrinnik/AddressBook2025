@@ -1,6 +1,6 @@
 # Plan: Issue #192 — ProblemDetailsHandler: empty or non-JSON response body breaks error handling
 
-> **Issue:** [#192](https://github.com/askrinnik/AddressBook2025/issues/192) — «Blazor Tests B24: ProblemDetailsHandler: пустое или не-JSON тело ответа ломает обработку ошибок»
+> **Issue:** [#192](https://github.com/askrinnik/AddressBook/issues/192) — «Blazor Tests B24: ProblemDetailsHandler: пустое или не-JSON тело ответа ломает обработку ошибок»
 > **Lane:** Bug · **Complexity:** S
 
 ## 1. Bug and root cause

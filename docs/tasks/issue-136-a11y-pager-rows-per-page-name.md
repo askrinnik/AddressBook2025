@@ -1,7 +1,7 @@
 # Issue #136 (bug) — MudTablePager rows-per-page select has no accessible name
 
-**Issue:** [#136](https://github.com/askrinnik/AddressBook2025/issues/136) — labelled `bug`, `ui`, `dependencies`.
-Follow-up to [#132](https://github.com/askrinnik/AddressBook2025/issues/132) (PR #134) for the one a11y
+**Issue:** [#136](https://github.com/askrinnik/AddressBook/issues/136) — labelled `bug`, `ui`, `dependencies`.
+Follow-up to [#132](https://github.com/askrinnik/AddressBook/issues/132) (PR #134) for the one a11y
 violation that could not be fixed in our markup at the time.
 
 ## Reproduced failure

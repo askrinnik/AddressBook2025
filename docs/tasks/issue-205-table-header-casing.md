@@ -1,6 +1,6 @@
 # Issue #205 — Use one casing for table column headers and form labels of contacts
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/205
+- Issue: https://github.com/askrinnik/AddressBook/issues/205
 - Title: Use one casing for table column headers and form labels of contacts
 - Lane: Feature
 - Complexity: S

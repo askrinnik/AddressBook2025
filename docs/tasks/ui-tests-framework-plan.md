@@ -136,62 +136,62 @@ src/UiTests/
 
 ### Фаза 0 — Каркас
 
-- [x] **U1** ([#92](https://github.com/askrinnik/AddressBook2025/issues/92)) Scaffold `src/UiTests`: `package.json` (скрипты `test`, `test:report`, `test:ui`,
+- [x] **U1** ([#92](https://github.com/askrinnik/AddressBook/issues/92)) Scaffold `src/UiTests`: `package.json` (скрипты `test`, `test:report`, `test:ui`,
   `test:debug`, `test:headed`, `test:remote`, `lint`, `format`), `tsconfig.json`,
   `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`,
   README-заглушка. Создать этот файл плана в `docs/tasks/`.
-- [x] **U2** ([#93](https://github.com/askrinnik/AddressBook2025/issues/93)) Установить зависимости + браузеры (`npx playwright install`). `playwright.config.ts`:
+- [x] **U2** ([#93](https://github.com/askrinnik/AddressBook/issues/93)) Установить зависимости + браузеры (`npx playwright install`). `playwright.config.ts`:
   проект(ы) браузеров (chromium; опц. firefox/webkit), `baseURL`, `ignoreHTTPSErrors`, `trace`,
   `screenshot`, `video`, reporters `list`+`html`, массив `webServer` (API + Web,
   `reuseExistingServer` локально).
 
 ### Фаза 1 — Инфраструктура
 
-- [x] **U3** ([#94](https://github.com/askrinnik/AddressBook2025/issues/94)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, `API_URL`, таймауты,
+- [x] **U3** ([#94](https://github.com/askrinnik/AddressBook/issues/94)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, `API_URL`, таймауты,
   `HEADLESS`) + dotenv (`.env.local`/`.env.ci`).
-- [x] **U4** ([#95](https://github.com/askrinnik/AddressBook2025/issues/95)) Enabler: добавить ненавязчивые `data-testid` в `AddressBook.Web` (через
+- [x] **U4** ([#95](https://github.com/askrinnik/AddressBook/issues/95)) Enabler: добавить ненавязчивые `data-testid` в `AddressBook.Web` (через
   `UserAttributes`) для иконочных кнопок Edit/Delete, кнопок Create/Save/Cancel, полей формы,
   строк таблицы, диалога удаления, тумблера темы. Задокументировать соглашение об именах
   `data-testid`. `utils/testids.ts` — централизованные константы.
-- [x] **U5** ([#96](https://github.com/askrinnik/AddressBook2025/issues/96)) `api/contacts-api.ts` — обёртка над `APIRequestContext` для seed/cleanup контактов
+- [x] **U5** ([#96](https://github.com/askrinnik/AddressBook/issues/96)) `api/contacts-api.ts` — обёртка над `APIRequestContext` для seed/cleanup контактов
   (create → id из `Location`, delete по id). Переиспользуем факты об API из `src/ApiTests`.
-- [x] **U6** ([#97](https://github.com/askrinnik/AddressBook2025/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
+- [x] **U6** ([#97](https://github.com/askrinnik/AddressBook/issues/97)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + именованные граничные
   варианты (валидный, с/без birthday, длина 30/31, пробелы, будущая дата) + уникальный токен.
-- [x] **U7** ([#98](https://github.com/askrinnik/AddressBook2025/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
+- [x] **U7** ([#98](https://github.com/askrinnik/AddressBook/issues/98)) `components/*` — component objects: `app-shell`, `contacts-table`, `contact-form`,
   `date-picker` (popover), `confirm-dialog` (MudMessageBox).
-- [x] **U8** ([#99](https://github.com/askrinnik/AddressBook2025/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
+- [x] **U8** ([#99](https://github.com/askrinnik/AddressBook/issues/99)) `pages/*` — page objects: `base`, `home`, `contacts`, `create-contact`,
   `edit-contact` (используют component objects, ленивые локаторы).
-- [x] **U9** ([#100](https://github.com/askrinnik/AddressBook2025/issues/100)) `fixtures/test-fixtures.ts` — `test.extend`: инжект страниц/компонентов +
+- [x] **U9** ([#100](https://github.com/askrinnik/AddressBook/issues/100)) `fixtures/test-fixtures.ts` — `test.extend`: инжект страниц/компонентов +
   `contactsApi` + `data` + авто-cleanup созданных контактов. `utils/assertions.ts`,
   `utils/blazor.ts` (готовность WASM).
 
 ### Фаза 2 — Тесты
 
-- [x] **U10** ([#101](https://github.com/askrinnik/AddressBook2025/issues/101)) `tests/smoke/app-shell.spec.ts` — загрузка приложения, навигация Home↔Contacts,
+- [x] **U10** ([#101](https://github.com/askrinnik/AddressBook/issues/101)) `tests/smoke/app-shell.spec.ts` — загрузка приложения, навигация Home↔Contacts,
   переключение темы, toggle drawer, заголовки страниц.
-- [x] **U11** ([#102](https://github.com/askrinnik/AddressBook2025/issues/102)) `tests/contacts/list-search.spec.ts` — отображение созданных контактов, поиск по
+- [x] **U11** ([#102](https://github.com/askrinnik/AddressBook/issues/102)) `tests/contacts/list-search.spec.ts` — отображение созданных контактов, поиск по
   токену, пустой результат («No matching records found»), очистка поиска.
-- [x] **U12** ([#103](https://github.com/askrinnik/AddressBook2025/issues/103)) `tests/contacts/sort-paginate.spec.ts` — сортировка по First/Last/Birthday,
+- [x] **U12** ([#103](https://github.com/askrinnik/AddressBook/issues/103)) `tests/contacts/sort-paginate.spec.ts` — сортировка по First/Last/Birthday,
   пагинация (rows-per-page, next/prev), `TotalRows`.
-- [x] **U13** ([#104](https://github.com/askrinnik/AddressBook2025/issues/104)) `tests/contacts/create.spec.ts` — создание с birthday и без, появление в списке,
+- [x] **U13** ([#104](https://github.com/askrinnik/AddressBook/issues/104)) `tests/contacts/create.spec.ts` — создание с birthday и без, появление в списке,
   отмена (Cancel → без создания).
-- [x] **U14** ([#105](https://github.com/askrinnik/AddressBook2025/issues/105)) `tests/contacts/edit.spec.ts` — редактирование существующего (данные
+- [x] **U14** ([#105](https://github.com/askrinnik/AddressBook/issues/105)) `tests/contacts/edit.spec.ts` — редактирование существующего (данные
   предзаполнены, сохранение отражается в списке), not-found для несуществующего id, отмена.
-- [x] **U15** ([#106](https://github.com/askrinnik/AddressBook2025/issues/106)) `tests/contacts/delete.spec.ts` — confirm-диалог: «Cancel» не удаляет, «Yes»
+- [x] **U15** ([#106](https://github.com/askrinnik/AddressBook/issues/106)) `tests/contacts/delete.spec.ts` — confirm-диалог: «Cancel» не удаляет, «Yes»
   удаляет и обновляет таблицу.
-- [x] **U16** ([#107](https://github.com/askrinnik/AddressBook2025/issues/107)) `tests/contacts/validation.spec.ts` — клиент: пустые First/Last name блокируют
+- [x] **U16** ([#107](https://github.com/askrinnik/AddressBook/issues/107)) `tests/contacts/validation.spec.ts` — клиент: пустые First/Last name блокируют
   сабмит (`Required`); сервер: длина > 30 и будущая дата → 400 → сообщения на полях формы.
-- [x] **U17** ([#108](https://github.com/askrinnik/AddressBook2025/issues/108)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной UI-сценарий: create → найти
+- [x] **U17** ([#108](https://github.com/askrinnik/AddressBook/issues/108)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной UI-сценарий: create → найти
   поиском → edit → проверить → delete → убедиться, что исчез.
 
 ### Фаза 3 — Обвязка и документация
 
-- [x] **U18** ([#109](https://github.com/askrinnik/AddressBook2025/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
+- [x] **U18** ([#109](https://github.com/askrinnik/AddressBook/issues/109)) (опц., с подтверждением) `tests/a11y/accessibility.spec.ts` — `@axe-core/playwright`
   на Home/Contacts/Create.
-- [x] **U19** ([#110](https://github.com/askrinnik/AddressBook2025/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
-- [x] **U20** ([#111](https://github.com/askrinnik/AddressBook2025/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
+- [x] **U19** ([#110](https://github.com/askrinnik/AddressBook/issues/110)) `README.md` для `src/UiTests` (запуск, env, предпосылки: живые API+Web, отладка).
+- [x] **U20** ([#111](https://github.com/askrinnik/AddressBook/issues/111)) (опц., с подтверждением) CI-workflow (поднять API+Web, `npx playwright install
   --with-deps`, прогон, публикация HTML-репорта) + обновление skills/instructions.
-- [x] **U21** ([#112](https://github.com/askrinnik/AddressBook2025/issues/112)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
+- [x] **U21** ([#112](https://github.com/askrinnik/AddressBook/issues/112)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/ApiTests`
 

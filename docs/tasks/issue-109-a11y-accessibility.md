@@ -1,6 +1,6 @@
 # Issue #109 (U18) — `tests/a11y/accessibility.spec.ts` (accessibility, @axe-core/playwright)
 
-**Issue:** [#109](https://github.com/askrinnik/AddressBook2025/issues/109) — *UI Tests U18 (опц.): tests/a11y/accessibility.spec.ts*
+**Issue:** [#109](https://github.com/askrinnik/AddressBook/issues/109) — *UI Tests U18 (опц.): tests/a11y/accessibility.spec.ts*
 **Phase:** 3 (optional). **Mode:** test-authoring — the Playwright specs are the deliverable; **no production code** is expected.
 
 ## Requirement
@@ -54,7 +54,7 @@ Happy-path scans are the whole point of an a11y suite; there are no "boundary/ne
 
 Verification found real, pre-existing WCAG 2.0 Level A violations on all three pages (MudBlazor icon buttons and a MudTable select with no accessible name). Fixing production markup is out of scope for this test-authoring task, so — per the approved plan — both contingency options were applied together:
 
-- **(a) Defect filed:** [#132](https://github.com/askrinnik/AddressBook2025/issues/132) records the actual UI a11y bugs (`button-name` on Home/Contacts/Create, `aria-input-field-name` on Contacts) with root cause and suggested fix.
+- **(a) Defect filed:** [#132](https://github.com/askrinnik/AddressBook/issues/132) records the actual UI a11y bugs (`button-name` on Home/Contacts/Create, `aria-input-field-name` on Contacts) with root cause and suggested fix.
 - **(b) Documented baseline:** the spec tolerates exactly those known rule ids **per page** (`KNOWN_VIOLATIONS`, each citing #132) and asserts only that **no new** rule types appear. This is explicit and per-page — not a blanket disable — so a fresh violation of any other rule still fails. When #132 is fixed, the baseline entries are removed to re-enforce zero violations.
 
 Observed baseline:

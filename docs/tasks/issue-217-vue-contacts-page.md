@@ -1,6 +1,6 @@
 # Issue #217 — Vue V5: Contacts page of the Vue frontend
 
-> **Issue:** [#217](https://github.com/askrinnik/AddressBook2025/issues/217)
+> **Issue:** [#217](https://github.com/askrinnik/AddressBook/issues/217)
 > **Lane:** Feature
 > **Complexity:** L
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V5

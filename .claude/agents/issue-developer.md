@@ -1,6 +1,6 @@
 ---
 name: issue-developer
-description: Implementation agent for the implement-issue workflow — implements an approved plan across the AddressBook2025 stack (API, Contracts, Blazor/MudBlazor Web) with its tests, builds and runs the affected tests, and returns a change summary. Never commits, pushes, opens PRs or posts to GitHub. The caller picks the model per call from the plan's complexity.
+description: Implementation agent for the implement-issue workflow — implements an approved plan across the AddressBook stack (API, Contracts, Blazor/MudBlazor Web) with its tests, builds and runs the affected tests, and returns a change summary. Never commits, pushes, opens PRs or posts to GitHub. The caller picks the model per call from the plan's complexity.
 tools: Read, Edit, Write, Grep, Glob, Bash, mcp__context7__resolve-library-id, mcp__context7__query-docs, mcp__microsoft-learn__microsoft_docs_search, mcp__microsoft-learn__microsoft_docs_fetch, mcp__microsoft-learn__microsoft_code_sample_search
 model: sonnet
 ---

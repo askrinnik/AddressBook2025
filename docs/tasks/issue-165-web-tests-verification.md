@@ -1,6 +1,6 @@
 # Issue #165 — Blazor Tests B21: Verification: dotnet build + dotnet test
 
-- Issue: [#165](https://github.com/askrinnik/AddressBook2025/issues/165)
+- Issue: [#165](https://github.com/askrinnik/AddressBook/issues/165)
 - Lane: Test-authoring (verification only; no production or test code changes expected)
 - Complexity: S
 - Status: plan approved; verification complete.

@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook2025 solution.
+AddressBook.Web is a standalone Blazor WebAssembly frontend for the AddressBook solution.
 
 | Item | Value |
 |---|---|

@@ -1,7 +1,7 @@
 # Issue #132 (bug) — Icon buttons and MudTable rows-per-page select lack accessible names
 
-**Issue:** [#132](https://github.com/askrinnik/AddressBook2025/issues/132) — labelled `bug`, `ui`.
-**Discovered by:** the U18 a11y scans ([#109](https://github.com/askrinnik/AddressBook2025/issues/109) / PR #133).
+**Issue:** [#132](https://github.com/askrinnik/AddressBook/issues/132) — labelled `bug`, `ui`.
+**Discovered by:** the U18 a11y scans ([#109](https://github.com/askrinnik/AddressBook/issues/109) / PR #133).
 
 ## Reproduced failure
 

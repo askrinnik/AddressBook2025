@@ -1,6 +1,6 @@
 # Issue 204: Client and server validation drift
 
-- Issue: [#204](https://github.com/askrinnik/AddressBook2025/issues/204)
+- Issue: [#204](https://github.com/askrinnik/AddressBook/issues/204)
 - Title: Client and server validation drift: time zone of the birthday rule and a single source of length limits
 - Lane: Feature
 - Complexity: L

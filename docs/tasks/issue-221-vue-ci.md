@@ -1,6 +1,6 @@
 # Issue #221 — Vue V9: CI for the Vue frontend
 
-> **Issue:** [#221](https://github.com/askrinnik/AddressBook2025/issues/221)
+> **Issue:** [#221](https://github.com/askrinnik/AddressBook/issues/221)
 > **Lane:** Feature (CI)
 > **Complexity:** S
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V9

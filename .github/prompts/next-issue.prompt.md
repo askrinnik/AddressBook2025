@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: 'Recommend the next GitHub issue for AddressBook2025 to implement — the oldest ready issue whose blockers are closed and that has no open pull request.'
+description: 'Recommend the next GitHub issue for AddressBook to implement — the oldest ready issue whose blockers are closed and that has no open pull request.'
 ---
 
 Recommend the next issue to implement.

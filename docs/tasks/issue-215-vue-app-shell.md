@@ -1,6 +1,6 @@
 # Issue #215 — Vue V3: Application shell of the Vue frontend
 
-> **Issue:** [#215](https://github.com/askrinnik/AddressBook2025/issues/215)
+> **Issue:** [#215](https://github.com/askrinnik/AddressBook/issues/215)
 > **Lane:** Feature
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V3

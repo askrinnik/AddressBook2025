@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: 'Take several small GitHub issues for AddressBook2025 one after another on one branch, each with the full implement-issue workflow and its own commit, then verify once and ship one pull request.'
+description: 'Take several small GitHub issues for AddressBook one after another on one branch, each with the full implement-issue workflow and its own commit, then verify once and ship one pull request.'
 ---
 
 Take the GitHub issues given as the command argument in the given order, each with the `implement-issue` workflow and its own commit on one shared branch, then verify the branch once and ship one pull request.

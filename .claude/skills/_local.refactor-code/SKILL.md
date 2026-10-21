@@ -1,6 +1,6 @@
 ---
 name: refactor-code
-description: Refactor AddressBook2025 source surgically without changing behaviour — improve structure, naming or duplication within the existing architecture (CQRS/MediatR API, Contracts, Blazor/MudBlazor Web, Playwright and bUnit test code), verified by the unchanged test suites. Use when asked to refactor, clean up or restructure code.
+description: Refactor AddressBook source surgically without changing behaviour — improve structure, naming or duplication within the existing architecture (CQRS/MediatR API, Contracts, Blazor/MudBlazor Web, Playwright and bUnit test code), verified by the unchanged test suites. Use when asked to refactor, clean up or restructure code.
 ---
 
 # Refactor Code

@@ -1,6 +1,6 @@
 ---
 name: 'Issue Verifier'
-description: 'Browser verification agent for the implement-issue workflow — starts the AddressBook2025 API and Web app, then either reproduces a reported bug or walks every acceptance item in a real browser with the Playwright MCP server, checking console and network. Returns a compact evidence table so browser snapshots stay out of the caller''s context. Never edits files, commits or posts.'
+description: 'Browser verification agent for the implement-issue workflow — starts the AddressBook API and Web app, then either reproduces a reported bug or walks every acceptance item in a real browser with the Playwright MCP server, checking console and network. Returns a compact evidence table so browser snapshots stay out of the caller''s context. Never edits files, commits or posts.'
 model: Claude Sonnet 4
 tools: ['read', 'search', 'execute', 'playwright/*']
 ---

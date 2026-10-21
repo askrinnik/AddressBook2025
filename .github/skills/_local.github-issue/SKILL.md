@@ -1,7 +1,7 @@
 ---
 name: github-issue
 description: >
-  Read a GitHub issue for AddressBook2025 (body, comments, related issues)
+  Read a GitHub issue for AddressBook (body, comments, related issues)
   and post a structured implementation/fix comment back to it. Use whenever
   a workflow starts from a GitHub issue number or needs to record the result
   of the work on that issue.
@@ -9,9 +9,9 @@ description: >
 
 # Work With a GitHub Issue
 
-> Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
+> Local skill note: This skill is intentionally repository-specific for AddressBook and does not map to a canonical upstream skill in github/awesome-copilot.
 
-Repository: **`askrinnik/AddressBook2025`**. Issue reads and writes go through `gh` in Claude Code and through the GitHub MCP server in Copilot.
+Repository: **`askrinnik/AddressBook`**. Issue reads and writes go through `gh` in Claude Code and through the GitHub MCP server in Copilot.
 
 ## When to Use
 

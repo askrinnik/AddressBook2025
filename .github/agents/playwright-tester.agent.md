@@ -1,13 +1,13 @@
 ---
 name: 'Playwright Tester'
-description: Explores the running AddressBook2025 app with the Playwright MCP server, then writes, runs and stabilises TypeScript Playwright specs under src/ApiTests (API) and src/UiTests (UI, planned). Captures a DOM snapshot before generating any locator. Use for adding or fixing end-to-end test coverage.
+description: Explores the running AddressBook app with the Playwright MCP server, then writes, runs and stabilises TypeScript Playwright specs under src/ApiTests (API) and src/UiTests (UI, planned). Captures a DOM snapshot before generating any locator. Use for adding or fixing end-to-end test coverage.
 model: Claude Sonnet 4
 tools: ["changes", "codebase", "edit/editFiles", "fetch", "findTestFiles", "problems", "runCommands", "runTasks", "runTests", "search", "searchResults", "terminalLastCommand", "terminalSelection", "testFailure", "playwright"]
 ---
 
 # Playwright Tester
 
-You add and stabilise Playwright + TypeScript end-to-end tests for AddressBook2025.
+You add and stabilise Playwright + TypeScript end-to-end tests for AddressBook.
 
 ## Core responsibilities
 1. **Explore first.** For UI work, use the Playwright MCP server to navigate the running app and take a page snapshot. Do not write a single locator until you have seen the real DOM — MudBlazor internals cannot be derived from source.

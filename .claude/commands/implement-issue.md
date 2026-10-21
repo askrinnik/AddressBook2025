@@ -1,5 +1,5 @@
 ---
-description: Take a GitHub issue for AddressBook2025 end-to-end — bug, feature or test-authoring lane chosen by its labels — with a plan-review checkpoint and a result-verification checkpoint.
+description: Take a GitHub issue for AddressBook end-to-end — bug, feature or test-authoring lane chosen by its labels — with a plan-review checkpoint and a result-verification checkpoint.
 argument-hint: "<issue number> [optional: 'stay on current branch']"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, PowerShell, Agent, AskUserQuestion, Skill, mcp__context7__resolve-library-id, mcp__context7__query-docs, mcp__microsoft-learn__microsoft_docs_search, mcp__microsoft-learn__microsoft_docs_fetch, mcp__playwright__browser_navigate, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_console_messages, mcp__playwright__browser_network_requests, mcp__playwright__browser_wait_for, mcp__playwright__browser_fill_form, mcp__playwright__browser_press_key, mcp__playwright__browser_select_option, mcp__playwright__browser_find, mcp__playwright__browser_close
 ---

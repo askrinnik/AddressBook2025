@@ -1,6 +1,6 @@
 # Issue #214 — Vue V2: Run the UI E2E suite src/UiTests against both frontends
 
-> **Issue:** [#214](https://github.com/askrinnik/AddressBook2025/issues/214)
+> **Issue:** [#214](https://github.com/askrinnik/AddressBook/issues/214)
 > **Lane:** Feature (test infrastructure)
 > **Complexity:** L
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V2

@@ -1,6 +1,6 @@
 # Issue #195 — UI texts: quotes in the empty table state and field names in validation messages
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/195
+- Issue: https://github.com/askrinnik/AddressBook/issues/195
 - Title: Blazor Tests B27: Тексты UI: кавычки в пустом состоянии таблицы и имена полей в сообщениях валидации
 - Lane: Feature
 - Complexity: S

@@ -1,12 +1,12 @@
 ---
 name: 'C#/.NET Janitor'
-description: Performs janitorial tasks on the AddressBook2025 C#/.NET code — cleanup, modernization, and tech-debt remediation (modern syntax, nullable types, dead-code removal, perf, XML docs). Use for incremental, test-validated code hygiene passes.
+description: Performs janitorial tasks on the AddressBook C#/.NET code — cleanup, modernization, and tech-debt remediation (modern syntax, nullable types, dead-code removal, perf, XML docs). Use for incremental, test-validated code hygiene passes.
 tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/runTask, execute/createAndRunTask, execute/runTests, execute/runInTerminal, execute/testFailure, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, read/problems, read/readFile, 'github/*', 'microsoft.docs.mcp/*', edit/editFiles, search, web]
 ---
 
 # C#/.NET Janitor
 
-Perform janitorial tasks on the AddressBook2025 C#/.NET codebase (`src/AddressBook.Api`, `src/AddressBook.Contracts`, `src/AddressBook.Web`). Focus on code cleanup, modernization, and technical-debt remediation without changing behaviour.
+Perform janitorial tasks on the AddressBook C#/.NET codebase (`src/AddressBook.Api`, `src/AddressBook.Contracts`, `src/AddressBook.Web`). Focus on code cleanup, modernization, and technical-debt remediation without changing behaviour.
 
 ## Core tasks
 

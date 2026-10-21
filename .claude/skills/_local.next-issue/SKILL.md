@@ -1,6 +1,6 @@
 ---
 name: next-issue
-description: 'Recommend the next GitHub issue to implement for AddressBook2025: the oldest open issue whose blocking issues are all closed and that has no open pull request yet, plus the issues that become ready once pending pull requests merge. Use when the user asks what to do next or which issue to take, at the end of /implement-issue, and when /implement-issue is started without an issue number.'
+description: 'Recommend the next GitHub issue to implement for AddressBook: the oldest open issue whose blocking issues are all closed and that has no open pull request yet, plus the issues that become ready once pending pull requests merge. Use when the user asks what to do next or which issue to take, at the end of /implement-issue, and when /implement-issue is started without an issue number.'
 argument-hint: 'Optional: issue numbers to treat as closed (for example the one just shipped)'
 ---
 

@@ -1,7 +1,7 @@
 # План: Issue #146 — Blazor Tests B2: Базовый `MudTestContext` + заглушки JSInterop
 
-> **Issue:** [#146](https://github.com/askrinnik/AddressBook2025/issues/146) — «Blazor Tests B2: Базовый MudTestContext + заглушки JSInterop» (Фаза 0)
-> **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**; предшественник B1 ([#145](https://github.com/askrinnik/AddressBook2025/issues/145)) уже наскаффолдил проект `src/AddressBook.Web.Tests` и влит в `main`.
+> **Issue:** [#146](https://github.com/askrinnik/AddressBook/issues/146) — «Blazor Tests B2: Базовый MudTestContext + заглушки JSInterop» (Фаза 0)
+> **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**; предшественник B1 ([#145](https://github.com/askrinnik/AddressBook/issues/145)) уже наскаффолдил проект `src/AddressBook.Web.Tests` и влит в `main`.
 > **Авторитетный дизайн:** [`docs/tasks/blazor-component-tests-framework-plan.md`](blazor-component-tests-framework-plan.md) (раздел B2).
 
 ## 1. Требование

@@ -1,6 +1,6 @@
 # План: Issue #154 — Blazor Tests B10: ContactsListTests
 
-> **Issue:** [#154](https://github.com/askrinnik/AddressBook2025/issues/154) — «Blazor Tests B10: ContactsListTests» (Фаза 2)
+> **Issue:** [#154](https://github.com/askrinnik/AddressBook/issues/154) — «Blazor Tests B10: ContactsListTests» (Фаза 2)
 > **Режим работы:** test-authoring — **production-код (`AddressBook.Web`) не трогаем**, новые `data-testid` не добавляем.
 
 ## 1. Требование

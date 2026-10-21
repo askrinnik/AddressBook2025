@@ -1,6 +1,6 @@
 # Plan: Issue #159 — Blazor Tests B15: EditContactTests + EditContactNotFoundTests
 
-> **Issue:** [#159](https://github.com/askrinnik/AddressBook2025/issues/159) — Phase 2
+> **Issue:** [#159](https://github.com/askrinnik/AddressBook/issues/159) — Phase 2
 > **Mode:** test-authoring (bUnit); no production code changes.
 
 ## 1. Requirement

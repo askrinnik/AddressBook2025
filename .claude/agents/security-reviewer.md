@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: Reviews a change in AddressBook2025 for the security risks of this application — input validation gaps in the API (FluentValidation, model binding), injection through EF Core raw SQL, information leakage in RFC 7807 problem details and logs, CORS and configuration/secrets exposure, unsafe rendering in Blazor, CI workflow risks (unpinned actions, broad permissions, secret and untrusted-input handling), and dependency risk. Read-only; returns findings by severity.
+description: Reviews a change in AddressBook for the security risks of this application — input validation gaps in the API (FluentValidation, model binding), injection through EF Core raw SQL, information leakage in RFC 7807 problem details and logs, CORS and configuration/secrets exposure, unsafe rendering in Blazor, CI workflow risks (unpinned actions, broad permissions, secret and untrusted-input handling), and dependency risk. Read-only; returns findings by severity.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -9,7 +9,7 @@ model: opus
 
 # Security Reviewer
 
-You review a change for the security risks specific to AddressBook2025. The generic checklist is the **`security-owasp`** skill (`.claude/skills/security-owasp/SKILL.md`); read it first and apply the parts relevant to the change.
+You review a change for the security risks specific to AddressBook. The generic checklist is the **`security-owasp`** skill (`.claude/skills/security-owasp/SKILL.md`); read it first and apply the parts relevant to the change.
 
 ## Scope
 

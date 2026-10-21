@@ -1,6 +1,6 @@
 # План: Issue #148 — Blazor Tests B4: `ApiServiceMock` + `FakeHttpMessageHandler`
 
-> **Issue:** [#148](https://github.com/askrinnik/AddressBook2025/issues/148) — «Blazor Tests B4: ApiServiceMock + FakeHttpMessageHandler» (Фаза 1)
+> **Issue:** [#148](https://github.com/askrinnik/AddressBook/issues/148) — «Blazor Tests B4: ApiServiceMock + FakeHttpMessageHandler» (Фаза 1)
 > **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**.
 
 ## 1. Требование

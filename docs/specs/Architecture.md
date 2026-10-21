@@ -1,6 +1,6 @@
-# Research Report: `askrinnik/AddressBook2025`
+# Research Report: `askrinnik/AddressBook`
 
-> **Repo:** [askrinnik/AddressBook2025](https://github.com/askrinnik/AddressBook2025)  
+> **Repo:** [askrinnik/AddressBook](https://github.com/askrinnik/AddressBook)  
 > **Head commit:** `b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73`  
 > **Report date:** 2026-05-05  
 > **Last updated:** 2026-05-26 — corrected CORS, exception handler, and Scalar documentation; added spec document references; marked Issue #50 as resolved
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-`AddressBook2025` is a full-stack pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application has no hosted deployment: it runs locally against SQL Server, and CI runs it in GitHub Actions against a SQL Server container. Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. A second frontend, **Vue.js** (Vue 3, TypeScript, Vuetify) in `src/AddressBook.Vue`, offers the same UI against the same API; it has its own **Vitest** component tests and shares the UI E2E suite with the Blazor frontend. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
+`AddressBook` is a full-stack pet/learning project that implements a contact management (address book) application. It is written in **C# / .NET 10**, with a **Blazor WebAssembly** frontend (MudBlazor UI), an **ASP.NET Core Web API** backend following a clean CQRS + MediatR architecture, a shared contracts library, a **bUnit** component test suite, and **Playwright/TypeScript** end-to-end test suites. The application has no hosted deployment: it runs locally against SQL Server, and CI runs it in GitHub Actions against a SQL Server container. Development is collaborative between two contributors (Alexander Skrinnik and Vira Skrynnik), with extensive use of **GitHub Copilot coding agent** for automated PR creation and feature implementation. A second frontend, **Vue.js** (Vue 3, TypeScript, Vuetify) in `src/AddressBook.Vue`, offers the same UI against the same API; it has its own **Vitest** component tests and shares the UI E2E suite with the Blazor frontend. The project has been consistently maintained with 36 tracked issues, 14 pull requests, and active CI/CD via GitHub Actions.
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Repository | Language | Purpose |
 |---|---|---|
-| [askrinnik/AddressBook2025](https://github.com/askrinnik/AddressBook2025) | C# / TypeScript | Full-stack contacts app: API + Blazor UI + E2E tests |
+| [askrinnik/AddressBook](https://github.com/askrinnik/AddressBook) | C# / TypeScript | Full-stack contacts app: API + Blazor UI + E2E tests |
 
 ---
 
@@ -165,7 +165,7 @@ Component Tests (jsdom)"]
 ## Project Structure
 
 ```
-askrinnik/AddressBook2025/
+askrinnik/AddressBook/
 ├── .github/
 │   ├── agents/                      # Custom agent definitions (GitHub Copilot)
 │   ├── instructions/                # Path-scoped coding standards (applyTo globs)
@@ -393,7 +393,7 @@ The application has no hosted deployment. Developers run the API, the frontends 
 
 ```mermaid
 graph LR
-    Dev["Developer"] -->|"git push / pull request"| GH["GitHub\naskrinnik/AddressBook2025"]
+    Dev["Developer"] -->|"git push / pull request"| GH["GitHub\naskrinnik/AddressBook"]
 
     subgraph Actions["GitHub Actions (ubuntu-latest)"]
         Build["build.yml\ndotnet build (Release)"]
@@ -492,26 +492,26 @@ These spec documents provide implementation-level detail complementing the archi
 
 ## Footnotes
 
-[^1]: [src/AddressBook.Contracts/CreateContactCommand.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/CreateContactCommand.cs) SHA: `3dcc5faf` | [Models/ContactModel.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/ContactModel.cs) SHA: `bc2bd3a3` | [Models/GetFilteredContactsResponse.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/GetFilteredContactsResponse.cs) SHA: `14539636`
+[^1]: [src/AddressBook.Contracts/CreateContactCommand.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/CreateContactCommand.cs) SHA: `3dcc5faf` | [Models/ContactModel.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/ContactModel.cs) SHA: `bc2bd3a3` | [Models/GetFilteredContactsResponse.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Contracts/Models/GetFilteredContactsResponse.cs) SHA: `14539636`
 
-[^2]: [src/AddressBook.Api/DataAccess/StartupExtensions.cs (DataAccess)](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/StartupExtensions.cs) SHA: `efcf28b8`
+[^2]: [src/AddressBook.Api/DataAccess/StartupExtensions.cs (DataAccess)](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/StartupExtensions.cs) SHA: `efcf28b8`
 
-[^3]: GitHub Issue [#50](https://github.com/askrinnik/AddressBook2025/issues/50) | Draft PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51)
+[^3]: GitHub Issue [#50](https://github.com/askrinnik/AddressBook/issues/50) | Draft PR [#51](https://github.com/askrinnik/AddressBook/pull/51)
 
-[^4]: [src/AddressBook.Api/StartupExtensions.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/StartupExtensions.cs) SHA: `d653082b`
+[^4]: [src/AddressBook.Api/StartupExtensions.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/StartupExtensions.cs) SHA: `d653082b`
 
-[^5]: [src/AddressBook.Web/Pages/Contacts.razor](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor) SHA: `ee474d20` | [Contacts.razor.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor.cs) SHA: `3136afd7`
+[^5]: [src/AddressBook.Web/Pages/Contacts.razor](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor) SHA: `ee474d20` | [Contacts.razor.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Web/Pages/Contacts.razor.cs) SHA: `3136afd7`
 
-[^6]: [.github/workflows/build.yml](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/build.yml) SHA: `b66d3ac7`
+[^6]: [.github/workflows/build.yml](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/.github/workflows/build.yml) SHA: `b66d3ac7`
 
 
-[^8]: PR [#51](https://github.com/askrinnik/AddressBook2025/pull/51), PR [#48](https://github.com/askrinnik/AddressBook2025/pull/48), PR [#42](https://github.com/askrinnik/AddressBook2025/pull/42), PR [#41](https://github.com/askrinnik/AddressBook2025/pull/41)
+[^8]: PR [#51](https://github.com/askrinnik/AddressBook/pull/51), PR [#48](https://github.com/askrinnik/AddressBook/pull/48), PR [#42](https://github.com/askrinnik/AddressBook/pull/42), PR [#41](https://github.com/askrinnik/AddressBook/pull/41)
 
-[^9]: [CLAUDE.md](https://github.com/askrinnik/AddressBook2025/blob/main/CLAUDE.md) | [.ai/customizations.policy.json](https://github.com/askrinnik/AddressBook2025/blob/main/.ai/customizations.policy.json) — the cross-tool AI-customizations hub and sync policy (current `main`; supersedes the former `.github/copilot-instructions.md`, which held the single *"source code supports non-English comments"* rule).
+[^9]: [CLAUDE.md](https://github.com/askrinnik/AddressBook/blob/main/CLAUDE.md) | [.ai/customizations.policy.json](https://github.com/askrinnik/AddressBook/blob/main/.ai/customizations.policy.json) — the cross-tool AI-customizations hub and sync policy (current `main`; supersedes the former `.github/copilot-instructions.md`, which held the single *"source code supports non-English comments"* rule).
 
-[^10]: [src/AddressBook.Api/DataAccess/ApplicationDbContext.cs:400-424](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/ApplicationDbContext.cs) (ValueObjectExtensions)
+[^10]: [src/AddressBook.Api/DataAccess/ApplicationDbContext.cs:400-424](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/DataAccess/ApplicationDbContext.cs) (ValueObjectExtensions)
 
-[^11]: [src/AddressBook.Api/Program.cs](https://github.com/askrinnik/AddressBook2025/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Program.cs) SHA: `a08642e1`
+[^11]: [src/AddressBook.Api/Program.cs](https://github.com/askrinnik/AddressBook/blob/b2aa3f742b5f21ede8ab8dc3a0b8993ad55f8c73/src/AddressBook.Api/Program.cs) SHA: `a08642e1`
 
 [^12]: src/AddressBook.Contracts/DeleteContactByIdQuery.cs SHA: `79789132`
 

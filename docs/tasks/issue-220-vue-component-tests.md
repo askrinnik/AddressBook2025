@@ -1,6 +1,6 @@
 # Issue #220 — Vue V8: Component tests of the Vue frontend with Vitest
 
-> **Issue:** [#220](https://github.com/askrinnik/AddressBook2025/issues/220)
+> **Issue:** [#220](https://github.com/askrinnik/AddressBook/issues/220)
 > **Lane:** Test-authoring (tests for existing behaviour; test tooling only, no production change)
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V8

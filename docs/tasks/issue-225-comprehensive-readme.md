@@ -1,6 +1,6 @@
 # Plan: Issue #225 — Write a comprehensive README
 
-> **Issue:** [#225](https://github.com/askrinnik/AddressBook2025/issues/225) — Write a comprehensive README
+> **Issue:** [#225](https://github.com/askrinnik/AddressBook/issues/225) — Write a comprehensive README
 > **Lane:** Feature (documentation only) · **Complexity:** M
 
 ## Requirement

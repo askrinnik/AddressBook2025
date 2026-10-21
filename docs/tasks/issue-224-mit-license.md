@@ -1,6 +1,6 @@
 # Plan: Issue #224 — Add MIT LICENSE file
 
-> **Issue:** [#224](https://github.com/askrinnik/AddressBook2025/issues/224) — Add MIT LICENSE file
+> **Issue:** [#224](https://github.com/askrinnik/AddressBook/issues/224) — Add MIT LICENSE file
 > **Lane:** Feature (documentation only) · **Complexity:** S
 
 ## Requirement

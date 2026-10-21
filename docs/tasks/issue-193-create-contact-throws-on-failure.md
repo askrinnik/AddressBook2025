@@ -1,6 +1,6 @@
 # Plan: Issue #193 — AddressBookApiService.CreateContact silently returns 0 on a failed response
 
-> **Issue:** [#193](https://github.com/askrinnik/AddressBook2025/issues/193) — «Blazor Tests B25: AddressBookApiService.CreateContact молча возвращает 0 при неуспешном ответе»
+> **Issue:** [#193](https://github.com/askrinnik/AddressBook/issues/193) — «Blazor Tests B25: AddressBookApiService.CreateContact молча возвращает 0 при неуспешном ответе»
 > **Lane:** Bug · **Complexity:** S
 
 ## 1. Bug and root cause

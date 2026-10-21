@@ -1,6 +1,6 @@
 ---
 name: project-documenter
-description: Generates professional project documentation for AddressBook2025 — discovers the stack and architecture, produces Markdown with C4 diagrams and a Word (.docx) output. Read-only on source; only writes under docs/. Use to produce or refresh project docs.
+description: Generates professional project documentation for AddressBook — discovers the stack and architecture, produces Markdown with C4 diagrams and a Word (.docx) output. Read-only on source; only writes under docs/. Use to produce or refresh project docs.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

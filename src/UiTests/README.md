@@ -223,7 +223,7 @@ npm run test:remote
   `dotnet run` и сборки Vue при старте серверов.
 - **Параллелизм и повторы** (см. [`playwright.config.ts`](playwright.config.ts)): локально
   `workers: 4`, `retries: 1`; в CI `workers: 1`, `retries: 2`. Один локальный retry
-  «залечивает» редкий промах холодного старта Blazor WASM (см. [#138](https://github.com/askrinnik/AddressBook2025/issues/138)).
+  «залечивает» редкий промах холодного старта Blazor WASM (см. [#138](https://github.com/askrinnik/AddressBook/issues/138)).
   При отладке гонок бывает полезно сузить параллелизм: `npx playwright test --workers=1`.
 
 ## CI
@@ -259,7 +259,7 @@ npm run test:remote
 Или через GitHub CLI (значение спросит интерактивно, не попадёт в историю оболочки):
 
 ```bash
-gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook2025
+gh secret set MSSQL_SA_PASSWORD --repo askrinnik/AddressBook
 ```
 
 Запуск вручную:

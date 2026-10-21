@@ -1,7 +1,7 @@
 ---
 name: open-pr
 description: >
-  Open a pull request for AddressBook2025 following this repository's
+  Open a pull request for AddressBook following this repository's
   conventions — target branch, title, the Closes keyword and what the
   description should contain — with gh (Claude Code) or the GitHub MCP server
   (Copilot). Use whenever creating or updating a PR, on its own or as the PR
@@ -11,7 +11,7 @@ description: >
 
 # Open a Pull Request
 
-> Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
+> Local skill note: This skill is intentionally repository-specific for AddressBook and does not map to a canonical upstream skill in github/awesome-copilot.
 
 How to open a pull request in this repository. **Pull-request mechanics only** — the branch and the commits are made with the **`git-commit`** skill.
 

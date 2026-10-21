@@ -1,6 +1,6 @@
 # Implementation plan — Issue #96: UI Tests U5: `api/contacts-api.ts` (seed/cleanup via APIRequestContext)
 
-- **Issue:** [#96](https://github.com/askrinnik/AddressBook2025/issues/96) — *UI Tests U5: api/contacts-api.ts (seed/cleanup через APIRequestContext)*
+- **Issue:** [#96](https://github.com/askrinnik/AddressBook/issues/96) — *UI Tests U5: api/contacts-api.ts (seed/cleanup через APIRequestContext)*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 1 (U5)
 - **Depends on:** U1–U4 (merged); consumes `env` from U3
 - **Type:** test infrastructure (no production code, no permanent specs)

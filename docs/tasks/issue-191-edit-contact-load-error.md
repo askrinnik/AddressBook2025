@@ -1,6 +1,6 @@
 # Plan: Issue #191 — EditContact: unhandled load error and blank page while loading
 
-> **Issue:** [#191](https://github.com/askrinnik/AddressBook2025/issues/191) — «Blazor Tests B23: EditContact: необработанная ошибка загрузки и пустая страница во время загрузки»
+> **Issue:** [#191](https://github.com/askrinnik/AddressBook/issues/191) — «Blazor Tests B23: EditContact: необработанная ошибка загрузки и пустая страница во время загрузки»
 > **Lane:** Bug · **Complexity:** S
 
 ## 1. Bug and root cause

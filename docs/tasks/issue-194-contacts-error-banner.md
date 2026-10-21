@@ -1,6 +1,6 @@
 # Issue #194 — Contacts: the error banner is not cleared after a successful reload
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/194
+- Issue: https://github.com/askrinnik/AddressBook/issues/194
 - Title: Blazor Tests B26: Contacts: баннер Error не очищается после успешной перезагрузки
 - Lane: Feature
 - Complexity: S

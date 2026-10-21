@@ -1,6 +1,6 @@
 # Plan: Issue #156 — Blazor Tests B12: ContactsErrorTests
 
-> **Issue:** [#156](https://github.com/askrinnik/AddressBook2025/issues/156) — «Blazor Tests B12: ContactsErrorTests» (Phase 2)
+> **Issue:** [#156](https://github.com/askrinnik/AddressBook/issues/156) — «Blazor Tests B12: ContactsErrorTests» (Phase 2)
 > **Mode:** test-authoring — **no production code (`AddressBook.Web`) changes**, no new `data-testid`.
 
 ## 1. Requirement

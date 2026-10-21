@@ -1,6 +1,6 @@
 # План: Issue #153 — Blazor Tests B9: HomeTests
 
-> **Issue:** [#153](https://github.com/askrinnik/AddressBook2025/issues/153) — «Blazor Tests B9: HomeTests» (Фаза 2)
+> **Issue:** [#153](https://github.com/askrinnik/AddressBook/issues/153) — «Blazor Tests B9: HomeTests» (Фаза 2)
 > **Режим работы:** test-authoring — **production-код (`AddressBook.Web`) не трогаем**, новые `data-testid` не добавляем.
 
 ## 1. Требование

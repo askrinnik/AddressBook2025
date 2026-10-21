@@ -1,6 +1,6 @@
 # Issue #198 — Blazor Tests B30: EditContactServerErrorTests: серверные ошибки при сохранении контакта
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/198
+- Issue: https://github.com/askrinnik/AddressBook/issues/198
 - Lane: Test-authoring (tests only, no production code)
 - Complexity: S
 

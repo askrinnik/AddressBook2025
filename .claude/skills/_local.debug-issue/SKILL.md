@@ -1,6 +1,6 @@
 ---
 name: debug-issue
-description: Reproduce and diagnose a defect in AddressBook2025 systematically — reproduce with a failing Playwright or bUnit test or in a real browser, read the problem details, console and API log, find the root cause in the right layer (Web, Contracts, API handler/validator/controller/repository), and validate the fix. Use when something behaves wrongly, a test fails unexpectedly, or the API returns an unexpected error.
+description: Reproduce and diagnose a defect in AddressBook systematically — reproduce with a failing Playwright or bUnit test or in a real browser, read the problem details, console and API log, find the root cause in the right layer (Web, Contracts, API handler/validator/controller/repository), and validate the fix. Use when something behaves wrongly, a test fails unexpectedly, or the API returns an unexpected error.
 ---
 
 # Debug Issue

@@ -1,6 +1,6 @@
 # Issue #222 — Vue V10: Documentation, AI harness and learning guide for the Vue frontend
 
-> **Issue:** [#222](https://github.com/askrinnik/AddressBook2025/issues/222)
+> **Issue:** [#222](https://github.com/askrinnik/AddressBook/issues/222)
 > **Lane:** Feature (documentation and harness)
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V10

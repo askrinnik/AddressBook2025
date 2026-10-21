@@ -1,6 +1,6 @@
 # Issue #196 — Client-side validation of the contact form per the API rules
 
-- Issue: https://github.com/askrinnik/AddressBook2025/issues/196
+- Issue: https://github.com/askrinnik/AddressBook/issues/196
 - Title: Blazor Tests B28: Клиентская валидация формы контакта по правилам API (длина, пробелы, будущая дата)
 - Lane: Feature
 - Complexity: M

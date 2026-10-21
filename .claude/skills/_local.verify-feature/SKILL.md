@@ -1,7 +1,7 @@
 ---
 name: verify-feature
 description: >
-  Verify a change to AddressBook2025 at both the API and the UI level: start
+  Verify a change to AddressBook at both the API and the UI level: start
   the API and Blazor Web app, run the Playwright E2E API tests, and walk every
   acceptance criterion in a real browser. Use after implementing a feature or a
   defect fix, before asking the user to confirm the work.
@@ -9,7 +9,7 @@ description: >
 
 # Verify a Change (API + UI)
 
-> Local skill note: This skill is intentionally repository-specific for AddressBook2025 and does not map to a canonical upstream skill in github/awesome-copilot.
+> Local skill note: This skill is intentionally repository-specific for AddressBook and does not map to a canonical upstream skill in github/awesome-copilot.
 
 Verify at **both** the API and the UI level against a list of acceptance criteria. Use this after implementing a feature or a defect fix and before asking the user to confirm.
 

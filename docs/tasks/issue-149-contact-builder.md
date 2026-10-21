@@ -1,6 +1,6 @@
 # План: Issue #149 — Blazor Tests B5: `ContactBuilder` на Bogus
 
-> **Issue:** [#149](https://github.com/askrinnik/AddressBook2025/issues/149) — «Blazor Tests B5: ContactBuilder на Bogus» (Фаза 1)
+> **Issue:** [#149](https://github.com/askrinnik/AddressBook/issues/149) — «Blazor Tests B5: ContactBuilder на Bogus» (Фаза 1)
 > **Режим работы:** test-authoring / инфраструктура — **production-код не трогаем**.
 
 ## 1. Требование

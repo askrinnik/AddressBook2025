@@ -1,6 +1,6 @@
 # Issue #216 — Vue V4: API client of the Vue frontend with the problem-details pipeline
 
-> **Issue:** [#216](https://github.com/askrinnik/AddressBook2025/issues/216)
+> **Issue:** [#216](https://github.com/askrinnik/AddressBook/issues/216)
 > **Lane:** Feature
 > **Complexity:** M
 > **Multi-issue plan:** [vue-frontend-plan.md](vue-frontend-plan.md), task V4

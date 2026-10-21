@@ -1,6 +1,6 @@
 # Issue 201 — CI web-tests.yml: checks: write, PR triggers and paths, concurrency, coverage threshold
 
-- Issue: [#201](https://github.com/askrinnik/AddressBook2025/issues/201) — Blazor Tests B33: CI web-tests.yml: checks: write, триггеры PR и paths, concurrency, порог покрытия
+- Issue: [#201](https://github.com/askrinnik/AddressBook/issues/201) — Blazor Tests B33: CI web-tests.yml: checks: write, триггеры PR и paths, concurrency, порог покрытия
 - Lane: Test-authoring (CI configuration; no production code)
 - Complexity: S
 

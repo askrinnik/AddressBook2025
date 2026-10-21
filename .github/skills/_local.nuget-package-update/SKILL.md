@@ -1,6 +1,6 @@
 ---
 name: nuget-package-update
-description: 'Pin-aware NuGet dependency updates for AddressBook2025 through Central Package Management (src/Directory.Packages.props). Use when the user asks to update or bump NuGet packages, find outdated or vulnerable packages, or invokes this skill. Discovers outdated packages, classifies them against the pin contract and package families, and applies safe updates on the current branch with a build and test gate after each step. Never commits, pushes or creates a branch.'
+description: 'Pin-aware NuGet dependency updates for AddressBook through Central Package Management (src/Directory.Packages.props). Use when the user asks to update or bump NuGet packages, find outdated or vulnerable packages, or invokes this skill. Discovers outdated packages, classifies them against the pin contract and package families, and applies safe updates on the current branch with a build and test gate after each step. Never commits, pushes or creates a branch.'
 ---
 
 # nuget-package-update

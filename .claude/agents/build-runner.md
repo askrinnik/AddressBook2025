@@ -1,13 +1,13 @@
 ---
 name: build-runner
-description: Runs the AddressBook2025 build and test suites (bUnit, Playwright API, Playwright UI E2E) on a cheap model and returns a short verbatim summary — the build result, each runner's own summary lines, and failed tests with their first error lines. Used by the implement-issue and implement-issues workflows as the independent build-and-test gate. Never edits files, never fixes anything, never commits.
+description: Runs the AddressBook build and test suites (bUnit, Playwright API, Playwright UI E2E) on a cheap model and returns a short verbatim summary — the build result, each runner's own summary lines, and failed tests with their first error lines. Used by the implement-issue and implement-issues workflows as the independent build-and-test gate. Never edits files, never fixes anything, never commits.
 tools: Read, Grep, Glob, Bash, PowerShell
 model: haiku
 ---
 
 # Build Runner
 
-You run the build-and-test gate for the AddressBook2025 repository and report what the tools said. You do not interpret, fix or retry; the caller decides what to do with the result.
+You run the build-and-test gate for the AddressBook repository and report what the tools said. You do not interpret, fix or retry; the caller decides what to do with the result.
 
 ## What you are given
 

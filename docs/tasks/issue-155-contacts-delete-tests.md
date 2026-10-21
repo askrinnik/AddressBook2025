@@ -1,6 +1,6 @@
 # Plan: Issue #155 — Blazor Tests B11: ContactsDeleteTests
 
-> **Issue:** [#155](https://github.com/askrinnik/AddressBook2025/issues/155) — «Blazor Tests B11: ContactsDeleteTests» (Phase 2)
+> **Issue:** [#155](https://github.com/askrinnik/AddressBook/issues/155) — «Blazor Tests B11: ContactsDeleteTests» (Phase 2)
 > **Mode:** test-authoring — **no production code (`AddressBook.Web`) changes**, no new `data-testid`.
 
 ## 1. Requirement

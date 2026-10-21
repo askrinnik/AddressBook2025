@@ -1,6 +1,6 @@
 ---
 name: 'Issue Planner'
-description: 'Planning agent for the implement-issue workflow — researches the AddressBook2025 codebase read-only and returns a concise, review-ready implementation plan for one GitHub issue (Bug, Feature or Test-authoring lane), including a complexity estimate (S/M/L). Never edits code, runs commands or writes files; the caller saves the plan and runs the review gate.'
+description: 'Planning agent for the implement-issue workflow — researches the AddressBook codebase read-only and returns a concise, review-ready implementation plan for one GitHub issue (Bug, Feature or Test-authoring lane), including a complexity estimate (S/M/L). Never edits code, runs commands or writes files; the caller saves the plan and runs the review gate.'
 model: Claude Opus 4.6 (copilot)
 tools: ['read', 'search', 'context7/*', 'microsoft-learn/*']
 ---

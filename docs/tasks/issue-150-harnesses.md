@@ -1,6 +1,6 @@
 # План: Issue #150 — Blazor Tests B6: Harness-обёртки над отрендеренным компонентом
 
-> **Issue:** [#150](https://github.com/askrinnik/AddressBook2025/issues/150) — «Blazor Tests B6: Harness-обёртки над отрендеренным компонентом» (Фаза 1)
+> **Issue:** [#150](https://github.com/askrinnik/AddressBook/issues/150) — «Blazor Tests B6: Harness-обёртки над отрендеренным компонентом» (Фаза 1)
 > **Режим работы:** test-authoring / инфраструктура — **production-код (`AddressBook.Web`) не трогаем**, новые `data-testid` не добавляем.
 
 ## 1. Требование

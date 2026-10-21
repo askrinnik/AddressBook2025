@@ -88,34 +88,34 @@ src/ApiTests/
 
 ### Фаза 0 — Каркас
 
-- [x] **T1** ([#61](https://github.com/askrinnik/AddressBook2025/issues/61)) Scaffold `src/ApiTests`: `package.json` (скрипты `test`, `test:report`, `test:remote`, `test:ui`, `test:debug`, `lint`, `format`), `tsconfig.json`, `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`, README-заглушка. Создать этот файл плана в `docs/tasks/`.
-- [x] **T2** ([#58](https://github.com/askrinnik/AddressBook2025/issues/58)) Установить зависимости + `playwright.config.ts` (webServer `dotnet run` + `reuseExistingServer`, reporters `list`+`html`, `trace: on-first-retry`, `baseURL` из env).
+- [x] **T1** ([#61](https://github.com/askrinnik/AddressBook/issues/61)) Scaffold `src/ApiTests`: `package.json` (скрипты `test`, `test:report`, `test:remote`, `test:ui`, `test:debug`, `lint`, `format`), `tsconfig.json`, `eslint.config.mjs` (flat), `.prettierrc.json`, `.gitignore`, `.env.example`, README-заглушка. Создать этот файл плана в `docs/tasks/`.
+- [x] **T2** ([#58](https://github.com/askrinnik/AddressBook/issues/58)) Установить зависимости + `playwright.config.ts` (webServer `dotnet run` + `reuseExistingServer`, reporters `list`+`html`, `trace: on-first-retry`, `baseURL` из env).
 
 ### Фаза 1 — Инфраструктура
 
-- [x] **T3** ([#56](https://github.com/askrinnik/AddressBook2025/issues/56)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, таймауты) + dotenv.
-- [x] **T4** ([#63](https://github.com/askrinnik/AddressBook2025/issues/63)) `schemas/contact.schema.ts` — zod-схемы `Contact` / `ListResponse` / `ProblemDetails`.
-- [x] **T5** ([#62](https://github.com/askrinnik/AddressBook2025/issues/62)) `clients/base-api-client.ts` + `contacts-client.ts` (5 методов, без ассертов, парсинг `Location` через `/\/Contacts\/(\d+)$/`).
-- [x] **T6** ([#57](https://github.com/askrinnik/AddressBook2025/issues/57)) `models/problem-details.ts` — порт RFC7807-хелпера (`messagesFor`, `messages`, `hasErrors`).
-- [x] **T7** ([#64](https://github.com/askrinnik/AddressBook2025/issues/64)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + граничные варианты.
-- [x] **T8** ([#60](https://github.com/askrinnik/AddressBook2025/issues/60)) `fixtures/api.fixtures.ts` — `test.extend` (client + factory + авто-очистка созданных контактов).
-- [x] **T9** ([#59](https://github.com/askrinnik/AddressBook2025/issues/59)) `utils/assertions.ts` — хелперы проверки схем и problem-details.
+- [x] **T3** ([#56](https://github.com/askrinnik/AddressBook/issues/56)) `config/env.ts` — zod-загрузчик окружения (`BASE_URL`, таймауты) + dotenv.
+- [x] **T4** ([#63](https://github.com/askrinnik/AddressBook/issues/63)) `schemas/contact.schema.ts` — zod-схемы `Contact` / `ListResponse` / `ProblemDetails`.
+- [x] **T5** ([#62](https://github.com/askrinnik/AddressBook/issues/62)) `clients/base-api-client.ts` + `contacts-client.ts` (5 методов, без ассертов, парсинг `Location` через `/\/Contacts\/(\d+)$/`).
+- [x] **T6** ([#57](https://github.com/askrinnik/AddressBook/issues/57)) `models/problem-details.ts` — порт RFC7807-хелпера (`messagesFor`, `messages`, `hasErrors`).
+- [x] **T7** ([#64](https://github.com/askrinnik/AddressBook/issues/64)) `data/contact.factory.ts` + `tokens.ts` — фабрики на faker + граничные варианты.
+- [x] **T8** ([#60](https://github.com/askrinnik/AddressBook/issues/60)) `fixtures/api.fixtures.ts` — `test.extend` (client + factory + авто-очистка созданных контактов).
+- [x] **T9** ([#59](https://github.com/askrinnik/AddressBook/issues/59)) `utils/assertions.ts` — хелперы проверки схем и problem-details.
 
 ### Фаза 2 — Тесты
 
-- [x] **T10** ([#65](https://github.com/askrinnik/AddressBook2025/issues/65)) `tests/contacts/get-list.spec.ts` — поиск, пустой результат, кодирование query, независимость от seed.
-- [x] **T11** ([#67](https://github.com/askrinnik/AddressBook2025/issues/67)) `tests/contacts/get-by-id.spec.ts` — созданный контакт, `404`, нечисловой id → `404`.
-- [x] **T12** ([#69](https://github.com/askrinnik/AddressBook2025/issues/69)) `tests/contacts/create.spec.ts` — валидный с/без birthday, границы 30/31, пусто, пробелы `"   "` → `400` (корректно отклоняется, «баг» не подтвердился), будущая дата → `400` + problem-details, «сегодня» → OK.
-- [x] **T13** ([#73](https://github.com/askrinnik/AddressBook2025/issues/73)) `tests/contacts/update.spec.ts` — **PUT (новое покрытие)**: полное/частичное обновление, `404`, валидация `400`, границы.
-- [x] **T14** ([#68](https://github.com/askrinnik/AddressBook2025/issues/68)) `tests/contacts/delete.spec.ts` — удаление созданного (`204`) → затем `404`, удаление неизвестного → `404`.
-- [x] **T15** ([#72](https://github.com/askrinnik/AddressBook2025/issues/72)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной create → read → update → read → delete → `404`.
-- [x] **T16** ([#70](https://github.com/askrinnik/AddressBook2025/issues/70)) `tests/contract/schema.spec.ts` — валидация всех ответов против zod-схем.
+- [x] **T10** ([#65](https://github.com/askrinnik/AddressBook/issues/65)) `tests/contacts/get-list.spec.ts` — поиск, пустой результат, кодирование query, независимость от seed.
+- [x] **T11** ([#67](https://github.com/askrinnik/AddressBook/issues/67)) `tests/contacts/get-by-id.spec.ts` — созданный контакт, `404`, нечисловой id → `404`.
+- [x] **T12** ([#69](https://github.com/askrinnik/AddressBook/issues/69)) `tests/contacts/create.spec.ts` — валидный с/без birthday, границы 30/31, пусто, пробелы `"   "` → `400` (корректно отклоняется, «баг» не подтвердился), будущая дата → `400` + problem-details, «сегодня» → OK.
+- [x] **T13** ([#73](https://github.com/askrinnik/AddressBook/issues/73)) `tests/contacts/update.spec.ts` — **PUT (новое покрытие)**: полное/частичное обновление, `404`, валидация `400`, границы.
+- [x] **T14** ([#68](https://github.com/askrinnik/AddressBook/issues/68)) `tests/contacts/delete.spec.ts` — удаление созданного (`204`) → затем `404`, удаление неизвестного → `404`.
+- [x] **T15** ([#72](https://github.com/askrinnik/AddressBook/issues/72)) `tests/contacts/crud-lifecycle.spec.ts` — сквозной create → read → update → read → delete → `404`.
+- [x] **T16** ([#70](https://github.com/askrinnik/AddressBook/issues/70)) `tests/contract/schema.spec.ts` — валидация всех ответов против zod-схем.
 
 ### Фаза 3 — Обвязка и документация
 
-- [x] **T17** ([#71](https://github.com/askrinnik/AddressBook2025/issues/71)) `README.md` для `src/ApiTests`.
-- [x] **T18** ([#74](https://github.com/askrinnik/AddressBook2025/issues/74)) (опционально, с подтверждением) CI-workflow + обновление skills/instructions.
-- [x] **T19** ([#66](https://github.com/askrinnik/AddressBook2025/issues/66)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
+- [x] **T17** ([#71](https://github.com/askrinnik/AddressBook/issues/71)) `README.md` для `src/ApiTests`.
+- [x] **T18** ([#74](https://github.com/askrinnik/AddressBook/issues/74)) (опционально, с подтверждением) CI-workflow + обновление skills/instructions.
+- [x] **T19** ([#66](https://github.com/askrinnik/AddressBook/issues/66)) Верификация: `npm ci`, `npm run lint`, `npm test` — всё зелёное.
 
 ## 6. Что переиспользуем из `src/AutoTests`
 

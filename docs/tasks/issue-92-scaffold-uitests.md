@@ -1,6 +1,6 @@
 # Implementation plan — Issue #92: UI Tests U1: Scaffold `src/UiTests`
 
-- **Issue:** [#92](https://github.com/askrinnik/AddressBook2025/issues/92) — *UI Tests U1: Scaffold `src/UiTests`*
+- **Issue:** [#92](https://github.com/askrinnik/AddressBook/issues/92) — *UI Tests U1: Scaffold `src/UiTests`*
 - **Parent plan:** [docs/tasks/ui-tests-framework-plan.md](ui-tests-framework-plan.md) — Фаза 0 (U1)
 - **Type:** tooling scaffold (no production code, no tests yet)
 - **Labels:** none

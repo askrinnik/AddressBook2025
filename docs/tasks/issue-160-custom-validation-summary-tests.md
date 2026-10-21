@@ -1,6 +1,6 @@
 # Plan: Issue #160 — Blazor Tests B16: CustomValidationSummaryTests
 
-> **Issue:** [#160](https://github.com/askrinnik/AddressBook2025/issues/160) — Phase 2
+> **Issue:** [#160](https://github.com/askrinnik/AddressBook/issues/160) — Phase 2
 > **Lane:** test-authoring (bUnit), extended during plan review with a fix of the summary's filter (see Decisions).
 > **Complexity:** S
 

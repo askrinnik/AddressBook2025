@@ -1,4 +1,4 @@
-Take a list of small GitHub issues for AddressBook2025 one after another on **one branch**, each with the full `implement-issue` workflow and its own commit, then verify the whole branch once and ship it as **one pull request**. The batch runs without review stops: it halts only on a question it cannot settle itself, and it reports every debatable decision at the end.
+Take a list of small GitHub issues for AddressBook one after another on **one branch**, each with the full `implement-issue` workflow and its own commit, then verify the whole branch once and ship it as **one pull request**. The batch runs without review stops: it halts only on a question it cannot settle itself, and it reports every debatable decision at the end.
 
 The arguments are issue numbers in execution order (`/implement-issues 191 192 193`), plus optional flags:
 
