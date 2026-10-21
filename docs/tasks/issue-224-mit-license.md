@@ -11,7 +11,7 @@ The repository has no license file, so the code is "all rights reserved" by defa
 
 - [x] `LICENSE` exists at the repository root with the standard MIT License text
 - [x] The copyright line names the year and the copyright holder (Alexander Skrinnik)
-- [ ] GitHub detects the license as MIT (repository sidebar shows "MIT license")
+- [x] GitHub detects the license as MIT (repository sidebar shows "MIT license")
 
 ## Affected files
 

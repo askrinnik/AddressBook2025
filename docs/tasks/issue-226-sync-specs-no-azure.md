@@ -12,7 +12,7 @@ The specifications describe a minimal README, the removed `playwright.yml` workf
 - [x] `Architecture.md` project structure describes `README.md` as the project overview
 - [x] `Architecture.md` no longer shows `playwright.yml`; its CI picture matches the workflows in `.github/workflows/`
 - [x] `Architecture.md`, `AddressBook.Web.md` and `AddressBook.Vue.md` no longer describe an Azure deployment or production URLs as current
-- [ ] Mermaid diagrams in the changed files still render on GitHub
+- [x] Mermaid diagrams in the changed files still render on GitHub
 - [x] Every relative link in the changed files resolves
 
 ## Affected files

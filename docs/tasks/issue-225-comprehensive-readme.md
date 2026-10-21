@@ -11,10 +11,10 @@ Owner decisions: English; CI status, technology and metadata badges only (passed
 
 ## Acceptance checklist
 
-- [ ] Title, one-line description and badge rows (CI status, technologies, license/metadata); every badge renders on GitHub and links to its target
+- [x] Title, one-line description and badge rows (CI status, technologies, license/metadata); every badge renders on GitHub and links to its target
 - [x] Table of contents whose links resolve to the README's headings
 - [x] Features section describes what the application does (contacts, phones, search, validation, RFC 7807 errors, two frontends on one API)
-- [ ] Architecture section with a Mermaid diagram (Blazor / Vue → API → SQL Server) that renders on GitHub, linking to `docs/specs/Architecture.md`
+- [x] Architecture section with a Mermaid diagram (Blazor / Vue → API → SQL Server) that renders on GitHub, linking to `docs/specs/Architecture.md`
 - [x] Tech stack table per project with the key technologies and their versions as in the code
 - [x] Repository structure overview
 - [x] Getting started: prerequisites, database setup, running the API, the Blazor app and the Vue app with their ports
